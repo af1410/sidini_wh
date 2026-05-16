@@ -1,6 +1,9 @@
 <?php
 
 use App\Models\User;
+use App\Models\Siswa;
+use App\Models\Guru;
+use App\Models\Ortu;
 
 return [
 
@@ -42,6 +45,21 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'siswa' => [
+            'driver' => 'session',
+            'provider' => 'siswa',
+        ],
+
+        'guru' => [
+            'driver' => 'session',
+            'provider' => 'guru',
+        ],
+
+        'ortu' => [
+            'driver' => 'session',
+            'provider' => 'ortu',
+        ],
     ],
 
     /*
@@ -65,6 +83,21 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', User::class),
+        ],
+
+        'siswa' => [
+            'driver' => 'eloquent',
+            'model' => Siswa::class,
+        ],
+
+        'guru' => [
+            'driver' => 'eloquent',
+            'model' => Guru::class,
+        ],
+
+        'ortu' => [
+            'driver' => 'eloquent',
+            'model' => Ortu::class,
         ],
 
         // 'users' => [
