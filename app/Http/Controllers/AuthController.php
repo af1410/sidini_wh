@@ -30,27 +30,29 @@ class AuthController extends Controller
 
         // Try to authenticate as siswa first
         if (Auth::guard('siswa')->attempt($credentials)) {
-            return redirect()->route('siswa.dashboard');
+            $name = Auth::guard('siswa')->user()->nama_siswa ?? 'Siswa';
+            return redirect()->route('siswa.dashboard')->with('success', 'Selamat datang, ' . $name);
         }
 
         // Try to authenticate as ortu
         if (Auth::guard('ortu')->attempt($credentials)) {
-            return redirect()->route('ortu.dashboard');
+            $name = Auth::guard('ortu')->user()->nama_ortu ?? 'Orang Tua';
+            return redirect()->route('ortu.dashboard')->with('success', 'Selamat datang, ' . $name);
         }
 
         // Try to authenticate as guru (check jabatan for admin/kepsek)
-        $guru = Guru::where('username', $validated['username'])->first();
+        $guru = Guru::query()->where('username', '=', $validated['username'])->first();
         if ($guru && Hash::check($validated['password'], $guru->password)) {
             Auth::guard('guru')->login($guru);
-
+            $name = $guru->nama_guru ?? 'Guru';
             if ($guru->jabatan === 'admin') {
-                return redirect()->route('admin.dashboard');
+                return redirect()->route('admin.dashboard')->with('success', 'Selamat datang, ' . $name);
             } elseif ($guru->jabatan === 'kepala_sekolah') {
-                return redirect()->route('kepsek.dashboard');
+                return redirect()->route('kepsek.dashboard')->with('success', 'Selamat datang, ' . $name);
             } elseif ($guru->jabatan === 'kurikulum') {
-                return redirect()->route('kurikulum.dashboard');
+                return redirect()->route('kurikulum.dashboard')->with('success', 'Selamat datang, ' . $name);
             } else {
-                return redirect()->route('guru.dashboard');
+                return redirect()->route('guru.dashboard')->with('success', 'Selamat datang, ' . $name);
             }
         }
 

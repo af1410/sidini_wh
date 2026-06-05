@@ -22,12 +22,12 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="{{ route('guru.nilai.index') }}">
                     <i class="bi bi-file-earmark-text"></i> <span>Input Nilai</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="{{ route('guru.presensi.index') }}">
                     <i class="bi bi-check-circle"></i> <span>Presensi Siswa</span>
                 </a>
             </li>
@@ -72,68 +72,46 @@
                     <h4 class="mb-0"><i class="bi bi-speedometer2 me-2"></i>Dashboard Guru</h4>
                 </div>
                 <div class="card-body">
-                    <div class="row mb-4">
+                    <div class="row align-items-center mb-4">
                         <div class="col-md-8">
-                            <h5>Selamat Datang, {{ $guru->nama_guru }}!</h5>
-                            <p class="text-muted mb-0">NIP: {{ $guru->nip }}</p>
+                            <h5>Selamat Datang di Dashboard Guru</h5>
+                            <p class="text-muted mb-0">Gunakan menu ini untuk mengelola nilai dan presensi siswa.</p>
                         </div>
                         <div class="col-md-4 text-end">
                             <span class="badge bg-success fs-6">{{ ucfirst($guru->jabatan) }}</span>
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6 class="fw-bold mb-3">Informasi Pribadi</h6>
-                            <table class="table table-sm">
-                                <tr>
-                                    <td><strong>Nama:</strong></td>
-                                    <td>{{ $guru->nama_guru }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>NIP:</strong></td>
-                                    <td>{{ $guru->nip }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>NIK:</strong></td>
-                                    <td>{{ $guru->nik }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Jenis Kelamin:</strong></td>
-                                    <td>{{ $guru->jenis_kelamin }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Tempat Lahir:</strong></td>
-                                    <td>{{ $guru->tempat_lahir }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Tanggal Lahir:</strong></td>
-                                    <td>{{ $guru->tanggal_lahir }}</td>
-                                </tr>
-                            </table>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <div class="card h-100 border-primary">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-pencil-square fs-1 text-primary"></i>
+                                    <h6 class="mt-3">Input Nilai</h6>
+                                    <p class="text-muted">Tambahkan nilai formatif dan sumatif siswa.</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <h6 class="fw-bold mb-3">Kontak</h6>
-                            <table class="table table-sm">
-                                <tr>
-                                    <td><strong>Email:</strong></td>
-                                    <td>{{ $guru->email }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>No. HP:</strong></td>
-                                    <td>{{ $guru->no_hp ?? 'Belum diisi' }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Alamat:</strong></td>
-                                    <td>{{ $guru->alamat }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Jabatan:</strong></td>
-                                    <td><span class="badge bg-secondary">{{ ucfirst($guru->jabatan) }}</span></td>
-                                </tr>
-                            </table>
+                        <div class="col-md-4">
+                            <div class="card h-100 border-success">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-check2-square fs-1 text-success"></i>
+                                    <h6 class="mt-3">Presensi</h6>
+                                    <p class="text-muted">Kelola kehadiran harian siswa Anda.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100 border-warning">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-file-earmark-medical fs-1 text-warning"></i>
+                                    <h6 class="mt-3">Laporan Nilai</h6>
+                                    <p class="text-muted">Pantau riwayat dan status penilaian.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

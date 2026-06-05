@@ -72,10 +72,10 @@
                     <h4 class="mb-0"><i class="bi bi-speedometer2 me-2"></i>Dashboard Siswa</h4>
                 </div>
                 <div class="card-body">
-                    <div class="row mb-4">
+                    <div class="row align-items-center mb-4">
                         <div class="col-md-8">
-                            <h5>Selamat Datang, {{ $siswa->nama_siswa }}!</h5>
-                            <p class="text-muted mb-0">NIS: {{ $siswa->nis }}</p>
+                            <h5>Selamat Datang di Dashboard Siswa</h5>
+                            <p class="text-muted mb-0">Cek nilai, presensi, jadwal, dan pengumuman sekolah di sini.</p>
                         </div>
                         <div class="col-md-4 text-end">
                             <span
@@ -83,54 +83,47 @@
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6 class="fw-bold mb-3">Informasi Pribadi</h6>
-                            <table class="table table-sm">
-                                <tr>
-                                    <td><strong>Nama:</strong></td>
-                                    <td>{{ $siswa->nama_siswa }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>NIS:</strong></td>
-                                    <td>{{ $siswa->nis }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>NIK:</strong></td>
-                                    <td>{{ $siswa->nik }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Jenis Kelamin:</strong></td>
-                                    <td>{{ $siswa->jenis_kelamin }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Tempat Lahir:</strong></td>
-                                    <td>{{ $siswa->tempat_lahir }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Tanggal Lahir:</strong></td>
-                                    <td>{{ $siswa->tanggal_lahir }}</td>
-                                </tr>
-                            </table>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <div class="card h-100 border-primary">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-file-earmark-text fs-1 text-primary"></i>
+                                    <h6 class="mt-3">Nilai Saya</h6>
+                                    <p class="text-muted">Lihat ringkasan nilai terbaru.</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <h6 class="fw-bold mb-3">Kontak</h6>
-                            <table class="table table-sm">
-                                <tr>
-                                    <td><strong>Email:</strong></td>
-                                    <td>{{ $siswa->email }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>No. HP:</strong></td>
-                                    <td>{{ $siswa->no_hp ?? 'Belum diisi' }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Alamat:</strong></td>
-                                    <td>{{ $siswa->alamat }}</td>
-                                </tr>
-                            </table>
+                        <div class="col-md-3">
+                            <a href="{{ route('siswa.presensi.index') }}" class="text-decoration-none">
+                                <div class="card h-100 border-success">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-check2-square fs-1 text-success"></i>
+                                        <h6 class="mt-3">Presensi</h6>
+                                        <p class="text-muted">Cek kehadiran harian Anda.</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card h-100 border-warning">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-calendar3 fs-1 text-warning"></i>
+                                    <h6 class="mt-3">Jadwal</h6>
+                                    <p class="text-muted">Lihat jadwal pelajaran kelas Anda.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card h-100 border-info">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-megaphone fs-1 text-info"></i>
+                                    <h6 class="mt-3">Pengumuman</h6>
+                                    <p class="text-muted">Pantau informasi sekolah terbaru.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

@@ -3,12 +3,15 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Siswa\DashboardController as SiswaDashboard;
+use App\Http\Controllers\Siswa\PresensiController as SiswaPresensiController;
+use App\Http\Controllers\Siswa\NilaiController as SiswaNilaiController;
 use App\Http\Controllers\Guru\DashboardController as GuruDashboard;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\SiswaController as AdminSiswaController;
 use App\Http\Controllers\Admin\KelasController as AdminKelasController;
 use App\Http\Controllers\Admin\KelasMapelController;
 use App\Http\Controllers\Admin\GuruController as AdminGuruController;
+use App\Http\Controllers\Admin\OrtuController as AdminOrtuController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\MapelController as AdminMapelController;
 use App\Http\Controllers\Admin\PresensiController;
@@ -18,6 +21,10 @@ use App\Http\Controllers\Ortu\DashboardController as OrtuDashboard;
 use App\Http\Controllers\Admin\PenilaianController;
 use App\Http\Controllers\Guru\NilaiController;
 use App\Http\Controllers\Guru\PresensiController as GuruPresensiController;
+use App\Http\Controllers\Guru\KelasSayaController;
+use App\Http\Controllers\Guru\MapelSayaController;
+use App\Http\Controllers\Guru\NilaiFormatifController;
+use App\Http\Controllers\Guru\NilaiSumatifController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -30,6 +37,11 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Siswa Routes
 Route::middleware('is_siswa')->group(function () {
     Route::get('/siswa/dashboard', [SiswaDashboard::class, 'dashboard'])->name('siswa.dashboard');
+    Route::get('/siswa/nilai', [SiswaDashboard::class, 'nilai'])->name('siswa.nilai.index');
+    Route::get('/siswa/presensi', [SiswaPresensiController::class, 'index'])->name('siswa.presensi.index');
+    // student nilai details and export
+    Route::get('/siswa/nilai/sumatif/{id_mapel}/{semester}', [SiswaNilaiController::class, 'sumatifByMapel'])->name('siswa.nilai.sumatif.show');
+    Route::get('/siswa/nilai/penilaian/{id}', [SiswaNilaiController::class, 'showPenilaian'])->name('siswa.nilai.penilaian.show');
 });
 
 // Guru Routes
@@ -39,6 +51,7 @@ Route::middleware('is_guru')->group(function () {
     //nilai
     Route::get('guru/nilai/', [NilaiController::class, 'index'])->name('guru.nilai.index');
     Route::get('guru/nilai/{idPembukaan}/detail', [NilaiController::class, 'show'])->name('guru.nilai.show');
+    Route::get('guru/nilai/export', [NilaiController::class, 'exportCsv'])->name('guru.nilai.export');
     Route::post('guru/nilai/{idPembukaan}/request-approval', [NilaiController::class, 'requestApproval'])->name('guru.nilai.requestApproval');
     Route::get('guru/nilai/formatif/{idPembukaan}', [NilaiController::class, 'createFormatif'])->name('guru.nilai.formatif.create');
     Route::post('guru/nilai/formatif', [NilaiController::class, 'storeFormatif'])->name('guru.nilai.formatif.store');
@@ -46,6 +59,53 @@ Route::middleware('is_guru')->group(function () {
     Route::post('guru/nilai/sumatif', [NilaiController::class, 'storeSumatif'])->name('guru.nilai.sumatif.store');
     Route::get('/guru/presensi', [GuruPresensiController::class, 'index'])->name('guru.presensi.index');
     Route::post('/guru/presensi/status/{id_siswa}', [GuruPresensiController::class, 'markStatus'])->name('guru.presensi.status');
+
+    //kelas_saya
+    Route::get('guru/kelas_saya', [KelasSayaController::class, 'index'])
+        ->name('guru.kelas.index');
+
+    //mapel_saya
+    Route::get('guru/mapel_saya', [MapelSayaController::class, 'index'])
+        ->name('guru.mapel.index');
+    Route::get('guru/mapel_saya/{id_mapel}', [MapelSayaController::class, 'show'])
+        ->name('guru.mapel.show');
+
+    //nilai formatif
+    Route::get(
+        'guru/nilai-formatif/{id_kelas}/{id_mapel}',
+        [NilaiFormatifController::class, 'show']
+    )->name('guru.nilai_formatif.show');
+
+    Route::post(
+        'guru/nilai-formatif/store',
+        [NilaiFormatifController::class, 'store']
+    )->name('guru.nilai_formatif.store');
+
+    Route::get(
+        'guru/nilai-formatif/{id}/bab-baru',
+        [NilaiFormatifController::class, 'tambahBab']
+    )->name('guru.nilai_formatif.tambah_bab');
+
+    Route::get(
+        'guru/nilai-formatif/{id}/bab/{bab}/pertemuan-baru',
+        [NilaiFormatifController::class, 'tambahPertemuan']
+    )->name('guru.nilai_formatif.tambah_pertemuan');
+
+    //Nilai Sumatif
+    Route::get(
+        'guru/nilai-sumatif/{id_kelas}/{id_mapel}',
+        [NilaiSumatifController::class, 'show']
+    )->name('guru.nilai_sumatif.show');
+
+    Route::post(
+        'guru/nilai-sumatif/store',
+        [NilaiSumatifController::class, 'store']
+    )->name('guru.nilai_sumatif.store');
+
+    Route::post(
+        '/guru/nilai-sumatif/{id_kelas}/{id_mapel}/tambah-bab',
+        [NilaiSumatifController::class, 'tambahBab']
+    )->name('guru.nilai_sumatif.tambah_bab');
 });
 
 // Admin Routes
@@ -54,6 +114,9 @@ Route::middleware('is_admin')->group(function () {
     Route::resource('/admin/siswa', AdminSiswaController::class, ['as' => 'admin'])->except(['show']);
     Route::resource('/admin/kelas', AdminKelasController::class, ['as' => 'admin', 'parameters' => ['kelas' => 'kelas']])->except(['show']);
     Route::resource('/admin/guru', AdminGuruController::class, ['as' => 'admin'])->except(['show']);
+    Route::post('/admin/guru/{guru}/reset-password', [AdminGuruController::class, 'resetPassword'])
+        ->name('admin.guru.reset-password');
+    Route::resource('/admin/ortu', AdminOrtuController::class, ['as' => 'admin'])->except(['show']);
     Route::get('/admin/profile', [AdminProfileController::class, 'index'])->name('admin.profile.index');
     Route::get('/admin/profile/edit', [AdminProfileController::class, 'edit'])->name('admin.profile.edit');
     Route::put('/admin/profile', [AdminProfileController::class, 'update'])->name('admin.profile.update');
@@ -99,4 +162,17 @@ Route::middleware('is_kurikulum')->group(function () {
 // Ortu Routes
 Route::middleware('is_ortu')->group(function () {
     Route::get('/ortu/dashboard', [OrtuDashboard::class, 'dashboard'])->name('ortu.dashboard');
+});
+
+Route::view(
+    '/fitur-belum-tersedia',
+    'errors.fitur-belum-tersedia'
+)->name('fitur.belum_tersedia');
+
+Route::fallback(function () {
+    return response()->view(
+        'errors.fitur-belum-tersedia',
+        [],
+        404
+    );
 });

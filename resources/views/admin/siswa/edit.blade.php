@@ -48,17 +48,17 @@
                             @enderror
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Jenim Kelamin</label>
-                            <select name="jenim_kelamin" class="form-control @error('jenim_kelamin') is-invalid @enderror">
-                                <option value="">Pilih Jenim Kelamin</option>
+                            <label class="form-label">Jenis Kelamin</label>
+                            <select name="jenis_kelamin" class="form-control @error('jenis_kelamin') is-invalid @enderror">
+                                <option value="">Pilih Jenis Kelamin</option>
                                 <option value="Laki-laki"
-                                    {{ old('jenim_kelamin', $siswa->jenim_kelamin) === 'Laki-laki' ? 'selected' : '' }}>
+                                    {{ old('jenis_kelamin', $siswa->jenis_kelamin) === 'Laki-laki' ? 'selected' : '' }}>
                                     Laki-laki</option>
                                 <option value="Perempuan"
-                                    {{ old('jenim_kelamin', $siswa->jenim_kelamin) === 'Perempuan' ? 'selected' : '' }}>
+                                    {{ old('jenis_kelamin', $siswa->jenis_kelamin) === 'Perempuan' ? 'selected' : '' }}>
                                     Perempuan</option>
                             </select>
-                            @error('jenim_kelamin')
+                            @error('jenis_kelamin')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -88,19 +88,18 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Alamat</label>
+                            <textarea name="alamat" class="form-control @error('alamat') is-invalid @enderror">{{ old('alamat', $siswa->alamat) }}</textarea>
+                            @error('alamat')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                         <div class="col-md-6">
                             <label class="form-label">Email</label>
                             <input type="email" name="email" value="{{ old('email', $siswa->email) }}"
                                 class="form-control @error('email') is-invalid @enderror">
                             @error('email')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Username</label>
-                            <input type="text" name="username" value="{{ old('username', $siswa->username) }}"
-                                class="form-control @error('username') is-invalid @enderror">
-                            @error('username')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -126,33 +125,11 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Angkatan</label>
-                            <select name="angkatan" class="form-control @error('angkatan') is-invalid @enderror">
-                                <option value="">Pilih Angkatan</option>
-                                @foreach ($angkatanOptions as $option)
-                                    <option value="{{ $option }}"
-                                        {{ old('angkatan', $siswa->angkatan) === $option ? 'selected' : '' }}>
-                                        {{ $option }}</option>
-                                @endforeach
-                            </select>
-                            @error('angkatan')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Password Baru</label>
-                            <input type="password" name="password"
-                                class="form-control @error('password') is-invalid @enderror">
-                            @error('password')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Konfirmasi Password Baru</label>
-                            <input type="password" name="password_confirmation" class="form-control">
-                        </div>
+                    </div>
+                    <div class="alert alert-info mt-3">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Catatan:</strong> Username otomatis di-sinkronkan dari NIM siswa. Password tidak dapat
+                        diubah dari form ini.
                     </div>
                     <div class="mt-4">
                         <button class="btn btn-primary">Simpan Perubahan</button>

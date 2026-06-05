@@ -2,6 +2,7 @@
     <button class="sidebar-toggle" id="sidebarToggleBtn" title="Toggle Sidebar">
         <i class="bi bi-chevron-left"></i>
     </button>
+
     <ul class="nav flex-column">
         <li class="nav-section-title">MENU UTAMA</li>
         <li class="nav-item">
@@ -22,6 +23,12 @@
             <a class="nav-link {{ request()->is('admin/siswa*') ? 'active' : '' }}"
                 href="{{ route('admin.siswa.index') }}">
                 <i class="bi bi-people"></i> <span>Kelola Siswa</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->is('admin/ortu*') ? 'active' : '' }}"
+                href="{{ route('admin.ortu.index') }}">
+                <i class="bi bi-people-fill"></i> <span>Kelola Orang Tua</span>
             </a>
         </li>
         <li class="nav-item">

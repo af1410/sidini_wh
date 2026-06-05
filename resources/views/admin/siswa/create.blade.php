@@ -48,11 +48,11 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Jenis Kelamin</label>
-                            <select name="jenim_kelamin" class="form-control @error('jenim_kelamin') is-invalid @enderror">
+                            <select name="jenis_kelamin" class="form-control @error('jenis_kelamin') is-invalid @enderror">
                                 <option value="">Pilih Jenis Kelamin</option>
-                                <option value="Laki-laki" {{ old('jenim_kelamin') === 'Laki-laki' ? 'selected' : '' }}>
+                                <option value="Laki-laki" {{ old('jenis_kelamin') === 'Laki-laki' ? 'selected' : '' }}>
                                     Laki-laki</option>
-                                <option value="Perempuan" {{ old('jenim_kelamin') === 'Perempuan' ? 'selected' : '' }}>
+                                <option value="Perempuan" {{ old('jenis_kelamin') === 'Perempuan' ? 'selected' : '' }}>
                                     Perempuan</option>
                             </select>
                             @error('jenim_kelamin')
@@ -99,14 +99,6 @@
                             @enderror
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Username</label>
-                            <input type="text" name="username" value="{{ old('username') }}"
-                                class="form-control @error('username') is-invalid @enderror">
-                            @error('username')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="col-md-6">
                             <label class="form-label">UID Kartu</label>
                             <input type="text" name="uid_kartu" value="{{ old('uid_kartu') }}"
                                 class="form-control @error('uid_kartu') is-invalid @enderror">
@@ -128,32 +120,11 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Angkatan</label>
-                            <select name="angkatan" class="form-control @error('angkatan') is-invalid @enderror">
-                                <option value="">Pilih Angkatan</option>
-                                @foreach ($angkatanOptions as $option)
-                                    <option value="{{ $option }}"
-                                        {{ old('angkatan') === $option ? 'selected' : '' }}>{{ $option }}</option>
-                                @endforeach
-                            </select>
-                            @error('angkatan')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
 
-                        <div class="col-md-6">
-                            <label class="form-label">Password</label>
-                            <input type="password" name="password"
-                                class="form-control @error('password') is-invalid @enderror">
-                            @error('password')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Konfirmasi Password</label>
-                            <input type="password" name="password_confirmation" class="form-control">
-                        </div>
+                    </div>
+                    <div class="alert alert-info mt-3">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Catatan:</strong> Username dan password akan otomatis di-generate dari NIM siswa.
                     </div>
                     <div class="mt-4">
                         <button class="btn btn-success">Simpan Siswa</button>

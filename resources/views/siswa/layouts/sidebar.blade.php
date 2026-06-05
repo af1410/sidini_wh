@@ -12,12 +12,12 @@
 
         <li class="nav-section-title mt-3">AKADEMIK</li>
         <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{{ route('siswa.nilai.index') }}">
                 <i class="bi bi-file-earmark"></i> <span>Nilai Saya</span>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{{ route('siswa.presensi.index') }}">
                 <i class="bi bi-check-circle"></i> <span>Presensi Saya</span>
             </a>
         </li>

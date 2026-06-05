@@ -71,19 +71,19 @@
 
 @section('content')
     <div class="container mt-5">
-        <div class="row">
+        <div class="row mb-4">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header bg-danger text-white">
                         <h4 class="mb-0">Dashboard Kepala Sekolah</h4>
                     </div>
                     <div class="card-body">
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <h5>Selamat Datang Bapak/Ibu Kepala Sekolah, {{ $kepsek->nama_guru }}!</h5>
-                                <p class="text-muted">NIP: {{ $kepsek->nip }}</p>
+                        <div class="row align-items-center mb-3">
+                            <div class="col-md-8">
+                                <h5>Selamat Datang di Dashboard Kepala Sekolah</h5>
+                                <p class="text-muted mb-0">Pantau kinerja akademik dan agenda sekolah di sini.</p>
                             </div>
-                            <div class="col-md-6 text-end">
+                            <div class="col-md-4 text-end">
                                 <form method="POST" action="{{ route('logout') }}" style="display: inline;">
                                     @csrf
                                     <button type="submit" class="btn btn-danger">Logout</button>
@@ -91,70 +91,54 @@
                             </div>
                         </div>
 
-                        <hr>
-
                         <div class="alert alert-info">
                             <i class="bi bi-info-circle me-2"></i>
-                            Anda login sebagai <strong>Kepala Sekolah</strong>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6 class="fw-bold">Informasi Pribadi</h6>
-                                <table class="table table-sm">
-                                    <tr>
-                                        <td><strong>Nama:</strong></td>
-                                        <td>{{ $kepsek->nama_guru }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>NIP:</strong></td>
-                                        <td>{{ $kepsek->nip }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>NIK:</strong></td>
-                                        <td>{{ $kepsek->nik }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Jenis Kelamin:</strong></td>
-                                        <td>{{ $kepsek->jenis_kelamin }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Tempat Lahir:</strong></td>
-                                        <td>{{ $kepsek->tempat_lahir }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Tanggal Lahir:</strong></td>
-                                        <td>{{ $kepsek->tanggal_lahir }}</td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div class="col-md-6">
-                                <h6 class="fw-bold">Kontak</h6>
-                                <table class="table table-sm">
-                                    <tr>
-                                        <td><strong>Email:</strong></td>
-                                        <td>{{ $kepsek->email }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>No. HP:</strong></td>
-                                        <td>{{ $kepsek->no_hp ?? 'Belum diisi' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Alamat:</strong></td>
-                                        <td>{{ $kepsek->alamat }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Jabatan:</strong></td>
-                                        <td><span
-                                                class="badge bg-danger">{{ ucfirst(str_replace('_', ' ', $kepsek->jabatan)) }}</span>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
+                            Anda login sebagai <strong>Kepala Sekolah</strong>. Pantau kinerja akademik dan agenda sekolah
+                            di sini.
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="card h-100 border-primary">
+                    <div class="card-body text-center">
+                        <i class="bi bi-bar-chart fs-1 text-primary"></i>
+                        <h6 class="mt-3">Statistik Akademik</h6>
+                        <p class="text-muted">Lihat ringkasan performa sekolah.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100 border-success">
+                    <div class="card-body text-center">
+                        <i class="bi bi-people fs-1 text-success"></i>
+                        <h6 class="mt-3">Data Guru</h6>
+                        <p class="text-muted">Kelola informasi guru dan jadwal mengajar.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100 border-warning">
+                    <div class="card-body text-center">
+                        <i class="bi bi-file-earmark-text fs-1 text-warning"></i>
+                        <h6 class="mt-3">Laporan Tahunan</h6>
+                        <p class="text-muted">Buka laporan evaluasi tahunan.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100 border-danger">
+                    <div class="card-body text-center">
+                        <i class="bi bi-graph-up fs-1 text-danger"></i>
+                        <h6 class="mt-3">Analisis Data</h6>
+                        <p class="text-muted">Analisis hasil dan perkembangan sekolah.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 @endsection

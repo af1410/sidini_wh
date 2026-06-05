@@ -1,0 +1,111 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+
+class SiswaSeeder extends Seeder
+{
+    public function run(): void
+    {
+        DB::table('siswa')->insert([
+            [
+                'nim' => '20260001',
+                'nik' => '3174010101010001',
+                'nama_siswa' => 'Ahmad Fauzi',
+                'jenis_kelamin' => 'Laki-laki',
+                'tempat_lahir' => 'Jakarta',
+                'tanggal_lahir' => '2008-01-15',
+                'alamat' => 'Jl. Melati No. 1',
+                'no_hp' => '081234567801',
+                'email' => 'ahmad@example.com',
+                'username' => '20260001',
+                'uid_kartu' => null,
+                'kelas' => null,
+                'id_kelas' => 'K2026002',
+                'password' => Hash::make('20260001'),
+                'gambar' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nim' => '20260002',
+                'nik' => '3174010101010002',
+                'nama_siswa' => 'Budi Santoso',
+                'jenis_kelamin' => 'Laki-laki',
+                'tempat_lahir' => 'Bandung',
+                'tanggal_lahir' => '2008-02-20',
+                'alamat' => 'Jl. Mawar No. 2',
+                'no_hp' => '081234567802',
+                'email' => 'budisantoso@example.com',
+                'username' => '20260002',
+                'uid_kartu' => null,
+                'kelas' => null,
+                'id_kelas' => 'K2026002',
+                'password' => Hash::make('20260002'),
+                'gambar' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nim' => '20260003',
+                'nik' => '3174010101010003',
+                'nama_siswa' => 'Citra Lestari',
+                'jenis_kelamin' => 'Perempuan',
+                'tempat_lahir' => 'Semarang',
+                'tanggal_lahir' => '2008-03-10',
+                'alamat' => 'Jl. Anggrek No. 3',
+                'no_hp' => '081234567803',
+                'email' => 'citra@example.com',
+                'username' => '20260003',
+                'uid_kartu' => null,
+                'kelas' => null,
+                'id_kelas' => 'K2026002',
+                'password' => Hash::make('20260003'),
+                'gambar' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nim' => '20260004',
+                'nik' => '3174010101010004',
+                'nama_siswa' => 'Dewi Kartika',
+                'jenis_kelamin' => 'Perempuan',
+                'tempat_lahir' => 'Yogyakarta',
+                'tanggal_lahir' => '2008-04-05',
+                'alamat' => 'Jl. Kenanga No. 4',
+                'no_hp' => '081234567804',
+                'email' => 'dewi@example.com',
+                'username' => '20260004',
+                'uid_kartu' => null,
+                'kelas' => null,
+                'id_kelas' => 'K2026001',
+                'password' => Hash::make('20260004'),
+                'gambar' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nim' => '20260005',
+                'nik' => '3174010101010005',
+                'nama_siswa' => 'Eko Prasetyo',
+                'jenis_kelamin' => 'Laki-laki',
+                'tempat_lahir' => 'Surabaya',
+                'tanggal_lahir' => '2008-05-12',
+                'alamat' => 'Jl. Dahlia No. 5',
+                'no_hp' => '081234567805',
+                'email' => 'eko@example.com',
+                'username' => '20260005',
+                'uid_kartu' => null,
+                'kelas' => null,
+                'id_kelas' => 'K2026002',
+                'password' => Hash::make('20260005'),
+                'gambar' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+    }
+}

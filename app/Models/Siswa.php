@@ -20,7 +20,7 @@ class Siswa extends Authenticatable
         'nim',
         'nik',
         'nama_siswa',
-        'jenim_kelamin',
+        'jenis_kelamin',
         'tempat_lahir',
         'tanggal_lahir',
         'alamat',
@@ -31,8 +31,6 @@ class Siswa extends Authenticatable
         'password',
         'gambar',
         'id_kelas',
-        'angkatan',
-        'jurusan',
     ];
 
     protected $hidden = [

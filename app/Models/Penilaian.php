@@ -9,6 +9,7 @@ use App\Models\NilaiSumatif;
 class Penilaian extends Model
 {
     protected $table = 'penilaian';
+    protected $primaryKey = 'id';
 
     protected $fillable = [
         'id_guru',

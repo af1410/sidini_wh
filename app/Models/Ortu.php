@@ -46,4 +46,26 @@ class Ortu extends Authenticatable
     {
         return $this->password;
     }
+
+    protected static function booted()
+    {
+        static::creating(function ($ortu) {
+            // jika username tidak diisi, gunakan no_hp
+            if (empty($ortu->username) && !empty($ortu->no_hp)) {
+                $ortu->username = $ortu->no_hp;
+            }
+
+            // jika password tidak diisi, set dari no_hp (hash)
+            if (empty($ortu->password) && !empty($ortu->no_hp)) {
+                $ortu->password = bcrypt($ortu->no_hp);
+            }
+        });
+
+        static::updating(function ($ortu) {
+            // sinkron username dengan no_hp jika admin tidak menetapkan username manual
+            if (empty($ortu->username) && !empty($ortu->no_hp)) {
+                $ortu->username = $ortu->no_hp;
+            }
+        });
+    }
 }

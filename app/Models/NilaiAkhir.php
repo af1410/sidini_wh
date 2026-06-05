@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Mapel;
 
 class NilaiAkhir extends Model
 {
@@ -18,4 +19,9 @@ class NilaiAkhir extends Model
         'nilai_sumatif',
         'nilai_akhir',
     ];
+
+    public function mapel()
+    {
+        return $this->belongsTo(Mapel::class, 'id_mapel', 'id_mapel');
+    }
 }

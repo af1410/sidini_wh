@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('id_sumatif');
             $table->string('nama_tugas', 150);
+            $table->unsignedTinyInteger('urutan_tugas')->default(1);
             $table->decimal('nilai', 5, 2)->default(0);
             $table->timestamps();
 

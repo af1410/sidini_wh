@@ -11,6 +11,7 @@ class NilaiSumatifTugas extends Model
     protected $fillable = [
         'id_sumatif',
         'nama_tugas',
+        'urutan_tugas',
         'nilai',
     ];
 

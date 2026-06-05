@@ -49,6 +49,26 @@ class Guru extends Authenticatable
         return $this->password;
     }
 
+    protected static function booted()
+    {
+        static::creating(function ($guru) {
+            if (empty($guru->username) && !empty($guru->nip)) {
+                $guru->username = $guru->nip;
+            }
+
+            if (empty($guru->password) && !empty($guru->nip)) {
+                $guru->password = bcrypt($guru->nip);
+            }
+        });
+
+        static::updating(function ($guru) {
+            // sinkron username dengan nip jika admin tidak menetapkan username manual
+            if (empty($guru->username) && !empty($guru->nip)) {
+                $guru->username = $guru->nip;
+            }
+        });
+    }
+
     public function kelas()
     {
         return $this->hasMany(Kelas::class, 'id_guru', 'id_guru');

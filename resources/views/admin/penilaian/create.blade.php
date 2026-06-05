@@ -10,7 +10,20 @@
             <div class="card-body">
                 <form action="{{ route('admin.penilaian.store') }}" method="POST">
                     @csrf
-
+                    <div class="mb-3">
+                        <label>Mapel</label>
+                        <select name="id_mapel" class="form-select @error('id_mapel') is-invalid @enderror" id="mapel_select">
+                            <option value="">-- Pilih Mapel --</option>
+                            @foreach ($mapel as $item)
+                                <option value="{{ $item->id_mapel }}" class="mapel-option" data-guru="{{ $item->id_guru }}">
+                                    {{ $item->nama_mapel }} - {{ $item->jenis_mapel }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('id_mapel')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
                     <div class="mb-3">
                         <label>Guru</label>
                         <select id="guru_select" name="id_guru" class="form-select @error('id_guru') is-invalid @enderror">
@@ -43,21 +56,7 @@
                         @enderror
                     </div>
 
-                    <div class="mb-3">
-                        <label>Mapel</label>
-                        <select name="id_mapel" class="form-select @error('id_mapel') is-invalid @enderror"
-                            id="mapel_select">
-                            <option value="">-- Pilih Mapel --</option>
-                            @foreach ($mapel as $item)
-                                <option value="{{ $item->id_mapel }}" class="mapel-option" data-guru="{{ $item->id_guru }}">
-                                    {{ $item->nama_mapel }} - {{ $item->jenis_mapel }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('id_mapel')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+
 
                     <div class="mb-3">
                         <label>Semester</label>
@@ -92,6 +91,8 @@
                                 @for ($i = 1; $i <= 10; $i++)
                                     <option value="{{ $i }}">Bab {{ $i }}</option>
                                 @endfor
+                                <option value="PTS">PTS</option>
+                                <option value="PAS">PAS</option>
                             </select>
                         </div>
 

@@ -2,10 +2,11 @@
     <button class="sidebar-toggle" id="sidebarToggleBtn" title="Toggle Sidebar">
         <i class="bi bi-chevron-left"></i>
     </button>
+
     <ul class="nav flex-column">
         <li class="nav-section-title">MENU UTAMA</li>
         <li class="nav-item">
-            <a class="nav-link active" href="{{ route('guru.dashboard') }}">
+            <a class="nav-link" href="{{ route('guru.dashboard') }}">
                 <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
             </a>
         </li>
@@ -30,6 +31,20 @@
         </li>
 
         <li class="nav-section-title mt-3">MANAJEMEN KELAS</li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->is('guru/kelas_saya*') ? 'active' : '' }}"
+                href="{{ route('guru.kelas.index') }}">
+                <i class="bi bi-house"></i>
+                <span> Kelas Saya</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->is('guru/mapel_saya*') ? 'active' : '' }}"
+                href="{{ route('guru.mapel.index') }}">
+                <i class="bi bi-journal-bookmark"></i>
+                <span>Mapel Saya</span>
+            </a>
+        </li>
         <li class="nav-item">
             <a class="nav-link" href="#">
                 <i class="bi bi-calendar2-week"></i> <span>Jadwal Mengajar</span>

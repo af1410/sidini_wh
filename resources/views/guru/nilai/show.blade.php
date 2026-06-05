@@ -8,6 +8,10 @@
             </div>
 
             <div class="card-body">
+                <div class="mb-3 text-end">
+                    <a href="{{ route('guru.nilai.export', ['id_penilaian' => $pembukaan->id]) }}"
+                        class="btn btn-sm btn-success">Export CSV</a>
+                </div>
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <div class="card bg-light">

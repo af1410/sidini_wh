@@ -353,6 +353,7 @@
         });
     </script>
     @stack('scripts')
+    @include('partials.session-messages')
 </body>
 
 </html>

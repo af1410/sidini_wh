@@ -38,17 +38,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Angkatan</label>
-                            <select name="angkatan" class="form-control">
-                                <option value="">Semua Angkatan</option>
-                                @foreach ($angkatanOptions as $angkatan)
-                                    <option value="{{ $angkatan }}"
-                                        {{ request('angkatan') === $angkatan ? 'selected' : '' }}>
-                                        {{ $angkatan }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+
 
                         <div class="col-md-3 d-flex gap-2">
                             <button type="submit" class="btn btn-primary">Terapkan Filter</button>
