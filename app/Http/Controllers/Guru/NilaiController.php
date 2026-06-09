@@ -17,7 +17,7 @@ class NilaiController extends Controller
     public function index()
     {
         $data = Penilaian::with(['mapel', 'kelas', 'guru'])
-            ->withCount(['nilaiFormatif', 'nilaiSumatif'])
+            ->withCount(['nilaiFormatif', 'nilaiSumatif', 'nilaiUjian'])
             ->where('status_buka', '=', 'dibuka', 'and')
             ->latest()
             ->get();

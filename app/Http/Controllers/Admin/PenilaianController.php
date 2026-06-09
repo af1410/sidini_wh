@@ -11,8 +11,9 @@ use App\Models\Guru;
 use Illuminate\Support\Facades\Auth;
 use App\Models\NilaiFormatif;
 use App\Models\NilaiSumatif;
-use App\Models\NilaiSumatifTugas;
-use App\Models\NilaiAkhir;
+use App\Models\GuruMapel;
+use App\Models\KelasMapel;
+use App\Models\SumatifUjian;
 use Illuminate\Support\Facades\DB;
 
 
@@ -20,12 +21,24 @@ class PenilaianController extends Controller
 {
     public function index()
     {
-        $data = Penilaian::with(['mapel', 'kelas', 'guru'])
-            ->withCount(['nilaiFormatif', 'nilaiSumatif'])
+        $data = Penilaian::with([
+            'mapel',
+            'kelas',
+            'guru'
+        ])
+            ->withCount([
+                'nilaiFormatif',
+                'nilaiSumatif',
+                'nilaiUjian'
+            ])
+            ->whereNotNull('tipe_sumatif')
             ->latest()
             ->get();
 
-        return view('admin.penilaian.index', compact('data'));
+        return view(
+            'admin.penilaian.index',
+            compact('data')
+        );
     }
 
     public function create()
@@ -35,7 +48,10 @@ class PenilaianController extends Controller
         $gurus = Guru::select('id_guru', 'nama_guru')
             ->orderBy('nama_guru')
             ->get();
-        return view('admin.penilaian.create', compact('mapel', 'kelas', 'gurus'));
+
+        $guruMapel = GuruMapel::all();
+        $kelasMapel = KelasMapel::all();
+        return view('admin.penilaian.create', compact('mapel', 'kelas', 'gurus', 'guruMapel', 'kelasMapel'));
     }
 
     public function store(Request $request)
@@ -46,6 +62,8 @@ class PenilaianController extends Controller
             'id_kelas' => 'required',
             'semester' => 'required',
             'jenis_penilaian' => 'required|in:formatif,sumatif',
+            'tipe_sumatif' => 'required|in:PSTS,PSAS',
+            'bab_ke' => 'nullable|integer',
             'bab_ke' => 'nullable|integer',
             'judul_bab' => 'nullable|string|max:150',
             'tanggal_mulai' => 'required|date',
@@ -58,7 +76,8 @@ class PenilaianController extends Controller
             'id_kelas' => $request->id_kelas,
             'semester' => $request->semester,
             'jenis_penilaian' => $request->jenis_penilaian,
-            'bab_ke' => $request->bab_ke,
+            'tipe_sumatif' => $request->tipe_sumatif,
+            'bab_ke' => null,
             'judul_bab' => $request->judul_bab,
             'tanggal_mulai' => $request->tanggal_mulai,
             'tanggal_selesai' => $request->tanggal_selesai,
@@ -78,10 +97,20 @@ class PenilaianController extends Controller
             $nilai = NilaiFormatif::with('siswa')
                 ->where('id_penilaian', $id)
                 ->get();
-        } else {
+        } else if ($pembukaan->jenis_penilaian === 'sumatif' && $pembukaan->tipe_sumatif === null) {
             $nilai = NilaiSumatif::with(['siswa', 'tugas'])
                 ->where('id_penilaian', $id)
                 ->get();
+        } else {
+            if ($pembukaan->tipe_sumatif) {
+                $nilai = SumatifUjian::with('siswa')
+                    ->where('id_penilaian', $id)
+                    ->get();
+            } else {
+                $nilai = NilaiSumatif::with(['siswa', 'tugas'])
+                    ->where('id_penilaian', $id)
+                    ->get();
+            }
         }
 
         return view('admin.penilaian.show', compact('pembukaan', 'nilai'));

@@ -25,13 +25,37 @@
                         @enderror
                     </div>
                     <div class="mb-3">
+                        <label>Kelas</label>
+                        <select name="id_kelas" id="kelas_select" class="form-select">
+
+                            <option value="">-- Pilih Kelas --</option>
+
+                            @foreach ($kelas as $item)
+                                @php
+                                    $mapelsKelas = $kelasMapel->where('id_kelas', $item->id_kelas);
+                                @endphp
+
+                                @foreach ($mapelsKelas as $km)
+                                    <option value="{{ $item->id_kelas }}" data-mapel="{{ $km->id_mapel }}" hidden>
+                                        {{ $item->nama_kelas }}
+                                    </option>
+                                @endforeach
+                            @endforeach
+                        </select>
+                        @error('id_kelas')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
                         <label>Guru</label>
-                        <select id="guru_select" name="id_guru" class="form-select @error('id_guru') is-invalid @enderror">
+                        <select id="guru_select" name="id_guru" class="form-select">
+
                             <option value="">-- Pilih Guru --</option>
-                            @foreach ($gurus as $guru)
-                                <option value="{{ $guru->id_guru }}"
-                                    {{ old('id_guru') == $guru->id_guru ? 'selected' : '' }}>
-                                    {{ $guru->nama_guru }}
+
+                            @foreach ($guruMapel as $gm)
+                                <option value="{{ $gm->guru->id_guru }}" data-mapel="{{ $gm->id_mapel }}" hidden>
+                                    {{ $gm->guru->nama_guru }}
                                 </option>
                             @endforeach
                         </select>
@@ -40,21 +64,7 @@
                         @enderror
                     </div>
 
-                    <div class="mb-3">
-                        <label>Kelas</label>
-                        <select name="id_kelas" class="form-select @error('id_kelas') is-invalid @enderror"
-                            id="kelas_select">
-                            <option value="">-- Pilih Kelas --</option>
-                            @foreach ($kelas as $item)
-                                <option value="{{ $item->id_kelas }}">
-                                    {{ $item->nama_kelas }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('id_kelas')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+
 
 
 
@@ -70,37 +80,28 @@
                         @enderror
                     </div>
 
-                    <div class="mb-3">
+                    {{-- <div class="mb-3">
                         <label>Jenis Penilaian</label>
                         <select name="jenis_penilaian" class="form-select @error('jenis_penilaian') is-invalid @enderror"
                             id="jenis_penilaian">
-                            <option value="">-- Pilih Jenis --</option>
-                            <option value="formatif">Formatif</option>
-                            <option value="sumatif">Sumatif</option>
+                            <option value="sumatif" selected>Sumatif</option>
                         </select>
                         @error('jenis_penilaian')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
+                    </div> --}}
+                    <input type="hidden" name="jenis_penilaian" value="sumatif" value="sumatif">
+
+                    <div class="mb-3">
+                        <label>Jenis Penilaian</label>
+                        <select name="tipe_sumatif" class="form-select">
+                            <option value="">-- Pilih Jenis Penilaian --</option>
+                            <option value="PSTS">PSTS</option>
+                            <option value="PSAS">PSAS</option>
+                        </select>
                     </div>
 
-                    <div id="sumatif-section" style="display: none;">
-                        <div class="mb-3">
-                            <label>Bab Ke</label>
-                            <select name="bab_ke" class="form-select">
-                                <option value="">-- Pilih Bab --</option>
-                                @for ($i = 1; $i <= 10; $i++)
-                                    <option value="{{ $i }}">Bab {{ $i }}</option>
-                                @endfor
-                                <option value="PTS">PTS</option>
-                                <option value="PAS">PAS</option>
-                            </select>
-                        </div>
 
-                        <div class="mb-3">
-                            <label>Judul Bab</label>
-                            <input type="text" name="judul_bab" class="form-control">
-                        </div>
-                    </div>
 
                     <div class="mb-3">
                         <label>Tanggal Mulai</label>
@@ -132,64 +133,50 @@
     </div>
 
     <script>
-        const jenis = document.getElementById('jenis_penilaian');
-        const sumatifSection = document.getElementById('sumatif-section');
-        const kelasSelect = document.getElementById('kelas_select');
-        const mapelSelect = document.getElementById('mapel_select');
-        const guruSelect = document.getElementById('guru_select');
+        document.addEventListener('DOMContentLoaded', function() {
 
-        // Data untuk kelas-mapel relationship
-        const kelasMapelData = {
-            @foreach ($kelas as $k)
-                '{{ $k->id_kelas }}': [
-                    @foreach ($k->mapels as $m)
-                        '{{ $m->id_mapel }}',
-                    @endforeach
-                ],
-            @endforeach
-        };
+            const mapelSelect = document.getElementById('mapel_select');
+            const kelasSelect = document.getElementById('kelas_select');
+            const guruSelect = document.getElementById('guru_select');
 
-        function toggleSumatif() {
-            if (jenis.value === 'sumatif') {
-                sumatifSection.style.display = 'block';
-            } else {
-                sumatifSection.style.display = 'none';
-            }
-        }
+            mapelSelect.addEventListener('change', function() {
 
-        function setGuruFromMapel() {
-            const selectedOption = mapelSelect.selectedOptions[0];
-            if (!selectedOption) {
-                return;
-            }
-            const guruId = selectedOption.dataset.guru || '';
-            if (guruId) {
-                guruSelect.value = guruId;
-            }
-        }
+                const idMapel = this.value;
 
-        function filterMapelByKelas() {
-            const selectedKelas = kelasSelect.value;
-            const allowedMapels = kelasMapelData[selectedKelas] || [];
+                kelasSelect.value = '';
+                guruSelect.value = '';
 
-            // Reset mapel select
-            mapelSelect.value = '';
-            guruSelect.value = '';
+                Array.from(kelasSelect.options).forEach(option => {
 
-            // Hide/show mapel options
-            const mapelOptions = document.querySelectorAll('.mapel-option');
-            mapelOptions.forEach(option => {
-                if (allowedMapels.includes(option.value)) {
-                    option.style.display = 'block';
-                } else {
-                    option.style.display = 'none';
-                }
+                    if (option.value === '') return;
+
+                    option.hidden = option.dataset.mapel != idMapel;
+                });
+
+                Array.from(guruSelect.options).forEach(option => {
+
+                    if (option.value === '') return;
+
+                    option.hidden = true;
+                });
+
             });
-        }
 
-        jenis.addEventListener('change', toggleSumatif);
-        kelasSelect.addEventListener('change', filterMapelByKelas);
-        mapelSelect.addEventListener('change', setGuruFromMapel);
-        toggleSumatif();
+            kelasSelect.addEventListener('change', function() {
+
+                const idMapel = mapelSelect.value;
+
+                guruSelect.value = '';
+
+                Array.from(guruSelect.options).forEach(option => {
+
+                    if (option.value === '') return;
+
+                    option.hidden = option.dataset.mapel != idMapel;
+                });
+
+            });
+
+        });
     </script>
 @endsection

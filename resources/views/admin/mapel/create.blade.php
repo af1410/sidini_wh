@@ -1,6 +1,29 @@
 @extends('admin.layouts.app')
 
 @section('content')
+    @push('styles')
+        <style>
+            .select2-container .select2-selection--multiple {
+                min-height: 42px !important;
+                border: 1px solid #ced4da !important;
+                border-radius: .375rem !important;
+                padding: 4px 8px !important;
+            }
+
+            .select2-container--default .select2-selection--multiple {
+                background-color: #fff;
+            }
+
+            .select2-container {
+                width: 100% !important;
+            }
+
+            .select2-selection__choice {
+                margin-top: 3px !important;
+            }
+        </style>
+    @endpush
+
     <div class="container">
         <div class="card">
             <div class="card-header">
@@ -18,15 +41,18 @@
 
                     <div class="mb-3">
                         <label class="form-label">Guru Pengajar</label>
-                        <select name="id_guru" class="form-select @error('id_guru') is-invalid @enderror">
-                            <option value="">-- Pilih Guru --</option>
+
+                        <select name="id_guru[]" id="id_guru" class="form-select @error('id_guru') is-invalid @enderror"
+                            multiple>
+
                             @foreach ($gurus as $guru)
-                                <option value="{{ $guru->id_guru }}"
-                                    {{ old('id_guru') == $guru->id_guru ? 'selected' : '' }}>
+                                <option value="{{ $guru->id_guru }}">
                                     {{ $guru->nama_guru }}
                                 </option>
                             @endforeach
+
                         </select>
+
                         @error('id_guru')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -63,4 +89,17 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+        <script>
+            $(function() {
+
+                $('#id_guru').select2({
+                    placeholder: 'Pilih Guru Pengajar',
+                    width: '100%'
+                });
+
+            });
+        </script>
+    @endpush
 @endsection

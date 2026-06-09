@@ -9,6 +9,8 @@ use App\Models\Penilaian;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Exports\NilaiSumatifExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class NilaiSumatifController extends Controller
 {
@@ -31,6 +33,7 @@ class NilaiSumatifController extends Controller
             ->where('id_mapel', $id_mapel)
             ->where('id_guru', $guru->id_guru)
             ->where('jenis_penilaian', 'sumatif')
+            ->whereNull('tipe_sumatif')
             ->where('semester', $semester)
             ->orderBy('bab_ke')
             ->get();
@@ -46,12 +49,15 @@ class NilaiSumatifController extends Controller
 
         $babList = $penilaians
             ->pluck('bab_ke')
+            ->filter()
             ->unique()
             ->sort()
             ->values()
             ->toArray();
 
-        $babAktif = max($babList);
+        $babAktif = !empty($babList)
+            ? max($babList)
+            : 1;
 
         $tugasPerBab = [];
         $nilaiPivot = [];
@@ -400,5 +406,95 @@ class NilaiSumatifController extends Controller
                 'Gagal menyimpan nilai sumatif : ' . $e->getMessage()
             );
         }
+    }
+
+    public function export($id_kelas, $id_mapel)
+    {
+        $guru = Auth::guard('guru')->user();
+
+        $semester = now()->month >= 7 ? 'ganjil' : 'genap';
+
+        $penilaians = Penilaian::with([
+            'kelas.siswas',
+            'nilaiSumatif.tugas'
+        ])
+            ->where('id_kelas', $id_kelas)
+            ->where('id_mapel', $id_mapel)
+            ->where('jenis_penilaian', 'sumatif')
+            ->where('semester', $semester)
+            ->orderBy('bab_ke')
+            ->get();
+
+        $siswa = $penilaians->first()->kelas->siswas;
+
+        $babList = [];
+        $tugasPerBab = [];
+        $rows = [];
+
+        foreach ($penilaians as $penilaian) {
+
+            $babList[] = $penilaian->bab_ke;
+
+            foreach ($penilaian->nilaiSumatif as $nilai) {
+
+                foreach ($nilai->tugas as $tugas) {
+
+                    $tugasPerBab[$penilaian->bab_ke][] =
+                        $tugas->urutan_tugas;
+                }
+            }
+        }
+
+        foreach ($babList as $bab) {
+
+            $tugasPerBab[$bab] =
+                collect($tugasPerBab[$bab] ?? [1])
+                ->unique()
+                ->sort()
+                ->values()
+                ->toArray();
+        }
+
+        foreach ($siswa as $index => $item) {
+
+            $row = [
+                $index + 1,
+                $item->nama_siswa
+            ];
+
+            foreach ($penilaians as $penilaian) {
+
+                $nilai = $penilaian->nilaiSumatif
+                    ->where('id_siswa', $item->id_siswa)
+                    ->first();
+
+                foreach ($tugasPerBab[$penilaian->bab_ke] as $urutan) {
+
+                    $nilaiTugas = optional(
+                        optional($nilai)->tugas
+                    )->where(
+                        'urutan_tugas',
+                        $urutan
+                    )->first();
+
+                    $row[] = $nilaiTugas->nilai ?? '';
+                }
+
+                $row[] = $nilai->nilai_tes_tulis ?? '';
+                $row[] = $nilai->nilai_kehadiran ?? '';
+                $row[] = $nilai->nilai_bab ?? '';
+            }
+
+            $rows[] = $row;
+        }
+
+        return Excel::download(
+            new NilaiSumatifExport(
+                $rows,
+                $babList,
+                $tugasPerBab
+            ),
+            'nilai-sumatif.xlsx'
+        );
     }
 }

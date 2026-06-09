@@ -42,8 +42,12 @@
                                     <th>No</th>
                                     <th>NIS</th>
                                     <th>Nama Siswa</th>
-                                    @if ($pembukaan->jenis_penilaian == 'formatif')
-                                        <th>Nilai UAS</th>
+                                    @if ($pembukaan->jenis_penilaian == 'sumatif' && $pembukaan->tipe_sumatif == 'PSAS')
+                                        <th>Nilai PSAS</th>
+                                    @elseif ($pembukaan->jenis_penilaian == 'sumatif' && $pembukaan->tipe_sumatif == 'PSTS')
+                                        <th>Nilai PSTS</th>
+                                    @elseif ($pembukaan->jenis_penilaian == 'formatif')
+                                        <th>Nilai Formatif</th>
                                     @else
                                         <th>Nilai Tes Tulis</th>
                                         <th>Nilai Kehadiran</th>
@@ -59,8 +63,8 @@
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $item->siswa->nim ?? '-' }}</td>
                                         <td>{{ $item->siswa->nama_siswa ?? '-' }}</td>
-                                        @if ($pembukaan->jenis_penilaian == 'formatif')
-                                            <td>{{ $item->nilai_uas }}</td>
+                                        @if ($pembukaan->jenis_penilaian == 'sumatif' && in_array($pembukaan->tipe_sumatif, ['PSAS', 'PSTS']))
+                                            <td>{{ $item->nilai_ujian }}</td>
                                         @else
                                             <td>{{ $item->nilai_tes_tulis }}</td>
                                             <td>{{ $item->nilai_kehadiran }}</td>

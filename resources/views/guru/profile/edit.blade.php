@@ -1,6 +1,6 @@
-@extends('admin.layouts.app')
+@extends('guru.layouts.app')
 
-@section('title', 'Edit Profile Admin')
+@section('title', 'Edit Profile Guru')
 
 @section('content')
 
@@ -9,19 +9,19 @@
         ```
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h3 class="fw-bold mb-1">Edit Profile Admin</h3>
+                <h3 class="fw-bold mb-1">Edit Profile Guru</h3>
                 <p class="text-muted mb-0">
                     Perbarui informasi pribadi dan keamanan akun Anda.
                 </p>
             </div>
 
-            <a href="{{ route('admin.profile.index') }}" class="btn btn-secondary">
+            <a href="{{ route('guru.profile.index') }}" class="btn btn-secondary">
                 <i class="bi bi-arrow-left me-1"></i>
                 Kembali
             </a>
         </div>
 
-        <form action="{{ route('admin.profile.update') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('guru.profile.update') }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -38,8 +38,8 @@
 
                             <div id="preview-wrapper">
 
-                                @if ($admin->gambar)
-                                    <img src="{{ asset('storage/' . $admin->gambar) }}" id="preview-image"
+                                @if ($guru->gambar)
+                                    <img src="{{ asset('storage/' . $guru->gambar) }}" id="preview-image"
                                         class="rounded-circle border border-4 border-white shadow"
                                         style="width:180px;height:180px;object-fit:cover;">
                                 @else
@@ -53,11 +53,11 @@
                             </div>
 
                             <h4 class="mt-3 fw-bold">
-                                {{ $admin->nama_guru }}
+                                {{ $guru->nama_guru }}
                             </h4>
 
                             <span class="badge bg-warning text-dark px-3 py-2">
-                                {{ ucfirst($admin->jabatan) }}
+                                {{ ucfirst($guru->jabatan) }}
                             </span>
 
                             <div class="mt-3 text-start">
@@ -105,17 +105,17 @@
 
                                 <div class="col-md-6">
                                     <label class="form-label">NIP</label>
-                                    <input type="text" value="{{ $admin->nip }}" class="form-control" disabled>
+                                    <input type="text" value="{{ $guru->nip }}" class="form-control" disabled>
                                 </div>
 
                                 <div class="col-md-6">
                                     <label class="form-label">NIK</label>
-                                    <input type="text" value="{{ $admin->nik }}" class="form-control" disabled>
+                                    <input type="text" value="{{ $guru->nik }}" class="form-control" disabled>
                                 </div>
 
                                 <div class="col-md-6">
                                     <label class="form-label">Nama Guru</label>
-                                    <input type="text" name="nama_guru" value="{{ old('nama_guru', $admin->nama_guru) }}"
+                                    <input type="text" name="nama_guru" value="{{ old('nama_guru', $guru->nama_guru) }}"
                                         class="form-control @error('nama_guru') is-invalid @enderror">
 
                                     @error('nama_guru')
@@ -134,12 +134,12 @@
                                         <option value="">Pilih Jenis Kelamin</option>
 
                                         <option value="Laki-laki"
-                                            {{ old('jenis_kelamin', $admin->jenis_kelamin) == 'Laki-laki' ? 'selected' : '' }}>
+                                            {{ old('jenis_kelamin', $guru->jenis_kelamin) == 'Laki-laki' ? 'selected' : '' }}>
                                             Laki-laki
                                         </option>
 
                                         <option value="Perempuan"
-                                            {{ old('jenis_kelamin', $admin->jenis_kelamin) == 'Perempuan' ? 'selected' : '' }}>
+                                            {{ old('jenis_kelamin', $guru->jenis_kelamin) == 'Perempuan' ? 'selected' : '' }}>
                                             Perempuan
                                         </option>
 
@@ -156,7 +156,7 @@
                                     <label class="form-label">Tempat Lahir</label>
 
                                     <input type="text" name="tempat_lahir"
-                                        value="{{ old('tempat_lahir', $admin->tempat_lahir) }}"
+                                        value="{{ old('tempat_lahir', $guru->tempat_lahir) }}"
                                         class="form-control @error('tempat_lahir') is-invalid @enderror">
 
                                     @error('tempat_lahir')
@@ -170,7 +170,7 @@
                                     <label class="form-label">Tanggal Lahir</label>
 
                                     <input type="date" name="tanggal_lahir"
-                                        value="{{ old('tanggal_lahir', $admin->tanggal_lahir) }}"
+                                        value="{{ old('tanggal_lahir', $guru->tanggal_lahir) }}"
                                         class="form-control @error('tanggal_lahir') is-invalid @enderror">
 
                                     @error('tanggal_lahir')
@@ -183,7 +183,7 @@
                                 <div class="col-md-6">
                                     <label class="form-label">No. HP</label>
 
-                                    <input type="text" name="no_hp" value="{{ old('no_hp', $admin->no_hp) }}"
+                                    <input type="text" name="no_hp" value="{{ old('no_hp', $guru->no_hp) }}"
                                         class="form-control @error('no_hp') is-invalid @enderror">
 
                                     @error('no_hp')
@@ -196,7 +196,7 @@
                                 <div class="col-md-6">
                                     <label class="form-label">Email</label>
 
-                                    <input type="email" name="email" value="{{ old('email', $admin->email) }}"
+                                    <input type="email" name="email" value="{{ old('email', $guru->email) }}"
                                         class="form-control @error('email') is-invalid @enderror">
 
                                     @error('email')
@@ -209,7 +209,7 @@
                                 <div class="col-12">
                                     <label class="form-label">Alamat</label>
 
-                                    <textarea name="alamat" rows="3" class="form-control @error('alamat') is-invalid @enderror">{{ old('alamat', $admin->alamat) }}</textarea>
+                                    <textarea name="alamat" rows="3" class="form-control @error('alamat') is-invalid @enderror">{{ old('alamat', $guru->alamat) }}</textarea>
 
                                     @error('alamat')
                                         <div class="invalid-feedback">
@@ -288,7 +288,7 @@
                                     Simpan Perubahan
                                 </button>
 
-                                <a href="{{ route('admin.profile.index') }}" class="btn btn-secondary">
+                                <a href="{{ route('guru.profile.index') }}" class="btn btn-secondary">
                                     Batal
                                 </a>
 

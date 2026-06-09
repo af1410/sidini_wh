@@ -28,6 +28,15 @@ class Mapel extends Model
         return $this->belongsTo(Guru::class, 'id_guru', 'id_guru');
     }
 
+    public function guruMapels()
+    {
+        return $this->hasMany(
+            GuruMapel::class,
+            'id_mapel',
+            'id_mapel'
+        );
+    }
+
     public function Penilaian()
     {
         return $this->hasMany(Penilaian::class, 'id_mapel', 'id_mapel');
@@ -41,5 +50,14 @@ class Mapel extends Model
     public function kelas()
     {
         return $this->belongsToMany(Kelas::class, 'kelas_mapel', 'id_mapel', 'id_kelas');
+    }
+
+    public function kelasMapel()
+    {
+        return $this->hasMany(
+            KelasMapel::class,
+            'id_mapel',
+            'id_mapel'
+        );
     }
 }

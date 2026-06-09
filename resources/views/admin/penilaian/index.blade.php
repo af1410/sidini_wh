@@ -26,7 +26,7 @@
                                 <th>Mapel</th>
                                 <th>Kelas / Guru</th>
                                 <th>Jenis</th>
-                                <th>Bab</th>
+                                <th>Penilaian</th>
                                 <th>Semester</th>
                                 <th>Periode</th>
                                 <th>Status</th>
@@ -59,9 +59,13 @@
                                     </td>
                                     <td>
                                         @if ($item->jenis_penilaian == 'sumatif')
-                                            Bab {{ $item->bab_ke }}
-                                            <br>
-                                            <small>{{ $item->judul_bab }}</small>
+                                            @if ($item->tipe_sumatif)
+                                                {{ $item->tipe_sumatif }}
+                                                <br>
+                                                <small>{{ $item->judul_bab }}</small>
+                                            @else
+                                                {{ strtoupper($item->tipe_sumatif) }}
+                                            @endif
                                         @else
                                             -
                                         @endif
@@ -96,30 +100,44 @@
                                         @php
                                             $hasNilai =
                                                 ($item->nilai_formatif_count ?? 0) > 0 ||
-                                                ($item->nilai_sumatif_count ?? 0) > 0;
+                                                ($item->nilai_sumatif_count ?? 0) > 0 ||
+                                                ($item->nilai_ujian_count ?? 0) > 0;
+
                                             $isExpired = now()->gt($item->tanggal_selesai);
                                         @endphp
 
                                         <div class="d-flex gap-2 flex-wrap">
+
+                                            {{-- Selalu tampil jika sudah ada nilai --}}
+                                            @if ($hasNilai)
+                                                <a href="{{ route('admin.penilaian.show', $item->id) }}"
+                                                    class="btn btn-info btn-sm">
+                                                    Lihat Nilai
+                                                </a>
+                                            @endif
+
                                             @if (!$isExpired)
                                                 <a href="{{ route('admin.penilaian.edit', $item->id) }}"
-                                                    class="btn btn-primary btn-sm">Edit</a>
+                                                    class="btn btn-primary btn-sm">
+                                                    Edit
+                                                </a>
 
                                                 <form action="{{ route('admin.penilaian.destroy', $item->id) }}"
                                                     method="POST" onsubmit="return confirm('Hapus penilaian?')">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button class="btn btn-danger btn-sm">Hapus</button>
+                                                    <button class="btn btn-danger btn-sm">
+                                                        Hapus
+                                                    </button>
                                                 </form>
                                             @else
-                                                @if ($hasNilai)
-                                                    <a href="{{ route('admin.penilaian.show', $item->id) }}"
-                                                        class="btn btn-info btn-sm">Detail Nilai</a>
-                                                @elseif ($item->status_approval == 'menunggu_approval')
+                                                @if (!$hasNilai && $item->status_approval == 'menunggu_approval')
                                                     <form action="{{ route('admin.penilaian.approve', $item->id) }}"
                                                         method="POST">
                                                         @csrf
-                                                        <button class="btn btn-success btn-sm">Approve</button>
+                                                        <button class="btn btn-success btn-sm">
+                                                            Approve
+                                                        </button>
                                                     </form>
 
                                                     <button type="button" class="btn btn-danger btn-sm"
@@ -129,34 +147,7 @@
                                                     </button>
                                                 @endif
                                             @endif
-                                        </div>
 
-                                        <div class="modal fade" id="tolakModal{{ $item->id }}">
-                                            <div class="modal-dialog">
-                                                <form action="{{ route('admin.penilaian.tolak', $item->id) }}"
-                                                    method="POST">
-                                                    @csrf
-
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title">Tolak Approval</h5>
-                                                        </div>
-
-                                                        <div class="modal-body">
-                                                            <div class="mb-3">
-                                                                <label>Catatan</label>
-                                                                <textarea name="catatan" class="form-control" rows="4"></textarea>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-bs-dismiss="modal">Batal</button>
-                                                            <button type="submit" class="btn btn-danger">Tolak</button>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
                                         </div>
                                     </td>
                                 </tr>

@@ -6,7 +6,8 @@
     <ul class="nav flex-column">
         <li class="nav-section-title">MENU UTAMA</li>
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('guru.dashboard') }}">
+            <a class="nav-link {{ request()->is('guru/dashboard') ? 'active' : '' }}"
+                href="{{ route('guru.dashboard') }}">
                 <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
             </a>
         </li>

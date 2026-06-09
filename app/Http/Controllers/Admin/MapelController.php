@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Guru;
 use App\Models\Mapel;
+use App\Models\GuruMapel;
 use Illuminate\Http\Request;
 
 class MapelController extends Controller
@@ -13,11 +14,24 @@ class MapelController extends Controller
     {
         $keyword = $request->keyword;
 
-        $data = Mapel::with('guru')->when($keyword, function ($query) use ($keyword) {
-            $query->where('nama_mapel', 'like', '%' . $keyword . '%')
-                ->orWhere('jenis_mapel', 'like', '%' . $keyword . '%')
-                ->orWhere('tahun_ajaran', 'like', '%' . $keyword . '%');
-        })
+        $data = Mapel::with('guruMapels.guru')
+            ->when($keyword, function ($query) use ($keyword) {
+
+                $query->where(function ($q) use ($keyword) {
+
+                    $q->where('nama_mapel', 'like', "%{$keyword}%")
+                        ->orWhere('jenis_mapel', 'like', "%{$keyword}%")
+                        ->orWhere('tahun_ajaran', 'like', "%{$keyword}%")
+                        ->orWhereHas('guruMapels.guru', function ($guru) use ($keyword) {
+
+                            $guru->where(
+                                'nama_guru',
+                                'like',
+                                "%{$keyword}%"
+                            );
+                        });
+                });
+            })
             ->latest()
             ->paginate(10)
             ->withQueryString();
@@ -37,7 +51,8 @@ class MapelController extends Controller
             'nama_mapel' => 'required|string|max:100',
             'jenis_mapel' => 'required|string|max:50',
             'tahun_ajaran' => 'required',
-            'id_guru' => 'required|exists:guru,id_guru',
+            'id_guru' => 'required|array',
+            'id_guru.*' => 'exists:guru,id_guru',
         ]);
 
         // M
@@ -77,8 +92,15 @@ class MapelController extends Controller
             'nama_mapel' => $request->nama_mapel,
             'jenis_mapel' => $request->jenis_mapel,
             'tahun_ajaran' => $request->tahun_ajaran,
-            'id_guru' => $request->id_guru,
         ]);
+
+        foreach ($request->id_guru as $idGuru) {
+
+            GuruMapel::create([
+                'id_mapel' => $idMapel,
+                'id_guru' => $idGuru,
+            ]);
+        }
 
         return redirect()
             ->route('admin.mapel.index')
@@ -87,9 +109,22 @@ class MapelController extends Controller
 
     public function edit($id)
     {
-        $mapel = Mapel::findOrFail($id);
+        $mapel = Mapel::with('guruMapels')->findOrFail($id);
+
         $gurus = Guru::orderBy('nama_guru')->get();
-        return view('admin.mapel.edit', compact('mapel', 'gurus'));
+
+        $selectedGuru = $mapel->guruMapels
+            ->pluck('id_guru')
+            ->toArray();
+
+        return view(
+            'admin.mapel.edit',
+            compact(
+                'mapel',
+                'gurus',
+                'selectedGuru'
+            )
+        );
     }
 
     public function update(Request $request, $id)
@@ -98,7 +133,9 @@ class MapelController extends Controller
             'nama_mapel' => 'required|string|max:100',
             'jenis_mapel' => 'required|string|max:50',
             'tahun_ajaran' => 'required',
-            'id_guru' => 'required|exists:guru,id_guru',
+
+            'id_guru' => 'required|array',
+            'id_guru.*' => 'exists:guru,id_guru',
         ]);
 
         $mapel = Mapel::findOrFail($id);
@@ -106,8 +143,19 @@ class MapelController extends Controller
             'nama_mapel' => $request->nama_mapel,
             'jenis_mapel' => $request->jenis_mapel,
             'tahun_ajaran' => $request->tahun_ajaran,
-            'id_guru' => $request->id_guru,
         ]);
+
+        GuruMapel::where(
+            'id_mapel',
+            $mapel->id_mapel
+        )->delete();
+        foreach ($request->id_guru as $idGuru) {
+
+            GuruMapel::create([
+                'id_mapel' => $mapel->id_mapel,
+                'id_guru' => $idGuru,
+            ]);
+        }
 
         return redirect()
             ->route('admin.mapel.index')

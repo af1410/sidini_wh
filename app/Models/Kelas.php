@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Guru;
 use App\Models\Mapel;
+use App\Models\GuruMapel;
+use App\Models\KelasMapel;
 
 class Kelas extends Model
 {
@@ -38,5 +40,14 @@ class Kelas extends Model
     public function siswas()
     {
         return $this->hasMany(Siswa::class, 'id_kelas', 'id_kelas');
+    }
+
+    public function kelasMapel()
+    {
+        return $this->hasMany(
+            KelasMapel::class,
+            'id_kelas',
+            'id_kelas'
+        );
     }
 }

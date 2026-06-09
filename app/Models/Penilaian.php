@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\NilaiFormatif;
 use App\Models\NilaiSumatif;
 
+
 class Penilaian extends Model
 {
     protected $table = 'penilaian';
@@ -17,6 +18,7 @@ class Penilaian extends Model
         'id_kelas',
         'semester',
         'jenis_penilaian',
+        'tipe_sumatif',
         'bab_ke',
         'judul_bab',
         'tanggal_mulai',
@@ -52,5 +54,14 @@ class Penilaian extends Model
     public function nilaiSumatif()
     {
         return $this->hasMany(NilaiSumatif::class, 'id_penilaian');
+    }
+
+    public function nilaiUjian()
+    {
+        return $this->hasMany(
+            SumatifUjian::class,
+            'id_penilaian',
+            'id'
+        );
     }
 }

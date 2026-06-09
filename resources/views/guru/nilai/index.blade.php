@@ -43,7 +43,10 @@
                             @forelse($data as $item)
                                 <tr>
                                     @php
-                                        $hasNilai = $item->nilai_formatif_count > 0 || $item->nilai_sumatif_count > 0;
+                                        $hasNilai =
+                                            $item->nilai_formatif_count > 0 ||
+                                            $item->nilai_sumatif_count > 0 ||
+                                            $item->nilai_ujian_count > 0;
                                         $isPastDeadline = now()->gt($item->tanggal_selesai);
                                     @endphp
                                     <td>{{ $loop->iteration }}</td>
@@ -57,9 +60,13 @@
                                     <td>{{ ucfirst($item->semester) }}</td>
                                     <td>
                                         @if ($item->jenis_penilaian == 'sumatif')
-                                            Bab {{ $item->bab_ke }}
-                                            <br>
-                                            <small>{{ $item->judul_bab }}</small>
+                                            @if ($item->bab_ke)
+                                                Bab {{ $item->bab_ke }}
+                                                <br>
+                                                <small>{{ $item->judul_bab }}</small>
+                                            @else
+                                                {{ strtoupper($item->tipe_sumatif) }}
+                                            @endif
                                         @else
                                             Formatif
                                         @endif
@@ -73,8 +80,9 @@
                                     </td>
                                     <td>
                                         @if ($hasNilai)
-                                            <a href="{{ route('guru.nilai.show', $item->id) }}" class="btn btn-info btn-sm">
-                                                Detail Nilai
+                                            <a href="{{ route('guru.nilai.sumatif_ujian.show', $item->id) }}"
+                                                class="btn btn-info btn-sm">
+                                                Lihat Nilai {{ strtoupper($item->tipe_sumatif) }}
                                             </a>
                                         @elseif ($isPastDeadline)
                                             @if ($item->status_approval == 'menunggu_approval')
@@ -82,17 +90,10 @@
                                                     Menunggu Persetujuan
                                                 </button>
                                             @elseif ($item->status_approval == 'disetujui')
-                                                @if ($item->jenis_penilaian == 'formatif')
-                                                    <a href="{{ route('guru.nilai.formatif.create', $item->id) }}"
-                                                        class="btn btn-success btn-sm">
-                                                        Input Formatif
-                                                    </a>
-                                                @else
-                                                    <a href="{{ route('guru.nilai.sumatif.create', $item->id) }}"
-                                                        class="btn btn-primary btn-sm">
-                                                        Input Sumatif
-                                                    </a>
-                                                @endif
+                                                <a href="{{ route('guru.nilai.sumatif_ujian.create', $item->id) }}"
+                                                    class="btn btn-success btn-sm">
+                                                    Input Nilai {{ strtoupper($item->tipe_sumatif) }}
+                                                </a>
                                             @else
                                                 <form action="{{ route('guru.nilai.requestApproval', $item->id) }}"
                                                     method="POST">
@@ -102,18 +103,12 @@
                                                     </button>
                                                 </form>
                                             @endif
-                                        @elseif ($item->jenis_penilaian == 'formatif')
-                                            <a href="{{ route('guru.nilai.formatif.create', $item->id) }}"
-                                                class="btn btn-success btn-sm">
-                                                Input Formatif
-                                            </a>
                                         @else
-                                            <a href="{{ route('guru.nilai.sumatif.create', $item->id) }}"
-                                                class="btn btn-primary btn-sm">
-                                                Input Sumatif
+                                            <a href="{{ route('guru.nilai.sumatif_ujian.create', $item->id) }}"
+                                                class="btn btn-success btn-sm">
+                                                Input Nilai {{ strtoupper($item->tipe_sumatif) }}
                                             </a>
                                         @endif
-                                    </td>
                                 </tr>
                             @empty
                                 <tr>

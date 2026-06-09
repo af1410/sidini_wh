@@ -47,7 +47,11 @@
                                     <td>{{ $loop->iteration + ($data->currentPage() - 1) * $data->perPage() }}</td>
                                     <td>{{ $item->id_mapel ?? '-' }}</td>
                                     <td>{{ $item->nama_mapel }}</td>
-                                    <td>{{ $item->guru->nama_guru ?? '-' }}</td>
+                                    <td>
+                                        @foreach ($item->guruMapels as $gm)
+                                            {{ $gm->guru->nama_guru }}<br>
+                                        @endforeach
+                                    </td>
                                     <td>{{ $item->jenis_mapel }}</td>
                                     <td>
                                         <a href="{{ route('admin.mapel.edit', $item->id_mapel) }}"

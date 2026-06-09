@@ -1,6 +1,6 @@
-@extends('admin.layouts.app')
+@extends('guru.layouts.app')
 
-@section('title', 'Admin - Profile')
+@section('title', 'Guru - Profile')
 
 @section('content')
     <div class="container-fluid">
@@ -25,13 +25,13 @@
         {{-- Header --}}
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h3 class="fw-bold mb-1">Profil Admin</h3>
+                <h3 class="fw-bold mb-1">Profil Guru</h3>
                 <p class="text-muted mb-0">
                     Kelola informasi pribadi dan foto profil Anda.
                 </p>
             </div>
 
-            <a href="{{ route('admin.profile.edit') }}" class="btn btn-primary">
+            <a href="{{ route('guru.profile.edit') }}" class="btn btn-primary">
                 <i class="bi bi-pencil-square me-1"></i>
                 Edit Profil
             </a>
@@ -47,8 +47,8 @@
 
                     <div class="card-body text-center mt-n5">
 
-                        @if ($admin->gambar)
-                            <img src="{{ asset('storage/' . $admin->gambar) }}"
+                        @if ($guru->gambar)
+                            <img src="{{ asset('storage/' . $guru->gambar) }}"
                                 class="rounded-circle border border-4 border-white shadow" width="140" height="140"
                                 style="object-fit:cover;">
                         @else
@@ -59,16 +59,16 @@
                         @endif
 
                         <h4 class="mt-3 mb-1 fw-bold">
-                            {{ $admin->nama_guru }}
+                            {{ $guru->nama_guru }}
                         </h4>
 
                         <span class="badge bg-warning text-dark px-3 py-2">
-                            {{ ucfirst($admin->jabatan) }}
+                            {{ ucfirst($guru->jabatan) }}
                         </span>
 
                         <div class="mt-3">
                             <small class="text-muted d-block">NIP</small>
-                            <strong>{{ $admin->nip }}</strong>
+                            <strong>{{ $guru->nip }}</strong>
                         </div>
 
                     </div>
@@ -97,7 +97,7 @@
                                         <i class="bi bi-person me-1"></i> Nama Lengkap
                                     </small>
                                     <div class="fw-semibold">
-                                        {{ $admin->nama_guru }}
+                                        {{ $guru->nama_guru }}
                                     </div>
                                 </div>
 
@@ -106,7 +106,7 @@
                                         <i class="bi bi-credit-card me-1"></i> NIK
                                     </small>
                                     <div class="fw-semibold">
-                                        {{ $admin->nik }}
+                                        {{ $guru->nik }}
                                     </div>
                                 </div>
 
@@ -116,7 +116,7 @@
                                         Jenis Kelamin
                                     </small>
                                     <div class="fw-semibold">
-                                        {{ $admin->jenis_kelamin }}
+                                        {{ $guru->jenis_kelamin }}
                                     </div>
                                 </div>
 
@@ -126,7 +126,7 @@
                                         Tempat Lahir
                                     </small>
                                     <div class="fw-semibold">
-                                        {{ $admin->tempat_lahir }}
+                                        {{ $guru->tempat_lahir }}
                                     </div>
                                 </div>
 
@@ -140,7 +140,7 @@
                                         Tanggal Lahir
                                     </small>
                                     <div class="fw-semibold">
-                                        {{ \Carbon\Carbon::parse($admin->tanggal_lahir)->translatedFormat('d F Y') }}
+                                        {{ \Carbon\Carbon::parse($guru->tanggal_lahir)->translatedFormat('d F Y') }}
                                     </div>
                                 </div>
 
@@ -150,7 +150,7 @@
                                         Email
                                     </small>
                                     <div class="fw-semibold">
-                                        {{ $admin->email }}
+                                        {{ $guru->email }}
                                     </div>
                                 </div>
 
@@ -160,7 +160,7 @@
                                         No. HP
                                     </small>
                                     <div class="fw-semibold">
-                                        {{ $admin->no_hp ?? 'Belum diisi' }}
+                                        {{ $guru->no_hp ?? 'Belum diisi' }}
                                     </div>
                                 </div>
 
@@ -170,7 +170,7 @@
                                         Alamat
                                     </small>
                                     <div class="fw-semibold">
-                                        {{ $admin->alamat }}
+                                        {{ $guru->alamat }}
                                     </div>
                                 </div>
 

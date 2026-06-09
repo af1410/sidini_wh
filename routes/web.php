@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\OrtuController as AdminOrtuController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\MapelController as AdminMapelController;
 use App\Http\Controllers\Admin\PresensiController;
+use App\Http\Controllers\Admin\ApprovalNilaiController;
 use App\Http\Controllers\Kepsek\DashboardController as KepsekDashboard;
 use App\Http\Controllers\Kurikulum\DashboardController as KurikulumDashboard;
 use App\Http\Controllers\Ortu\DashboardController as OrtuDashboard;
@@ -25,6 +26,8 @@ use App\Http\Controllers\Guru\KelasSayaController;
 use App\Http\Controllers\Guru\MapelSayaController;
 use App\Http\Controllers\Guru\NilaiFormatifController;
 use App\Http\Controllers\Guru\NilaiSumatifController;
+use App\Http\Controllers\Guru\NilaiSumatifUjianController;
+use App\Http\Controllers\Guru\ProfileController as GuruProfileController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -106,6 +109,33 @@ Route::middleware('is_guru')->group(function () {
         '/guru/nilai-sumatif/{id_kelas}/{id_mapel}/tambah-bab',
         [NilaiSumatifController::class, 'tambahBab']
     )->name('guru.nilai_sumatif.tambah_bab');
+
+    Route::get(
+        '/nilai-sumatif/export/{id_kelas}/{id_mapel}',
+        [NilaiSumatifController::class, 'export']
+    )->name('guru.nilai_sumatif.export');
+
+    //sumatif ujian
+    Route::get(
+        '/guru/nilai/sumatif-ujian/{id}',
+        [NilaiSumatifUjianController::class, 'create']
+    )->name('guru.nilai.sumatif_ujian.create');
+
+    Route::post(
+        '/guru/nilai/sumatif-ujian',
+        [NilaiSumatifUjianController::class, 'store']
+    )->name('guru.nilai.sumatif_ujian.store');
+
+    Route::get(
+        '/guru/nilai/sumatif-ujian/{id}/show',
+        [NilaiSumatifUjianController::class, 'show']
+    )->name('guru.nilai.sumatif_ujian.show');
+
+    //profile
+
+    Route::get('/guru/profile', [GuruProfileController::class, 'index'])->name('guru.profile.index');
+    Route::get('/guru/profile/edit', [GuruProfileController::class, 'edit'])->name('guru.profile.edit');
+    Route::put('/guru/profile', [GuruProfileController::class, 'update'])->name('guru.profile.update');
 });
 
 // Admin Routes
@@ -147,6 +177,22 @@ Route::middleware('is_admin')->group(function () {
     // kelas-mapel routes
     Route::get('/admin/kelas/{id_kelas}/mapel', [KelasMapelController::class, 'index'])->name('admin.kelas.mapel.index');
     Route::put('/admin/kelas/{id_kelas}/mapel', [KelasMapelController::class, 'update'])->name('admin.kelas.mapel.update');
+
+    //notifikasi
+    Route::get(
+        '/admin/approval',
+        [ApprovalNilaiController::class, 'index']
+    )->name('admin.approval.index');
+
+    Route::post(
+        '/admin/approval/{id}/approve',
+        [ApprovalNilaiController::class, 'approve']
+    )->name('admin.approval.approve');
+
+    Route::post(
+        '/admin/approval/{id}/reject',
+        [ApprovalNilaiController::class, 'reject']
+    )->name('admin.approval.reject');
 });
 
 // Kepsek Routes

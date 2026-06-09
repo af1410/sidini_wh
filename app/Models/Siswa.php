@@ -55,4 +55,14 @@ class Siswa extends Authenticatable
     {
         return $this->belongsTo(Kelas::class, 'id_kelas', 'id_kelas');
     }
+
+    public function nilaiSumatif()
+    {
+        return $this->hasMany(NilaiSumatif::class, 'id_siswa', 'id_siswa');
+    }
+
+    public function nilaiUjian()
+    {
+        return $this->hasMany(SumatifUjian::class, 'id_siswa', 'id_siswa');
+    }
 }

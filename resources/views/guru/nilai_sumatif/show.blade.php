@@ -24,6 +24,16 @@
                     Pengaturan Bobot
 
                 </button>
+                <a href="{{ route('guru.nilai_sumatif.export', [
+                    'id_kelas' => $penilaians->first()->id_kelas,
+                    'id_mapel' => $penilaians->first()->id_mapel,
+                ]) }}"
+                    class="btn btn-success">
+
+                    <i class="bi bi-file-earmark-excel"></i>
+                    Export Excel
+
+                </a>
 
                 <a href="{{ route('guru.mapel.show', $penilaians->first()->id_mapel) }}" class="btn btn-secondary">
 
