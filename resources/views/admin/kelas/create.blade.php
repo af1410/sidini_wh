@@ -4,19 +4,16 @@
 
 @section('content')
     <div class="container-fluid">
-        <div class="row mb-4">
-            <div class="col-12 d-flex align-items-center justify-content-between">
-                <div>
-                    <h4 class="mb-0">Tambah Kelas</h4>
-                    <p class="text-muted mb-0">Buat kelas baru. ID kelas akan dibuat otomatis setelah form disimpan.</p>
-                </div>
-                <a href="{{ route('admin.kelas.index') }}" class="btn btn-secondary">Kembali</a>
-            </div>
-        </div>
 
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0">Form Tambah Kelas</h5>
+                <div class="col-12 d-flex align-items-center justify-content-between">
+                    <div>
+                        <h4 class="mb-0">Tambah Kelas</h4>
+                    </div>
+                    <a href="{{ route('admin.kelas.index') }}" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i>
+                        Kembali</a>
+                </div>
             </div>
             <div class="card-body">
                 <form action="{{ route('admin.kelas.store') }}" method="POST">
@@ -32,7 +29,7 @@
                         }
                     @endphp
                     <div class="row gy-3">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label class="form-label">Tahun Ajar</label>
                             <input type="text" name="tahun_ajar" value="{{ old('tahun_ajar', $tahunAjar) }}"
                                 class="form-control @error('tahun_ajar') is-invalid @enderror" readonly>
@@ -40,7 +37,7 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label class="form-label">Kelas</label>
                             <select name="kelas" class="form-control @error('kelas') is-invalid @enderror">
                                 <option value="" disabled selected hidden>-- Pilih Kelas ---</option>
@@ -53,7 +50,7 @@
                             @enderror
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label class="form-label">Rombel</label>
                             <select name="rombel" class="form-control @error('rombel') is-invalid @enderror">
                                 <option value="" disabled selected hidden>-- Pilih Rombel ---</option>
@@ -66,7 +63,7 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <label class="form-label">Wali Kelas</label>
                             <select name="id_guru" class="form-control @error('id_guru') is-invalid @enderror">
                                 <option value="">Pilih Wali Kelas</option>
@@ -83,7 +80,7 @@
                         </div>
                     </div>
                     <div class="mt-4">
-                        <button class="btn btn-success">Simpan Kelas</button>
+                        <button class="btn btn-success"><i class="bi bi-floppy-fill me-1"></i> Simpan</button>
                     </div>
                 </form>
             </div>

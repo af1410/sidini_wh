@@ -15,13 +15,21 @@ class KelasMapelController extends Controller
     public function index($id_kelas)
     {
         $kelas = Kelas::findOrFail($id_kelas);
-        // Use property accessor untuk eager loading
+
         $mapelsSelected = $kelas->mapels->pluck('id_mapel')->toArray();
-        $mapelsAvailable = Mapel::all();
 
-        return view('admin.kelas_mapel.index', compact('kelas', 'mapelsSelected', 'mapelsAvailable'));
+        $mapelsAvailable = Mapel::where(
+            'tahun_ajaran',
+            $kelas->tahun_ajar
+        )
+            ->orderBy('nama_mapel')
+            ->get();
+
+        return view(
+            'admin.kelas_mapel.index',
+            compact('kelas', 'mapelsSelected', 'mapelsAvailable')
+        );
     }
-
     public function update(Request $request, $id_kelas)
     {
         $request->validate([

@@ -32,7 +32,7 @@
             <div class="col-md-3">
                 <div class="card shadow-sm">
                     <div class="card-body text-center">
-                        <i class="bi bi-journal-text fs-1 text-primary"></i>
+                        <i class="bi bi-journal-text fs-1 text-primary me-1"></i>
                         <h6 class="mt-3">Kelola Penilaian</h6>
                         <a href="{{ route('admin.penilaian.index') }}" class="stretched-link text-decoration-none"></a>
                     </div>
@@ -41,7 +41,7 @@
             <div class="col-md-3">
                 <div class="card shadow-sm">
                     <div class="card-body text-center">
-                        <i class="bi bi-book fs-1 text-success"></i>
+                        <i class="bi bi-book fs-1 text-success me-1"></i>
                         <h6 class="mt-3">Mata Pelajaran</h6>
                         <a href="{{ route('admin.mapel.index') }}" class="stretched-link text-decoration-none"></a>
                     </div>
@@ -50,7 +50,7 @@
             <div class="col-md-3">
                 <div class="card shadow-sm">
                     <div class="card-body text-center">
-                        <i class="bi bi-people fs-1 text-warning"></i>
+                        <i class="bi bi-people fs-1 text-warning me-1"></i>
                         <h6 class="mt-3">Data Guru & Siswa</h6>
                         <a href="#" class="stretched-link text-decoration-none"></a>
                     </div>
@@ -59,7 +59,7 @@
             <div class="col-md-3">
                 <div class="card shadow-sm">
                     <div class="card-body text-center">
-                        <i class="bi bi-gear fs-1 text-danger"></i>
+                        <i class="bi bi-gear fs-1 text-danger me-1"></i>
                         <h6 class="mt-3">Pengaturan Sistem</h6>
                         <a href="#" class="stretched-link text-decoration-none"></a>
                     </div>

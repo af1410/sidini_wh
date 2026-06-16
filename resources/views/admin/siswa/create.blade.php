@@ -4,19 +4,16 @@
 
 @section('content')
     <div class="container-fluid">
-        <div class="row mb-4">
-            <div class="col-12 d-flex align-items-center justify-content-between">
-                <div>
-                    <h4 class="mb-0">Tambah Siswa</h4>
-                    <p class="text-muted mb-0">Isi data siswa baru dengan lengkap dan benar.</p>
-                </div>
-                <a href="{{ route('admin.siswa.index') }}" class="btn btn-secondary">Kembali</a>
-            </div>
-        </div>
 
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0">Form Tambah Siswa</h5>
+                <div class="col-12 d-flex align-items-center justify-content-between">
+                    <div>
+                        <h4 class="mb-0">Tambah Siswa</h4>
+                    </div>
+                    <a href="{{ route('admin.siswa.index') }}" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i>
+                        Kembali</a>
+                </div>
             </div>
             <div class="card-body">
                 <form action="{{ route('admin.siswa.store') }}" method="POST">
@@ -35,6 +32,14 @@
                             <input type="text" name="nik" value="{{ old('nik') }}"
                                 class="form-control @error('nik') is-invalid @enderror">
                             @error('nik')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">NISN</label>
+                            <input type="text" name="nisn" value="{{ old('nisn') }}"
+                                class="form-control @error('nisn') is-invalid @enderror">
+                            @error('nisn')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -59,7 +64,7 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label class="form-label">Tempat Lahir</label>
                             <input type="text" name="tempat_lahir" value="{{ old('tempat_lahir') }}"
                                 class="form-control @error('tempat_lahir') is-invalid @enderror">
@@ -67,7 +72,7 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label class="form-label">Tanggal Lahir</label>
                             <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}"
                                 class="form-control @error('tanggal_lahir') is-invalid @enderror">
@@ -75,7 +80,7 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label class="form-label">No. HP</label>
                             <input type="text" name="no_hp" value="{{ old('no_hp') }}"
                                 class="form-control @error('no_hp') is-invalid @enderror">
@@ -106,7 +111,7 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label class="form-label">Kelas</label>
                             <select name="id_kelas" class="form-control @error('id_kelas') is-invalid @enderror">
                                 <option value="">Pilih Kelas</option>
@@ -124,10 +129,10 @@
                     </div>
                     <div class="alert alert-info mt-3">
                         <i class="bi bi-info-circle me-2"></i>
-                        <strong>Catatan:</strong> Username dan password akan otomatis di-generate dari NIM siswa.
+                        <strong>Catatan:</strong> Username dan password akan diambil dari NIM siswa.
                     </div>
                     <div class="mt-4">
-                        <button class="btn btn-success">Simpan Siswa</button>
+                        <button class="btn btn-success"><i class="bi bi-floppy-fill me-1"></i> Simpan</button>
                     </div>
                 </form>
             </div>

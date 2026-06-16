@@ -41,12 +41,12 @@
                     <div class="d-flex gap-2 align-items-center">
                         <a href="{{ route('siswa.presensi.index', ['month' => $currentDate->copy()->subMonth()->month, 'year' => $currentDate->copy()->subMonth()->year]) }}"
                             class="btn btn-outline-secondary btn-sm">
-                            <i class="bi bi-chevron-left"></i>
+                            <i class="bi bi-chevron-left me-1"></i>
                         </a>
                         <div class="btn btn-light btn-sm">{{ $monthNames[$month - 1] }} {{ $year }}</div>
                         <a href="{{ route('siswa.presensi.index', ['month' => $currentDate->copy()->addMonth()->month, 'year' => $currentDate->copy()->addMonth()->year]) }}"
                             class="btn btn-outline-secondary btn-sm">
-                            <i class="bi bi-chevron-right"></i>
+                            <i class="bi bi-chevron-right me-1"></i>
                         </a>
                     </div>
                 </div>
@@ -73,39 +73,57 @@
                     </form>
 
                     <div class="row g-3 mb-4">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="card border-success h-100">
                                 <div class="card-body text-center">
-                                    <h6 class="card-title">Masuk</h6>
+                                    <h6 class="card-title">Hadir</h6>
                                     <p class="display-6 mb-0">{{ $hadirCount }}</p>
-                                    <p class="text-muted mb-0">Hadir / Terlambat</p>
+                                    <p class="text-muted mb-0">Hari</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
+                            <div class="card border-success h-100">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title">Terlambat</h6>
+                                    <p class="display-6 mb-0">{{ $terlambatCount }}</p>
+                                    <p class="text-muted mb-0">Terlambat</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
                             <div class="card border-warning h-100">
                                 <div class="card-body text-center">
                                     <h6 class="card-title">Sakit</h6>
                                     <p class="display-6 mb-0">{{ $sakitCount }}</p>
-                                    <p class="text-muted mb-0">Hari sakit</p>
+                                    <p class="text-muted mb-0">Hari</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="card border-warning h-100">
                                 <div class="card-body text-center">
                                     <h6 class="card-title">Izin</h6>
                                     <p class="display-6 mb-0">{{ $izinCount }}</p>
-                                    <p class="text-muted mb-0">Hari izin</p>
+                                    <p class="text-muted mb-0">Hari</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="card border-danger h-100">
                                 <div class="card-body text-center">
-                                    <h6 class="card-title">Alpha / Lainnya</h6>
+                                    <h6 class="card-title">Alpha</h6>
+                                    <p class="display-6 mb-0">{{ $alphaCount }}</p>
+                                    <p class="text-muted mb-0">Hari</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="card border-danger h-100">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title">Belum Absen</h6>
                                     <p class="display-6 mb-0">{{ $redCount }}</p>
-                                    <p class="text-muted mb-0">Tidak masuk / status lain</p>
+                                    <p class="text-muted mb-0">Hari</p>
                                 </div>
                             </div>
                         </div>
@@ -130,12 +148,16 @@
 
                                                 if (!$day['inMonth']) {
                                                     $cellClass .= ' calendar-cell-outside';
-                                                } elseif (in_array($status, ['Hadir', 'Terlambat'])) {
+                                                } elseif (in_array($status, ['Hadir'])) {
                                                     $cellClass .= ' bg-success text-white';
+                                                } elseif (in_array($status, ['Terlambat'])) {
+                                                    $cellClass .= ' bg-warning text-white';
                                                 } elseif (in_array($status, ['Sakit', 'Izin'])) {
-                                                    $cellClass .= ' bg-warning text-dark';
-                                                } else {
+                                                    $cellClass .= ' bg-info text-dark';
+                                                } elseif ($status == 'Alpha') {
                                                     $cellClass .= ' bg-danger text-white';
+                                                } else {
+                                                    $cellClass .= ' bg-light';
                                                 }
                                             @endphp
                                             <td class="{{ $cellClass }}">
@@ -150,13 +172,30 @@
 
                                                 @if ($day['inMonth'])
                                                     <div class="small">
-                                                        @if ($status)
-                                                            <span
-                                                                class="status-pill {{ in_array($status, ['Hadir', 'Terlambat']) ? 'bg-success text-white' : (in_array($status, ['Sakit', 'Izin']) ? 'bg-warning text-dark' : 'bg-danger text-white') }}">
-                                                                {{ $status }}
+                                                        @if ($status == 'Hadir')
+                                                            <span class="status-pill bg-success text-white">
+                                                                Hadir
+                                                            </span>
+                                                        @elseif ($status == 'Terlambat')
+                                                            <span class="status-pill bg-warning text-dark">
+                                                                Terlambat
+                                                            </span>
+                                                        @elseif ($status == 'Sakit')
+                                                            <span class="status-pill bg-secondary text-white">
+                                                                Sakit
+                                                            </span>
+                                                        @elseif ($status == 'Izin')
+                                                            <span class="status-pill bg-secondary text-white">
+                                                                Izin
+                                                            </span>
+                                                        @elseif ($status == 'Alpha')
+                                                            <span class="status-pill bg-danger text-white">
+                                                                Alpha
                                                             </span>
                                                         @else
-                                                            <span class="status-pill bg-danger text-white">Alpha</span>
+                                                            <span class="status-pill bg-light text-dark border">
+                                                                Belum Absen
+                                                            </span>
                                                         @endif
                                                     </div>
                                                 @endif

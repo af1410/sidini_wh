@@ -82,31 +82,34 @@
                                         @if ($hasNilai)
                                             <a href="{{ route('guru.nilai.sumatif_ujian.show', $item->id) }}"
                                                 class="btn btn-info btn-sm">
-                                                Lihat Nilai {{ strtoupper($item->tipe_sumatif) }}
+                                                <i class="bi bi-eye me-1"></i> Lihat Nilai
+                                                {{ strtoupper($item->tipe_sumatif) }}
                                             </a>
                                         @elseif ($isPastDeadline)
                                             @if ($item->status_approval == 'menunggu_approval')
                                                 <button class="btn btn-warning btn-sm" disabled>
-                                                    Menunggu Persetujuan
+                                                    <i class="bi bi-clock me-1"></i> Menunggu Persetujuan
                                                 </button>
                                             @elseif ($item->status_approval == 'disetujui')
                                                 <a href="{{ route('guru.nilai.sumatif_ujian.create', $item->id) }}"
                                                     class="btn btn-success btn-sm">
-                                                    Input Nilai {{ strtoupper($item->tipe_sumatif) }}
+                                                    <i class="bi bi-journal-check me-1"></i> Input Nilai
+                                                    {{ strtoupper($item->tipe_sumatif) }}
                                                 </a>
                                             @else
                                                 <form action="{{ route('guru.nilai.requestApproval', $item->id) }}"
                                                     method="POST">
                                                     @csrf
                                                     <button class="btn btn-warning btn-sm" type="submit">
-                                                        Minta Persetujuan Input
+                                                        <i class="bi bi-send me-1"></i> Minta Persetujuan Input
                                                     </button>
                                                 </form>
                                             @endif
                                         @else
                                             <a href="{{ route('guru.nilai.sumatif_ujian.create', $item->id) }}"
                                                 class="btn btn-success btn-sm">
-                                                Input Nilai {{ strtoupper($item->tipe_sumatif) }}
+                                                <i class="bi bi-journal-check me-1"></i>Input Nilai
+                                                {{ strtoupper($item->tipe_sumatif) }}
                                             </a>
                                         @endif
                                 </tr>

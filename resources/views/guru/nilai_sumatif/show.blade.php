@@ -20,7 +20,7 @@
 
                 <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalBobot">
 
-                    <i class="bi bi-gear"></i>
+                    <i class="bi bi-gear me-1"></i>
                     Pengaturan Bobot
 
                 </button>
@@ -30,14 +30,14 @@
                 ]) }}"
                     class="btn btn-success">
 
-                    <i class="bi bi-file-earmark-excel"></i>
+                    <i class="bi bi-file-earmark-excel me-1"></i>
                     Export Excel
 
                 </a>
 
                 <a href="{{ route('guru.mapel.show', $penilaians->first()->id_mapel) }}" class="btn btn-secondary">
 
-                    Kembali
+                    <i class="bi bi-arrow-left me-1"></i> Kembali
 
                 </a>
 
@@ -197,7 +197,7 @@
 
                     <button class="btn btn-primary">
 
-                        Simpan
+                        <i class="bi bi-floppy-fill me-1"></i> Simpan
 
                     </button>
 
@@ -238,7 +238,8 @@
                     <div class="mb-3">
                         <label>Bobot Tes Tulis (%)</label>
 
-                        <input type="number" class="form-control" id="modal_bobot_tes" value="{{ $bobotTesTulis ?? 50 }}">
+                        <input type="number" class="form-control" id="modal_bobot_tes"
+                            value="{{ $bobotTesTulis ?? 50 }}">
                     </div>
 
                     <div class="mb-3">

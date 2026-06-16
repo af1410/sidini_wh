@@ -56,7 +56,7 @@
                 <table class="table table-hover table-bordered align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>#</th>
+                            <th>No</th>
                             <th>NIM</th>
                             <th>Nama</th>
                             <th>Kelas</th>
@@ -79,10 +79,18 @@
                                 <td>{{ $item->dataKelas->nama_kelas ?? '-' }}</td>
                                 <td>{{ $item->uid_kartu ?? '-' }}</td>
                                 <td class="status-cell">
-                                    @if ($hadir)
-                                        <span class="badge bg-success">Hadir</span>
-                                    @else
+                                    @if (!$hadir)
                                         <span class="badge bg-secondary">Belum</span>
+                                    @elseif ($hadir->status == 'Hadir')
+                                        <span class="badge bg-success">Hadir</span>
+                                    @elseif ($hadir->status == 'Izin')
+                                        <span class="badge bg-info">Izin</span>
+                                    @elseif ($hadir->status == 'Sakit')
+                                        <span class="badge bg-primary">Sakit</span>
+                                    @elseif ($hadir->status == 'Alpha')
+                                        <span class="badge bg-danger">Alpha</span>
+                                    @else
+                                        <span class="badge bg-warning">Terlambat</span>
                                     @endif
                                 </td>
                                 <td class="time-cell">

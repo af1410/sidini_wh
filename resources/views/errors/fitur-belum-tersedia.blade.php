@@ -17,7 +17,7 @@
         <div class="card shadow border-0 text-center" style="max-width:600px">
             <div class="card-body p-5">
 
-                <i class="bi bi-cone-striped text-warning" style="font-size:90px"></i>
+                <i class="bi bi-cone-striped text-warning me-1" style="font-size:90px"></i>
 
                 <h2 class="fw-bold mt-3">
                     Fitur Belum Tersedia
@@ -28,7 +28,7 @@
                 </p>
 
                 <button onclick="history.back()" class="btn btn-primary">
-                    <i class="bi bi-arrow-left"></i>
+                    <i class="bi bi-arrow-left me-1"></i>
                     Kembali
                 </button>
 

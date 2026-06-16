@@ -4,7 +4,7 @@
     <div class="container">
         <div class="card">
             <div class="card-header">
-                <h4>Buka Penilaian</h4>
+                <h4><i class="bi bi-journal-check me-2 fs-3"></i> Buka Penilaian</h4>
             </div>
 
             <div class="card-body">
@@ -123,9 +123,10 @@
 
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary">
-                            💾 Simpan
+                            <i class="bi bi-floppy-fill me-1"></i> Simpan
                         </button>
-                        <a href="{{ route('admin.penilaian.index') }}" class="btn btn-secondary">Batal</a>
+                        <a href="{{ route('admin.penilaian.index') }}" class="btn btn-secondary"><i
+                                class="bi bi-x-lg me-1"></i> Batal</a>
                     </div>
                 </form>
             </div>

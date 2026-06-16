@@ -9,7 +9,7 @@
                 <p class="text-muted mb-0">Daftar mapel dan siswa pada kelas ini.</p>
             </div>
             <a href="{{ route('guru.mapel.index') }}" class="btn btn-secondary">
-                Kembali
+                <i class="bi bi-arrow-left me-1"></i> Kembali
             </a>
         </div>
 
@@ -48,7 +48,7 @@
                                             'id_mapel' => $mapel->id_mapel,
                                         ]) }}"
                                             class="btn btn-primary btn-sm mt-2">
-                                            <i class="bi bi-journal-text"></i> Nilai Formatif
+                                            <i class="bi bi-journal-text me-1"></i> Nilai Formatif
                                         </a>
 
                                         <a href="{{ route('guru.nilai_sumatif.show', [
@@ -56,7 +56,15 @@
                                             'id_mapel' => $mapel->id_mapel,
                                         ]) }}"
                                             class="btn btn-success btn-sm mt-2">
-                                            <i class="bi bi-journal-check"></i> Nilai Sumatif
+                                            <i class="bi bi-journal-check me-1"></i> Nilai Sumatif
+                                        </a>
+
+                                        <a href="{{ route('guru.nilai_akhir.show', [
+                                            'id_kelas' => $kelas->id_kelas,
+                                            'id_mapel' => $mapel->id_mapel,
+                                        ]) }}"
+                                            class="btn btn-primary btn-sm mt-2">
+                                            <i class="bi bi-award me-1"></i> Nilai Akhir
                                         </a>
                                     </div>
                                 </div>

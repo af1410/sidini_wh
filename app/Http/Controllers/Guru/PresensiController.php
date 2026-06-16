@@ -14,9 +14,16 @@ class PresensiController extends Controller
     {
         $guru = Auth::guard('guru')->user();
         $tanggal = now()->format('Y-m-d');
-        $siswa = Siswa::with('dataKelas')->orderBy('nama_siswa')->get();
+        $siswa = Siswa::with('dataKelas')
+            ->whereIn(
+                'id_kelas',
+                $guru->kelas()->pluck('id_kelas')
+            )
+            ->orderBy('nama_siswa')
+            ->get();
 
         $presensiHariIni = Presensi::whereDate('tanggal', $tanggal)
+            ->whereIn('id_siswa', $siswa->pluck('id_siswa'))
             ->get()
             ->keyBy('id_siswa');
 

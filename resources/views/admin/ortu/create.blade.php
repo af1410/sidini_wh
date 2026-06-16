@@ -10,7 +10,8 @@
                     <h4 class="mb-0">Tambah Orang Tua</h4>
                     <p class="text-muted mb-0">Isi data orang tua/wali siswa.</p>
                 </div>
-                <a href="{{ route('admin.ortu.index') }}" class="btn btn-secondary">Kembali</a>
+                <a href="{{ route('admin.ortu.index') }}" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i>
+                    Kembali</a>
             </div>
         </div>
 
@@ -98,7 +99,7 @@
                     </div>
 
                     <div class="mt-4">
-                        <button class="btn btn-success">Simpan Orang Tua</button>
+                        <button class="btn btn-success"><i class="bi bi-floppy-fill me-1"></i> Simpan Orang Tua</button>
                     </div>
                 </form>
             </div>

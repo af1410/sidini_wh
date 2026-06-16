@@ -3,8 +3,8 @@
 @section('content')
     <div class="container">
         <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">Detail Nilai (Admin)</h4>
+            <div class="card-header">
+                <h4 class="mb-0"><i class="bi bi-eye me-2 fs-3"></i> Detail Nilai</h4>
             </div>
 
             <div class="card-body">
@@ -54,7 +54,6 @@
                                         <th>Rata-rata Tugas</th>
                                         <th>Nilai Bab</th>
                                     @endif
-                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -71,19 +70,6 @@
                                             <td>{{ number_format($item->tugas->avg('nilai') ?? 0, 2) }}</td>
                                             <td>{{ number_format($item->nilai_bab, 2) }}</td>
                                         @endif
-                                        <td>
-                                            @if ($item->status_data == 'submitted')
-                                                <span class="badge bg-success">Terkirim</span>
-                                            @elseif($item->status_data == 'menunggu_approval')
-                                                <span class="badge bg-warning text-dark">Menunggu Approval</span>
-                                            @elseif($item->status_data == 'approved')
-                                                <span class="badge bg-success">Disetujui</span>
-                                            @elseif($item->status_data == 'ditolak')
-                                                <span class="badge bg-danger">Ditolak</span>
-                                            @else
-                                                <span class="badge bg-secondary">{{ ucfirst($item->status_data) }}</span>
-                                            @endif
-                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -91,7 +77,8 @@
                     </div>
                 @endif
 
-                <a href="{{ route('admin.penilaian.index') }}" class="btn btn-secondary mt-3">Kembali</a>
+                <a href="{{ route('admin.penilaian.index') }}" class="btn btn-secondary mt-3"><i
+                        class="bi bi-arrow-left me-1"></i> Kembali</a>
             </div>
         </div>
     </div>

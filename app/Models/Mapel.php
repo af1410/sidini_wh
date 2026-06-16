@@ -42,10 +42,7 @@ class Mapel extends Model
         return $this->hasMany(Penilaian::class, 'id_mapel', 'id_mapel');
     }
 
-    public function nilaiAkhir()
-    {
-        return $this->hasMany(NilaiAkhir::class, 'id_mapel', 'id_mapel');
-    }
+
 
     public function kelas()
     {
@@ -56,6 +53,15 @@ class Mapel extends Model
     {
         return $this->hasMany(
             KelasMapel::class,
+            'id_mapel',
+            'id_mapel'
+        );
+    }
+
+    public function nilaiAkhir()
+    {
+        return $this->hasMany(
+            NilaiAkhir::class,
             'id_mapel',
             'id_mapel'
         );

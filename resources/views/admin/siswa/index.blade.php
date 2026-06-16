@@ -12,7 +12,8 @@
                             <strong>{{ $totalCount }}</strong> total.
                         </p>
                     </div>
-                    <a href="{{ route('admin.siswa.create') }}" class="btn btn-success">+ Tambah Siswa</a>
+                    <a href="{{ route('admin.siswa.create') }}" class="btn btn-success"><i class="bi bi-plus me-1"></i> Tambah
+                        Siswa</a>
                 </div>
             </div>
 
@@ -20,7 +21,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div>
                         <h5 class="mb-0">Filter Data</h5>
-                        <small class="text-muted">Gunakan filter untuk mempersempit daftar siswa.</small>
+
                     </div>
                     <a href="{{ route('admin.siswa.index') }}" class="btn btn-sm btn-outline-secondary">Reset Semua</a>
                 </div>
@@ -53,11 +54,11 @@
                     <table class="table table-hover table-bordered align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>#</th>
+                                <th>No</th>
                                 <th>NIM</th>
+                                <th>NISN</th>
                                 <th>Nama</th>
                                 <th>Kelas</th>
-                                <th>UID Kartu</th>
                                 <th>Angkatan</th>
                                 <th>Email</th>
                                 <th>Aksi</th>
@@ -68,20 +69,22 @@
                                 <tr>
                                     <td>{{ $loop->iteration + $siswa->firstItem() - 1 }}</td>
                                     <td>{{ $item->nim }}</td>
+                                    <td>{{ $item->nisn ?? '-' }}</td>
                                     <td>{{ $item->nama_siswa }}</td>
                                     <td>{{ $item->dataKelas->nama_kelas ?? '-' }}</td>
-                                    <td>{{ $item->uid_kartu ?? '-' }}</td>
-                                    <td>{{ $item->angkatan ?? '-' }}</td>
+                                    <td>{{ $item->dataKelas->tahun_ajar ?? '-' }}</td>
                                     <td>{{ $item->email }}</td>
                                     <td>
                                         <a href="{{ route('admin.siswa.edit', $item->id_siswa) }}"
-                                            class="btn btn-sm btn-primary">Edit</a>
+                                            class="btn btn-sm btn-primary"><i class="bi bi-pencil me-1"></i> Edit</a>
                                         <form action="{{ route('admin.siswa.destroy', $item->id_siswa) }}" method="POST"
                                             class="d-inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-danger"
-                                                onclick="return confirm('Hapus siswa ini?')">Hapus</button>
+                                                onclick="return confirm('Hapus siswa ini?')"><i
+                                                    class="bi bi-trash me-1"></i>
+                                                Hapus</button>
                                         </form>
                                     </td>
                                 </tr>

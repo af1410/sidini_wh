@@ -6,6 +6,16 @@
         <h4>Detail Kelas</h4>
 
         @if ($kelas)
+            <div class="mb-4 d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="mb-0">Detail Kelas</h4>
+                </div>
+                <div>
+                    <a href="{{ route('guru.kelas.rapor.index') }}" class="btn btn-primary">
+                        <i class="bi bi-file-earmark-pdf-fill me-1"></i> Cetak Rapor Siswa
+                    </a>
+                </div>
+            </div>
             <div class="card mb-4">
                 <div class="card-body">
                     <p><strong>ID Kelas:</strong> {{ $kelas->id_kelas }}</p>
@@ -26,20 +36,67 @@
                     @if ($kelas->siswas->count() > 0)
                         <div class="table-responsive">
                             <table class="table table-bordered table-striped">
+
                                 <thead>
+
                                     <tr>
-                                        <th>No</th>
-                                        <th>Nama Siswa</th>
+                                        <th rowspan="2">No</th>
+                                        <th rowspan="2">Nama Siswa</th>
+
+                                        @foreach ($mapels as $mapel)
+                                            <th colspan="4" class="text-center">
+                                                {{ $mapel->nama_mapel }}
+                                            </th>
+                                        @endforeach
                                     </tr>
+
+                                    <tr>
+                                        @foreach ($mapels as $mapel)
+                                            <th>Rata BAB</th>
+                                            <th>PSTS</th>
+                                            <th>PSAS</th>
+                                            <th>Nilai Akhir</th>
+                                        @endforeach
+                                    </tr>
+
                                 </thead>
+
                                 <tbody>
+
                                     @foreach ($kelas->siswas as $index => $siswa)
                                         <tr>
+
                                             <td>{{ $index + 1 }}</td>
+
                                             <td>{{ $siswa->nama_siswa }}</td>
+
+                                            @foreach ($mapels as $mapel)
+                                                @php
+                                                    $nilai = $nilaiAkhir[$siswa->id_siswa][$mapel->id_mapel][0] ?? null;
+                                                @endphp
+
+                                                <td>
+                                                    {{ $nilai->rata_bab ?? '-' }}
+                                                </td>
+
+                                                <td>
+                                                    {{ $nilai->nilai_psts ?? '-' }}
+                                                </td>
+
+                                                <td>
+                                                    {{ $nilai->nilai_psas ?? '-' }}
+                                                </td>
+
+                                                <td class="fw-bold">
+                                                    {{ $nilai->nilai_akhir ?? '-' }}
+                                                </td>
+                                            @endforeach
+
                                         </tr>
                                     @endforeach
+
                                 </tbody>
+
                             </table>
                         </div>
                     @else

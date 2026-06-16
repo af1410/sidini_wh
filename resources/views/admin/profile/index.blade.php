@@ -54,7 +54,7 @@
                         @else
                             <div class="rounded-circle bg-light border border-4 border-white shadow d-flex align-items-center justify-content-center mx-auto"
                                 style="width:140px;height:140px;">
-                                <i class="bi bi-person-fill text-secondary" style="font-size:4rem;"></i>
+                                <i class="bi bi-person-fill text-secondary me-1" style="font-size:4rem;"></i>
                             </div>
                         @endif
 

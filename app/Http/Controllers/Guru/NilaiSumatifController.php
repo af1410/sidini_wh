@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Exports\NilaiSumatifExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Str;
 
 class NilaiSumatifController extends Controller
 {
@@ -412,6 +413,10 @@ class NilaiSumatifController extends Controller
     {
         $guru = Auth::guard('guru')->user();
 
+        if (!$guru) {
+            abort(403);
+        }
+
         $semester = now()->month >= 7 ? 'ganjil' : 'genap';
 
         $penilaians = Penilaian::with([
@@ -421,17 +426,40 @@ class NilaiSumatifController extends Controller
             ->where('id_kelas', $id_kelas)
             ->where('id_mapel', $id_mapel)
             ->where('jenis_penilaian', 'sumatif')
+            ->whereNull('tipe_sumatif')
+            ->whereNotNull('bab_ke')
             ->where('semester', $semester)
             ->orderBy('bab_ke')
             ->get();
 
-        $siswa = $penilaians->first()->kelas->siswas;
+        if ($penilaians->isEmpty()) {
+            return back()->with(
+                'error',
+                'Penilaian sumatif belum tersedia.'
+            );
+        }
+
+        $kelas = $penilaians->first()->kelas;
+
+        if (!$kelas) {
+            return back()->with(
+                'error',
+                'Data kelas untuk penilaian ini tidak ditemukan.'
+            );
+        }
+
+        $siswa = $kelas->siswas;
+        $mapel = $penilaians->first()->mapel;
 
         $babList = [];
         $tugasPerBab = [];
         $rows = [];
 
         foreach ($penilaians as $penilaian) {
+
+            if ($penilaian->bab_ke === null) {
+                continue;
+            }
 
             $babList[] = $penilaian->bab_ke;
 
@@ -470,12 +498,8 @@ class NilaiSumatifController extends Controller
 
                 foreach ($tugasPerBab[$penilaian->bab_ke] as $urutan) {
 
-                    $nilaiTugas = optional(
-                        optional($nilai)->tugas
-                    )->where(
-                        'urutan_tugas',
-                        $urutan
-                    )->first();
+                    $nilaiTugas = collect(optional($nilai)->tugas)
+                        ->firstWhere('urutan_tugas', $urutan);
 
                     $row[] = $nilaiTugas->nilai ?? '';
                 }
@@ -488,13 +512,20 @@ class NilaiSumatifController extends Controller
             $rows[] = $row;
         }
 
+        $filename = sprintf(
+            'nilai_sumatif_%s_%s_%s.xlsx',
+            Str::slug($mapel->nama_mapel, '_'),
+            Str::slug($kelas->nama_kelas, '_'),
+            Str::slug($kelas->tahun_ajar ?? '', '_')
+        );
+
         return Excel::download(
             new NilaiSumatifExport(
                 $rows,
                 $babList,
                 $tugasPerBab
             ),
-            'nilai-sumatif.xlsx'
+            $filename
         );
     }
 }

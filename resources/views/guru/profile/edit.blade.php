@@ -46,7 +46,7 @@
                                     <div id="preview-placeholder"
                                         class="rounded-circle bg-light border border-4 border-white shadow mx-auto d-flex align-items-center justify-content-center"
                                         style="width:180px;height:180px;">
-                                        <i class="bi bi-person-fill text-secondary" style="font-size:4rem;"></i>
+                                        <i class="bi bi-person-fill text-secondary me-1" style="font-size:4rem;"></i>
                                     </div>
                                 @endif
 
@@ -245,7 +245,7 @@
 
                                         <button type="button" class="btn btn-outline-secondary"
                                             onclick="togglePassword('password')">
-                                            <i class="bi bi-eye"></i>
+                                            <i class="bi bi-eye me-1"></i>
                                         </button>
                                     </div>
 
@@ -269,7 +269,7 @@
 
                                         <button type="button" class="btn btn-outline-secondary"
                                             onclick="togglePassword('password_confirmation')">
-                                            <i class="bi bi-eye"></i>
+                                            <i class="bi bi-eye me-1"></i>
                                         </button>
                                     </div>
 

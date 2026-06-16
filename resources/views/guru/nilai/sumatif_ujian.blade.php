@@ -118,13 +118,13 @@
 
                         <button type="submit" class="btn btn-primary">
 
-                            Simpan Nilai
+                            <i class="bi bi-floppy-fill me-1"></i> Simpan Nilai
 
                         </button>
 
                         <a href="{{ route('guru.nilai.index') }}" class="btn btn-secondary">
 
-                            Kembali
+                            <i class="bi bi-arrow-left me-1"></i> Kembali
 
                         </a>
 

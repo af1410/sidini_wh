@@ -5,7 +5,7 @@
 
         <div class="card">
 
-            <div class="card-header bg-primary text-white">
+            <div class="card-header">
 
                 <h4 class="mb-0">
                     Hasil Nilai {{ strtoupper($penilaian->tipe_sumatif) }}
@@ -61,7 +61,7 @@
                             <tr>
 
                                 <th width="60">No</th>
-                                <th>NIS</th>
+                                <th>NIM</th>
                                 <th>Nama Siswa</th>
                                 <th width="150">Nilai {{ strtoupper($penilaian->tipe_sumatif) }}</th>
 
@@ -79,7 +79,7 @@
                                     </td>
 
                                     <td>
-                                        {{ $siswa->nis ?? '-' }}
+                                        {{ $siswa->nim ?? '-' }}
                                     </td>
 
                                     <td>
@@ -117,7 +117,7 @@
 
                     <a href="{{ url()->previous() }}" class="btn btn-secondary">
 
-                        Kembali
+                        <i class="bi bi-arrow-left me-1"></i> Kembali
 
                     </a>
 

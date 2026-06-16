@@ -18,7 +18,7 @@ class NilaiController extends Controller
     {
         $data = Penilaian::with(['mapel', 'kelas', 'guru'])
             ->withCount(['nilaiFormatif', 'nilaiSumatif', 'nilaiUjian'])
-            ->where('status_buka', '=', 'dibuka', 'and')
+            ->where('status_buka', '=', 'dibuka')
             ->latest()
             ->get();
 
@@ -32,7 +32,7 @@ class NilaiController extends Controller
         $semester = $request->query('semester');
         $idMapel = $request->query('id_mapel');
 
-        $query = NilaiAkhir::with(['mapel', 'siswa']);
+        // $query = NilaiAkhir::with(['mapel', 'siswa']);
 
         if ($idPenilaian) {
             // find penilaian to limit mapel/semester
@@ -125,7 +125,7 @@ class NilaiController extends Controller
 
         if ($pembukaan->jenis_penilaian === 'formatif') {
             $nilai = NilaiFormatif::with('siswa')
-                ->where('id_penilaian', '=', $idPenilaian, 'and')
+                ->where('id_penilaian', '=', $idPenilaian)
                 ->get();
         } else {
             $nilai = NilaiSumatif::with(['siswa', 'tugas'])
@@ -295,47 +295,5 @@ class NilaiController extends Controller
         });
 
         return view('guru.nilai.index')->with('success', 'Nilai sumatif berhasil disimpan untuk semua siswa.');
-    }
-
-    private function recalcAkhir($idSiswa, $idMapel, $semester)
-    {
-        $nilaiFormatif = NilaiFormatif::where('id_siswa', '=', $idSiswa, 'and')
-            ->whereHas('penilaian', function ($q) use ($idMapel, $semester) {
-                $q->where('id_mapel', '=', $idMapel)
-                    ->where('semester', '=', $semester)
-                    ->where('jenis_penilaian', '=', 'formatif');
-            })
-            ->value('nilai_uas') ?? 0;
-
-        $nilaiSumatif = NilaiSumatif::where('id_siswa', '=', $idSiswa, 'and')
-            ->whereHas('penilaian', function ($q) use ($idMapel, $semester) {
-                $q->where('id_mapel', '=', $idMapel)
-                    ->where('semester', '=', $semester)
-                    ->where('jenis_penilaian', '=', 'sumatif');
-            })
-            ->avg('nilai_bab') ?? 0;
-
-        $bobotFormatif = 40;
-        $bobotSumatif = 60;
-
-        $nilaiAkhir = (
-            ($nilaiFormatif * $bobotFormatif) +
-            ($nilaiSumatif * $bobotSumatif)
-        ) / 100;
-
-        NilaiAkhir::updateOrCreate(
-            [
-                'id_siswa' => $idSiswa,
-                'id_mapel' => $idMapel,
-                'semester' => $semester,
-            ],
-            [
-                'bobot_formatif' => $bobotFormatif,
-                'bobot_sumatif' => $bobotSumatif,
-                'nilai_formatif' => $nilaiFormatif,
-                'nilai_sumatif' => $nilaiSumatif,
-                'nilai_akhir' => $nilaiAkhir,
-            ]
-        );
     }
 }

@@ -25,13 +25,13 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="p-3 bg-light rounded">
                                     <h6>Hadir</h6>
                                     <strong>{{ $hadirCount }}</strong>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="p-3 bg-light rounded">
                                     <h6>Terlambat</h6>
                                     <strong>{{ $terlambatCount }}</strong>
@@ -55,10 +55,17 @@
                                     <strong>{{ $alphaCount }}</strong>
                                 </div>
                             </div>
+                            <div class="col-md-2">
+                                <div class="p-3 bg-light rounded">
+                                    <h6>Belum Absen</h6>
+                                    <strong>{{ $belumCount }}</strong>
+                                </div>
+                            </div>
                         </div>
                         <div class="mt-3">
                             <p class="mb-0">Tanggal:
-                                <strong>{{ \Illuminate\Support\Carbon::parse($tanggal)->format('d M Y') }}</strong></p>
+                                <strong>{{ \Illuminate\Support\Carbon::parse($tanggal)->format('d M Y') }}</strong>
+                            </p>
                             <p class="mb-0">Belum ada catatan: <strong>{{ $belumCount }}</strong></p>
                         </div>
                     </div>
@@ -105,7 +112,7 @@
                                 </td>
                                 <td>{{ $presensi->waktu_masuk ?? '-' }}</td>
                                 <td>
-                                    @if ($presensi && in_array($presensi->status, ['Hadir', 'Terlambat']))
+                                    @if ($presensi && $presensi->status !== null)
                                         <span class="text-muted">Tidak dapat diubah</span>
                                     @else
                                         <div class="d-flex gap-2 flex-wrap">

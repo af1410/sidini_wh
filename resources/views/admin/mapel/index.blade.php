@@ -4,7 +4,8 @@
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4>Data Mapel</h4>
-            <a href="{{ route('admin.mapel.create') }}" class="btn btn-primary">Tambah Mapel</a>
+            <a href="{{ route('admin.mapel.create') }}" class="btn btn-primary"><i class="bi bi-plus me-1"></i> Tambah
+                Mapel</a>
         </div>
 
         @if (session('success'))
@@ -21,7 +22,7 @@
                             placeholder="Cari kode, nama, atau jenis mapel..." value="{{ $keyword ?? request('keyword') }}">
                     </div>
                     <div class="col-md-2 d-grid">
-                        <button type="submit" class="btn btn-secondary">Cari</button>
+                        <button type="submit" class="btn btn-secondary"><i class="bi bi-search me-1"></i> Cari</button>
                     </div>
                 </form>
             </div>
@@ -55,15 +56,17 @@
                                     <td>{{ $item->jenis_mapel }}</td>
                                     <td>
                                         <a href="{{ route('admin.mapel.edit', $item->id_mapel) }}"
-                                            class="btn btn-warning btn-sm">
-                                            Edit
+                                            class="btn btn-success btn-sm">
+                                            <i class="bi bi-pencil me-1"></i> Edit
                                         </a>
 
                                         <form action="{{ route('admin.mapel.destroy', $item->id_mapel) }}" method="POST"
                                             class="d-inline" onsubmit="return confirm('Hapus mapel ini?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                            <button type="submit" class="btn btn-danger btn-sm"><i
+                                                    class="bi bi-trash me-1"></i>
+                                                Hapus</button>
                                         </form>
                                     </td>
                                 </tr>

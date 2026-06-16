@@ -12,8 +12,13 @@ class SiswaController extends Controller
 {
     public function index(Request $request)
     {
-        $kelasOptions = Kelas::all();
+        $latestTahunAjar = Kelas::select('tahun_ajar')
+            ->orderByRaw('CAST(LEFT(tahun_ajar,4) AS UNSIGNED) DESC')
+            ->value('tahun_ajar');
 
+        $kelasOptions = Kelas::where('tahun_ajar', $latestTahunAjar)
+            ->orderBy('nama_kelas')
+            ->get();
 
         $query = Siswa::with('dataKelas');
 
@@ -47,6 +52,7 @@ class SiswaController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
+            'nisn' => 'nullable|string|unique:siswa,nisn',
             'nim' => 'required|string|unique:siswa,nim',
             'nik' => 'required|string|unique:siswa,nik',
             'nama_siswa' => 'required|string|max:255',
@@ -55,7 +61,7 @@ class SiswaController extends Controller
             'tanggal_lahir' => 'required|date',
             'alamat' => 'required|string',
             'no_hp' => 'nullable|string|max:25',
-            'email' => 'required|email|unique:siswa,email',
+            'email' => 'nullable|email|unique:siswa,email',
             'uid_kartu' => 'nullable|string|unique:siswa,uid_kartu',
             'id_kelas' => 'nullable|exists:kelas,id_kelas',
         ]);
@@ -68,7 +74,7 @@ class SiswaController extends Controller
 
         Siswa::create($data);
 
-        return redirect()->route('admin.siswa.index')->with('success', 'Siswa berhasil ditambahkan. Username dan password otomatis dari NIM.');
+        return redirect()->route('admin.siswa.index')->with('success', 'Siswa berhasil ditambahkan. Username dan password dari NIM.');
     }
 
     public function edit(Siswa $siswa)
@@ -82,6 +88,7 @@ class SiswaController extends Controller
     public function update(Request $request, Siswa $siswa)
     {
         $data = $request->validate([
+            'nisn' => 'nullable|string|unique:siswa,nisn,' . $siswa->id_siswa . ',id_siswa',
             'nim' => 'required|string|unique:siswa,nim,' . $siswa->id_siswa . ',id_siswa',
             'nik' => 'required|string|unique:siswa,nik,' . $siswa->id_siswa . ',id_siswa',
             'nama_siswa' => 'required|string|max:255',
@@ -90,7 +97,7 @@ class SiswaController extends Controller
             'tanggal_lahir' => 'required|date',
             'alamat' => 'required|string',
             'no_hp' => 'nullable|string|max:25',
-            'email' => 'required|email|unique:siswa,email,' . $siswa->id_siswa . ',id_siswa',
+            'email' => 'nullable|email|unique:siswa,email,' . $siswa->id_siswa . ',id_siswa',
             'uid_kartu' => 'nullable|string|unique:siswa,uid_kartu,' . $siswa->id_siswa . ',id_siswa',
             'id_kelas' => 'nullable|exists:kelas,id_kelas',
         ]);
@@ -108,5 +115,18 @@ class SiswaController extends Controller
         $siswa->delete();
 
         return redirect()->route('admin.siswa.index')->with('success', 'Siswa berhasil dihapus.');
+    }
+
+    public function resetPassword(Siswa $siswa)
+    {
+        if (!$siswa->nim) {
+            return back()->with('error', 'Siswa tidak memiliki NIM, password tidak bisa direset.');
+        }
+
+        $siswa->update([
+            'password' => Hash::make($siswa->nim),
+        ]);
+
+        return back()->with('success', 'Password Siswa berhasil direset menjadi NIM.');
     }
 }

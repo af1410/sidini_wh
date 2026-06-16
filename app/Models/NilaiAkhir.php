@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Mapel;
 
 class NilaiAkhir extends Model
 {
@@ -12,16 +11,45 @@ class NilaiAkhir extends Model
     protected $fillable = [
         'id_siswa',
         'id_mapel',
+        'id_kelas',
         'semester',
-        'bobot_formatif',
-        'bobot_sumatif',
-        'nilai_formatif',
-        'nilai_sumatif',
+
+        'bobot_bab',
+        'bobot_psts',
+        'bobot_psas',
+
+        'rata_bab',
+        'nilai_psts',
+        'nilai_psas',
+
         'nilai_akhir',
+        'keterangan',
     ];
+
+    public function siswa()
+    {
+        return $this->belongsTo(
+            Siswa::class,
+            'id_siswa',
+            'id_siswa'
+        );
+    }
 
     public function mapel()
     {
-        return $this->belongsTo(Mapel::class, 'id_mapel', 'id_mapel');
+        return $this->belongsTo(
+            Mapel::class,
+            'id_mapel',
+            'id_mapel'
+        );
+    }
+
+    public function kelas()
+    {
+        return $this->belongsTo(
+            Kelas::class,
+            'id_kelas',
+            'id_kelas'
+        );
     }
 }

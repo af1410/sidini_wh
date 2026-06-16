@@ -6,7 +6,7 @@
             <h4>Data Pembukaan Penilaian</h4>
 
             <a href="{{ route('admin.penilaian.create') }}" class="btn btn-primary">
-                Buka Penilaian
+                <i class="bi bi-journal-check me-1"></i> Buka Penilaian
             </a>
         </div>
 
@@ -24,8 +24,8 @@
                             <tr>
                                 <th>No</th>
                                 <th>Mapel</th>
-                                <th>Kelas / Guru</th>
-                                <th>Jenis</th>
+                                <th>Guru</th>
+                                <th>Kelas</th>
                                 <th>Penilaian</th>
                                 <th>Semester</th>
                                 <th>Periode</th>
@@ -46,16 +46,10 @@
                                         </small>
                                     </td>
                                     <td>
-                                        {{ $item->kelas->nama_kelas ?? '-' }}
-                                        <br>
-                                        <small class="text-muted">
-                                            {{ $item->guru->nama_guru ?? '-' }}
-                                        </small>
+                                        {{ $item->guru->nama_guru ?? '-' }}
                                     </td>
                                     <td>
-                                        <span class="badge bg-info text-dark">
-                                            {{ ucfirst($item->jenis_penilaian) }}
-                                        </span>
+                                        {{ $item->kelas->nama_kelas ?? '-' }}
                                     </td>
                                     <td>
                                         @if ($item->jenis_penilaian == 'sumatif')
@@ -72,11 +66,11 @@
                                     </td>
                                     <td>{{ $item->semester }}</td>
                                     <td>
-                                        {{ date('d M Y H:i', strtotime($item->tanggal_mulai)) }}
+                                        {{ date('d M Y', strtotime($item->tanggal_mulai)) }}
                                         <br>
                                         s/d
                                         <br>
-                                        {{ date('d M Y H:i', strtotime($item->tanggal_selesai)) }}
+                                        {{ date('d M Y', strtotime($item->tanggal_selesai)) }}
                                     </td>
                                     <td>
                                         @if ($item->status_buka == 'dibuka')
@@ -112,14 +106,14 @@
                                             @if ($hasNilai)
                                                 <a href="{{ route('admin.penilaian.show', $item->id) }}"
                                                     class="btn btn-info btn-sm">
-                                                    Lihat Nilai
+                                                    <i class="bi bi-eye me-1"></i> Lihat Nilai
                                                 </a>
                                             @endif
 
                                             @if (!$isExpired)
                                                 <a href="{{ route('admin.penilaian.edit', $item->id) }}"
                                                     class="btn btn-primary btn-sm">
-                                                    Edit
+                                                    <i class="bi bi-pencil me-1"></i> Edit
                                                 </a>
 
                                                 <form action="{{ route('admin.penilaian.destroy', $item->id) }}"
@@ -127,7 +121,7 @@
                                                     @csrf
                                                     @method('DELETE')
                                                     <button class="btn btn-danger btn-sm">
-                                                        Hapus
+                                                        <i class="bi bi-trash me-1"></i> Hapus
                                                     </button>
                                                 </form>
                                             @else
@@ -136,14 +130,14 @@
                                                         method="POST">
                                                         @csrf
                                                         <button class="btn btn-success btn-sm">
-                                                            Approve
+                                                            <i class="bi bi-check-lg me-1"></i> Approve
                                                         </button>
                                                     </form>
 
                                                     <button type="button" class="btn btn-danger btn-sm"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#tolakModal{{ $item->id }}">
-                                                        Tolak
+                                                        <i class="bi bi-x-lg me-1"></i> Tolak
                                                     </button>
                                                 @endif
                                             @endif

@@ -70,8 +70,11 @@
                     <hr>
 
                     <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-success">💾 Simpan Perubahan</button>
-                        <a href="{{ route('admin.kelas.index') }}" class="btn btn-secondary">Batal</a>
+                        <button type="submit" class="btn btn-success"><i class="bi bi-floppy-fill me-1"></i> Simpan
+                            Perubahan</button>
+                        <a href="{{ route('admin.kelas.index') }}" class="btn btn-secondary"><i
+                                class="bi bi-x-lg me-1"></i>
+                            Batal</a>
                     </div>
                 </form>
             </div>

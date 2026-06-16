@@ -54,11 +54,13 @@ class PresensiController extends Controller
             $calendar[] = $week;
         }
 
-        $hadirCount = $presensiRecords->whereIn('status', ['Hadir', 'Terlambat'])->count();
+        $hadirCount = $presensiRecords->where('status', 'Hadir')->count();
+        $terlambatCount = $presensiRecords->where('status', 'Terlambat')->count();
         $sakitCount = $presensiRecords->where('status', 'Sakit')->count();
         $izinCount = $presensiRecords->where('status', 'Izin')->count();
+        $alphaCount = $presensiRecords->where('status', 'Alpha')->count();
         $totalDays = $endOfMonth->day;
-        $redCount = $totalDays - $hadirCount - $sakitCount - $izinCount;
+        $redCount = $totalDays - $hadirCount - $terlambatCount - $sakitCount - $izinCount - $alphaCount;
 
         $monthNames = [
             'Januari',
@@ -86,8 +88,10 @@ class PresensiController extends Controller
             'year',
             'monthNames',
             'hadirCount',
+            'terlambatCount',
             'sakitCount',
             'izinCount',
+            'alphaCount',
             'redCount'
         ));
     }

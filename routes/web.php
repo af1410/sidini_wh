@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Siswa\DashboardController as SiswaDashboard;
 use App\Http\Controllers\Siswa\PresensiController as SiswaPresensiController;
 use App\Http\Controllers\Siswa\NilaiController as SiswaNilaiController;
+use App\Http\Controllers\Siswa\ProfileController as SiswaProfileController;
 use App\Http\Controllers\Guru\DashboardController as GuruDashboard;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\SiswaController as AdminSiswaController;
@@ -28,6 +29,7 @@ use App\Http\Controllers\Guru\NilaiFormatifController;
 use App\Http\Controllers\Guru\NilaiSumatifController;
 use App\Http\Controllers\Guru\NilaiSumatifUjianController;
 use App\Http\Controllers\Guru\ProfileController as GuruProfileController;
+use App\Http\Controllers\Guru\NilaiAkhirController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -40,11 +42,12 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Siswa Routes
 Route::middleware('is_siswa')->group(function () {
     Route::get('/siswa/dashboard', [SiswaDashboard::class, 'dashboard'])->name('siswa.dashboard');
-    Route::get('/siswa/nilai', [SiswaDashboard::class, 'nilai'])->name('siswa.nilai.index');
+    Route::get('/siswa/nilai/index', [SiswaNilaiController::class, 'index'])->name('siswa.nilai.index');
     Route::get('/siswa/presensi', [SiswaPresensiController::class, 'index'])->name('siswa.presensi.index');
+    Route::get('/siswa/profile', [SiswaProfileController::class, 'index'])->name('siswa.profile.index');
+    Route::get('/siswa/profile/edit', [SiswaProfileController::class, 'edit'])->name('siswa.profile.edit');
+    Route::put('/siswa/profile', [SiswaProfileController::class, 'update'])->name('siswa.profile.update');
     // student nilai details and export
-    Route::get('/siswa/nilai/sumatif/{id_mapel}/{semester}', [SiswaNilaiController::class, 'sumatifByMapel'])->name('siswa.nilai.sumatif.show');
-    Route::get('/siswa/nilai/penilaian/{id}', [SiswaNilaiController::class, 'showPenilaian'])->name('siswa.nilai.penilaian.show');
 });
 
 // Guru Routes
@@ -66,6 +69,14 @@ Route::middleware('is_guru')->group(function () {
     //kelas_saya
     Route::get('guru/kelas_saya', [KelasSayaController::class, 'index'])
         ->name('guru.kelas.index');
+    Route::get('guru/kelas_saya/rapor', [KelasSayaController::class, 'raporIndex'])
+        ->name('guru.kelas.rapor.index');
+    Route::get('guru/kelas_saya/rapor/all', [KelasSayaController::class, 'downloadAllRapor'])
+        ->name('guru.kelas.rapor.download_all');
+    Route::get('guru/kelas_saya/rapor/{id_siswa}', [KelasSayaController::class, 'raporPdf'])
+        ->name('guru.kelas.rapor.pdf');
+    Route::get('guru/kelas_saya/rapor/{id_siswa}/download', [KelasSayaController::class, 'raporPdfDownload'])
+        ->name('guru.kelas.rapor.download');
 
     //mapel_saya
     Route::get('guru/mapel_saya', [MapelSayaController::class, 'index'])
@@ -131,6 +142,20 @@ Route::middleware('is_guru')->group(function () {
         [NilaiSumatifUjianController::class, 'show']
     )->name('guru.nilai.sumatif_ujian.show');
 
+    //nilai akhir
+    Route::get(
+        '/guru/nilai-akhir/{id_kelas}/{id_mapel}',
+        [NilaiAkhirController::class, 'show']
+    )->name('guru.nilai_akhir.show');
+    Route::get(
+        '/guru/nilai-akhir/{id_kelas}/{id_mapel}/export',
+        [NilaiAkhirController::class, 'exportExcel']
+    )->name('guru.nilai_akhir.export');
+    Route::post(
+        '/guru/nilai-akhir/{id_kelas}/{id_mapel}/store',
+        [NilaiAkhirController::class, 'store']
+    )->name('guru.nilai_akhir.store');
+
     //profile
 
     Route::get('/guru/profile', [GuruProfileController::class, 'index'])->name('guru.profile.index');
@@ -142,10 +167,10 @@ Route::middleware('is_guru')->group(function () {
 Route::middleware('is_admin')->group(function () {
     Route::get('/admin/dashboard', [AdminDashboard::class, 'dashboard'])->name('admin.dashboard');
     Route::resource('/admin/siswa', AdminSiswaController::class, ['as' => 'admin'])->except(['show']);
+    Route::post('/admin/siswa/{siswa}/reset-password', [AdminSiswaController::class, 'resetPassword'])->name('admin.siswa.reset-password');
     Route::resource('/admin/kelas', AdminKelasController::class, ['as' => 'admin', 'parameters' => ['kelas' => 'kelas']])->except(['show']);
     Route::resource('/admin/guru', AdminGuruController::class, ['as' => 'admin'])->except(['show']);
-    Route::post('/admin/guru/{guru}/reset-password', [AdminGuruController::class, 'resetPassword'])
-        ->name('admin.guru.reset-password');
+    Route::post('/admin/guru/{guru}/reset-password', [AdminGuruController::class, 'resetPassword'])->name('admin.guru.reset-password');
     Route::resource('/admin/ortu', AdminOrtuController::class, ['as' => 'admin'])->except(['show']);
     Route::get('/admin/profile', [AdminProfileController::class, 'index'])->name('admin.profile.index');
     Route::get('/admin/profile/edit', [AdminProfileController::class, 'edit'])->name('admin.profile.edit');

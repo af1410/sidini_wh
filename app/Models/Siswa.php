@@ -18,6 +18,7 @@ class Siswa extends Authenticatable
 
     protected $fillable = [
         'nim',
+        'nisn',
         'nik',
         'nama_siswa',
         'jenis_kelamin',
@@ -64,5 +65,19 @@ class Siswa extends Authenticatable
     public function nilaiUjian()
     {
         return $this->hasMany(SumatifUjian::class, 'id_siswa', 'id_siswa');
+    }
+
+    public function nilaiAkhir()
+    {
+        return $this->hasMany(
+            NilaiAkhir::class,
+            'id_siswa',
+            'id_siswa'
+        );
+    }
+
+    public function kelas()
+    {
+        return $this->belongsTo(Kelas::class, 'id_kelas', 'id_kelas');
     }
 }
