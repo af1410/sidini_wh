@@ -1,6 +1,6 @@
 @extends('siswa.layouts.app')
 
-@section('title', 'Nilai Akhir')
+@section('title', 'Detail Nilai ')
 
 @section('content')
     <div class="container-fluid">
@@ -9,7 +9,7 @@
 
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">
-                    Nilai Akhir
+                    Detail Nilai
                 </h5>
 
                 <small class="text-muted">
@@ -18,6 +18,23 @@
             </div>
 
             <div class="card-body">
+                <div class="row mb-3">
+                    <form method="GET" class="mb-3">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="form-label">Semester</label>
+                                <select name="semester" class="form-select" onchange="this.form.submit()">
+                                    <option value="ganjil" {{ $semester == 'ganjil' ? 'selected' : '' }}>
+                                        Ganjil
+                                    </option>
+                                    <option value="genap" {{ $semester == 'genap' ? 'selected' : '' }}>
+                                        Genap
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
 
                 @if (count($nilaiPerKelas) == 0)
                     <div class="alert alert-info">
@@ -49,10 +66,8 @@
 
                                 <div class="table-responsive">
 
-                                    <table class="table table-bordered table-striped align-middle">
-
+                                    <table class="table table-bordered table-striped align-middle tabel-nilai" data-semester="{{ strtolower($items[0]['semester'] ?? 'semua') }}">
                                         <thead class="table-light">
-
                                             <tr>
                                                 <th>No</th>
                                                 <th>Mata Pelajaran</th>
@@ -84,7 +99,7 @@
 
                                                     @foreach ($semuaBab as $bab)
                                                         <td class="text-center">
-                                                            {{ $item['detail_bab'][$bab] ?? '' }}
+                                                            {{ number_format($item['detail_bab'][$bab] ?? 0, 2) }}
                                                         </td>
                                                     @endforeach
 
@@ -134,3 +149,37 @@
 
     </div>
 @endsection
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const filter = document.getElementById('filterSemester');
+
+            function filterSemester() {
+
+                const semester = filter.value;
+
+                document.querySelectorAll('.tabel-nilai').forEach(function(table) {
+
+                    if (semester === 'semua') {
+                        table.closest('.table-responsive').style.display = '';
+                        return;
+                    }
+
+                    if (table.dataset.semester === semester) {
+                        table.closest('.table-responsive').style.display = '';
+                    } else {
+                        table.closest('.table-responsive').style.display = 'none';
+                    }
+
+                });
+
+            }
+
+            filter.addEventListener('change', filterSemester);
+
+            filterSemester();
+
+        });
+    </script>
+@endpush

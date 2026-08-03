@@ -26,11 +26,6 @@
                     <i class="bi bi-file-earmark-text me-1"></i> <span>Input Nilai</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('guru.presensi.index') }}">
-                    <i class="bi bi-check-circle me-1"></i> <span>Presensi Siswa</span>
-                </a>
-            </li>
 
             <li class="nav-section-title mt-3">MANAJEMEN KELAS</li>
             <li class="nav-item">
@@ -65,55 +60,223 @@
 @endsection
 
 @section('content')
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="mb-0"><i class="bi bi-speedometer2 me-2"></i>Dashboard Guru</h4>
-                </div>
-                <div class="card-body">
-                    <div class="row align-items-center mb-4">
-                        <div class="col-md-8">
-                            <h5>Selamat Datang di Dashboard Guru</h5>
-                            <p class="text-muted mb-0">Gunakan menu ini untuk mengelola nilai dan presensi siswa.</p>
-                        </div>
-                        <div class="col-md-4 text-end">
-                            <span class="badge bg-success fs-6">{{ ucfirst($guru->jabatan) }}</span>
-                        </div>
+    @php
+        $idGuru = auth()->guard('guru')->user()->id_guru;
+
+        $punyaKelas = \App\Models\Kelas::where('id_guru', $idGuru)->exists();
+        $punyaMapel = \App\Models\GuruMapel::where('id_guru', $idGuru)->exists();
+    @endphp
+
+    <style>
+        :root {
+            --primary-color: #29ab87;
+            --secondary-color: #1e7f5f;
+            --light-primary: #eefaf6;
+        }
+
+        .hero-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 18px;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .hero-card h3 {
+            font-weight: 700;
+        }
+
+        .hero-badge {
+            background: rgba(255, 255, 255, .2);
+            color: #fff;
+            border-radius: 30px;
+            padding: .45rem 1rem;
+            font-size: .9rem;
+        }
+
+        .hero-icon {
+            font-size: 90px;
+            opacity: .15;
+        }
+
+        .menu-card {
+            border: none;
+            border-radius: 16px;
+            transition: .3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, .08);
+        }
+
+        .menu-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 10px 25px rgba(41, 171, 135, .18);
+        }
+
+        .menu-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--light-primary);
+            color: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: auto;
+            font-size: 30px;
+        }
+
+        .menu-title {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .menu-desc {
+            font-size: .9rem;
+            color: #777;
+        }
+    </style>
+
+    <div class="container-fluid">
+
+        <div class="mb-4">
+            <h3 class="fw-bold">Dashboard</h3>
+        </div>
+
+        <div class="card hero-card shadow-sm mb-4">
+            <div class="card-body p-4">
+
+                <div class="row align-items-center">
+
+                    <div class="col-md-8">
+
+                        <h3 class="mb-2">
+                            Selamat Datang
+                        </h3>
+
+                        <p class="mb-3">
+                            Gunakan menu berikut untuk mengelola nilai, presensi, dan aktivitas pembelajaran.
+                        </p>
+
+                        <span class="hero-badge">
+                            @if ($punyaKelas)
+                                Wali Kelas
+                            @else
+                                {{ ucfirst($guru->jabatan) }}
+                            @endif
+                        </span>
+
                     </div>
 
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-4">
-                            <div class="card h-100 border-primary">
-                                <div class="card-body text-center">
-                                    <i class="bi bi-pencil-square fs-1 text-primary me-1"></i>
-                                    <h6 class="mt-3">Input Nilai</h6>
-                                    <p class="text-muted">Tambahkan nilai formatif dan sumatif siswa.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card h-100 border-success">
-                                <div class="card-body text-center">
-                                    <i class="bi bi-check2-square fs-1 text-success me-1"></i>
-                                    <h6 class="mt-3">Presensi</h6>
-                                    <p class="text-muted">Kelola kehadiran harian siswa Anda.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card h-100 border-warning">
-                                <div class="card-body text-center">
-                                    <i class="bi bi-file-earmark-medical fs-1 text-warning me-1"></i>
-                                    <h6 class="mt-3">Laporan Nilai</h6>
-                                    <p class="text-muted">Pantau riwayat dan status penilaian.</p>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="col-md-4 text-end d-none d-md-block">
+
+                        <i class="bi bi-mortarboard-fill hero-icon"></i>
+
                     </div>
 
                 </div>
+
             </div>
         </div>
+
+        <div class="row g-4">
+
+            @if ($punyaMapel)
+                <div class="col-md-4">
+                    <a href="{{ route('guru.mapel.index') }}" class="text-decoration-none">
+
+                        <div class="card menu-card h-100">
+
+                            <div class="card-body text-center p-4">
+
+                                <div class="menu-icon">
+                                    <i class="bi bi-book"></i>
+                                </div>
+
+                                <h5 class="menu-title mt-3">
+                                    Mata Pelajaran Saya
+                                </h5>
+
+                                <div class="menu-desc">
+                                    Kelola mata pelajaran yang Anda ampu.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </a>
+                </div>
+            @endif
+
+            @if ($punyaKelas)
+                <div class="col-md-4">
+                    <a href="{{ route('guru.kelas.index') }}" class="text-decoration-none">
+
+                        <div class="card menu-card h-100">
+
+                            <div class="card-body text-center p-4">
+
+                                <div class="menu-icon">
+                                    <i class="bi bi-building"></i>
+                                </div>
+
+                                <h5 class="menu-title mt-3">
+                                    Kelas Saya
+                                </h5>
+
+                                <div class="menu-desc">
+                                    Lihat data kelas yang menjadi wali kelas.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </a>
+                </div>
+            @endif
+
+            <div class="col-md-4">
+                <a href="{{ route('guru.profile.edit') }}" class="text-decoration-none">
+
+                    <div class="card menu-card h-100">
+
+                        <div class="card-body text-center p-4">
+
+                            <div class="menu-icon">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+
+                            <h5 class="menu-title mt-3">
+                                Profil
+                            </h5>
+
+                            <div class="menu-desc">
+                                Kelola informasi akun dan profil Anda.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </a>
+            </div>
+
+        </div>
+
     </div>
+
+    @if (session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Login Berhasil',
+                    text: '{{ session('success') }}',
+                    timer: 5000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+            });
+        </script>
+    @endif
 @endsection

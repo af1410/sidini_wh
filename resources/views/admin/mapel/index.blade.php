@@ -1,7 +1,9 @@
 @extends('admin.layouts.app')
 
+@section('title', 'Kelola Mata Pelajaran')
+
 @section('content')
-    <div class="container">
+    <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4>Data Mapel</h4>
             <a href="{{ route('admin.mapel.create') }}" class="btn btn-primary"><i class="bi bi-plus me-1"></i> Tambah
@@ -12,6 +14,9 @@
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>
+        @endif
+        @if (session('error'))
+            <div class="alert alert-danger">{{ session('error') }}</div>
         @endif
 
         <div class="card mb-3">
@@ -35,11 +40,11 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Kode Mapel</th>
-                                <th>Nama Mapel</th>
+                                <th>Kode</th>
+                                <th>Nama</th>
                                 <th>Guru Pengajar</th>
-                                <th>Jenis Mapel</th>
-                                <th width="160">Aksi</th>
+                                <th>Jenis</th>
+                                <th width="200">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -84,5 +89,6 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
 @endsection

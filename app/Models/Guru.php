@@ -29,6 +29,9 @@ class Guru extends Authenticatable
         'password',
         'gambar',
         'jabatan',
+        'pendidikan',
+        'status',
+        'ttd'
     ];
 
     protected $hidden = [
@@ -72,5 +75,15 @@ class Guru extends Authenticatable
     public function kelas()
     {
         return $this->hasMany(Kelas::class, 'id_guru', 'id_guru');
+    }
+
+    public function mapels()
+    {
+        return $this->belongsToMany(
+            Mapel::class,
+            'guru_mapel',
+            'id_guru',
+            'id_mapel'
+        );
     }
 }

@@ -20,10 +20,10 @@ return new class extends Migration
             $table->enum('jenis_penilaian', ['formatif', 'sumatif']);
             $table->unsignedInteger('bab_ke')->nullable();
             $table->string('judul_bab', 150)->nullable();
-            $table->dateTime('tanggal_mulai');
-            $table->dateTime('tanggal_selesai');
+            $table->dateTime('tanggal_mulai')->nullable();
+            $table->dateTime('tanggal_selesai')->nullable();
             $table->enum('status_buka', ['dibuka', 'ditutup'])->default('dibuka');
-            $table->enum('status_approval', ['normal', 'menunggu_approval', 'disetujui', 'ditolak'])->default('normal');
+            $table->enum('status_approval', ['normal', 'menunggu_approval', 'disetujui', 'ditolak', 'publish'])->default('normal');
             $table->unsignedBigInteger('dibuka_oleh');
             $table->unsignedBigInteger('approved_oleh')->nullable();
             $table->dateTime('approved_at')->nullable();

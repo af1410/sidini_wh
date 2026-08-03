@@ -12,13 +12,12 @@ class SiswaController extends Controller
 {
     public function index(Request $request)
     {
-        $latestTahunAjar = Kelas::select('tahun_ajar')
-            ->orderByRaw('CAST(LEFT(tahun_ajar,4) AS UNSIGNED) DESC')
-            ->value('tahun_ajar');
+        $kelasOptions = Kelas::orderBy('nama_kelas')->get();
 
-        $kelasOptions = Kelas::where('tahun_ajar', $latestTahunAjar)
-            ->orderBy('nama_kelas')
-            ->get();
+        $angkatanOptions = Siswa::whereNotNull('angkatan')
+            ->distinct()
+            ->orderByDesc('angkatan')
+            ->pluck('angkatan');
 
         $query = Siswa::with('dataKelas');
 
@@ -26,19 +25,36 @@ class SiswaController extends Controller
             $query->where('id_kelas', $request->kelas);
         }
 
-        $siswa = $query->orderBy('nama_siswa')
-            ->paginate(50)
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('angkatan')) {
+            $query->whereYear('created_at', $request->angkatan);
+        }
+
+        if ($request->filled('keyword')) {
+            $keyword = $request->keyword;
+
+            $query->where(function ($q) use ($keyword) {
+                $q->where('nama_siswa', 'like', "%{$keyword}%")
+                    ->orWhere('nim', 'like', "%{$keyword}%")
+                    ->orWhere('nisn', 'like', "%{$keyword}%");
+            });
+        }
+
+        $siswa = $query
+            ->orderBy('nama_siswa')
+            ->paginate(20)
             ->withQueryString();
 
-        $totalCount = Siswa::count();
-        $selectedCount = $siswa->total();
-
-        return view('admin.siswa.index', compact(
-            'siswa',
-            'kelasOptions',
-            'totalCount',
-            'selectedCount'
-        ));
+        return view('admin.siswa.index', [
+            'siswa' => $siswa,
+            'kelasOptions' => $kelasOptions,
+            'angkatanOptions' => $angkatanOptions,
+            'totalCount' => Siswa::count(),
+            'selectedCount' => $siswa->total(),
+        ]);
     }
 
     public function create()
@@ -59,13 +75,15 @@ class SiswaController extends Controller
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
+            'asal_sekolah' => 'nullable|string|max:255',
             'alamat' => 'required|string',
             'no_hp' => 'nullable|string|max:25',
             'email' => 'nullable|email|unique:siswa,email',
             'uid_kartu' => 'nullable|string|unique:siswa,uid_kartu',
             'id_kelas' => 'nullable|exists:kelas,id_kelas',
+            'status' => 'required|in:aktif,lulus,pindah,keluar',
         ]);
-
+        $data['agama'] = 'Islam';
         // Auto-generate username dari NIM
         $data['username'] = $data['nim'];
 
@@ -95,13 +113,16 @@ class SiswaController extends Controller
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
+            'asal_sekolah' => 'nullable|string|max:255',
             'alamat' => 'required|string',
             'no_hp' => 'nullable|string|max:25',
             'email' => 'nullable|email|unique:siswa,email,' . $siswa->id_siswa . ',id_siswa',
             'uid_kartu' => 'nullable|string|unique:siswa,uid_kartu,' . $siswa->id_siswa . ',id_siswa',
             'id_kelas' => 'nullable|exists:kelas,id_kelas',
+            'status' => 'required|in:aktif,lulus,pindah,keluar',
         ]);
 
+        $data['agama'] = 'Islam';
         // Auto-generate username dari NIM
         $data['username'] = $data['nim'];
 
@@ -128,5 +149,36 @@ class SiswaController extends Controller
         ]);
 
         return back()->with('success', 'Password Siswa berhasil direset menjadi NIM.');
+    }
+
+    public function updateStatus(Request $request, Siswa $siswa)
+    {
+        $request->validate([
+            'status' => 'required|in:aktif,lulus,pindah,keluar',
+        ]);
+
+        $siswa->update([
+            'status' => $request->status,
+        ]);
+
+        return back()->with('success', 'Status siswa berhasil diperbarui.');
+    }
+
+    public function bulkStatus(Request $request)
+    {
+        $request->validate([
+            'siswa' => 'required|array',
+            'status' => 'required|in:aktif,lulus,pindah,keluar',
+        ]);
+
+        Siswa::whereIn('id_siswa', $request->siswa)
+            ->update([
+                'status' => $request->status,
+            ]);
+
+        return back()->with(
+            'success',
+            count($request->siswa) . ' siswa berhasil diperbarui.'
+        );
     }
 }

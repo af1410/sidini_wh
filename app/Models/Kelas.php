@@ -20,12 +20,17 @@ class Kelas extends Model
 
     protected $fillable = [
         'id_kelas',
-        'tahun_ajar',
         'kelas',
         'rombel',
         'nama_kelas',
         'id_guru',
+        'id_tahun_ajar',
     ];
+
+    public function tahunAjar()
+    {
+        return $this->belongsTo(TahunAjar::class, 'id_tahun_ajar', 'id_tahun_ajar');
+    }
 
     public function waliKelas()
     {
@@ -34,7 +39,12 @@ class Kelas extends Model
 
     public function mapels()
     {
-        return $this->belongsToMany(Mapel::class, 'kelas_mapel', 'id_kelas', 'id_mapel');
+        return $this->belongsToMany(
+            Mapel::class,
+            'kelas_mapel',
+            'id_kelas',
+            'id_mapel'
+        )->withPivot('id_guru');
     }
 
     public function siswas()
@@ -49,5 +59,10 @@ class Kelas extends Model
             'id_kelas',
             'id_kelas'
         );
+    }
+
+    public function siswaKelas()
+    {
+        return $this->hasMany(SiswaKelas::class, 'id_kelas', 'id_kelas');
     }
 }

@@ -118,19 +118,28 @@
                             @enderror
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Kelas</label>
-                            <select name="id_kelas" class="form-control @error('id_kelas') is-invalid @enderror">
-                                <option value="">Pilih Kelas</option>
-                                @foreach ($kelasOptions as $option)
-                                    <option value="{{ $option->id_kelas }}"
-                                        {{ old('id_kelas', $siswa->id_kelas) == $option->id_kelas ? 'selected' : '' }}>
-                                        {{ $option->nama_kelas }}</option>
-                                @endforeach
-                            </select>
-                            @error('id_kelas')
+                            <label class="form-label">Asal Sekolah</label>
+                            <input type="text"
+                                name="asal_sekolah"
+                                value="{{ old('asal_sekolah', $siswa->asal_sekolah ?? '') }}"
+                                class="form-control @error('asal_sekolah') is-invalid @enderror"
+                                placeholder="Contoh: MTs Wasilatul Huda">
+                            @error('asal_sekolah')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-control @error('status') is-invalid @enderror">
+                                <option value="">Pilih Status</option>
+                                <option value="aktif" {{ old('status', $siswa->status) == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                                <option value="nonaktif" {{ old('status', $siswa->status) == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                            </select>
+                            @error('status')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                     </div>
                     <div class="alert alert-info mt-3">
                         <i class="bi bi-info-circle me-2"></i>

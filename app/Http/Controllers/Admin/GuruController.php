@@ -4,15 +4,46 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Guru;
+use App\Models\Kelas;
+use App\Models\Mapel;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class GuruController extends Controller
 {
-    public function index()
+    public function index1()
     {
         $gurus = Guru::orderBy('nama_guru')->paginate(50);
         return view('admin.guru.index', compact('gurus'));
+    }
+
+    public function index(Request $request)
+    {
+        $keyword = $request->keyword;
+
+        $data = Guru::when($keyword, function ($query) use ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('nama_guru', 'like', "%{$keyword}%")
+                    ->orWhere('nip', 'like', "%{$keyword}%")
+                    ->orWhere('username', 'like', "%{$keyword}%")
+                    ->orWhere('email', 'like', "%{$keyword}%");
+            });
+        })
+            ->when($request->filled('jabatan'), function ($query) use ($request) {
+                $query->where('jabatan', $request->jabatan);
+            })
+            ->when($request->filled('status'), function ($query) use ($request) {
+                $query->where('status', $request->status);
+            })
+            ->orderBy('nama_guru')
+            ->paginate(20)
+            ->withQueryString();
+
+        return view('admin.guru.index', compact(
+            'data',
+            'keyword'
+        ));
     }
 
     public function create()
@@ -33,11 +64,13 @@ class GuruController extends Controller
             'no_hp' => 'nullable|string|max:25',
             'email' => 'required|email|unique:guru,email',
             'jabatan' => 'required|in:guru,admin,kepala_sekolah',
+            'pendidikan' => 'nullable|string|max:100',
+            'status' => 'required|in:aktif,nonaktif',
         ]);
 
         // Auto-generate username dan password dari NIP
-        $data['username'] = $data['nip'];
-        $data['password'] = bcrypt($data['nip']);
+        $data['username'] = explode('@', $data['email'])[0];
+        $data['password'] = bcrypt(Carbon::parse($data['tanggal_lahir'])->format('dmY'));
 
         Guru::create($data);
 
@@ -61,12 +94,15 @@ class GuruController extends Controller
             'alamat' => 'required|string',
             'no_hp' => 'nullable|string|max:25',
             'email' => 'required|email|unique:guru,email,' . $guru->id_guru . ',id_guru',
-            'password' => 'nullable|string|min:6|confirmed',
+            'password' => 'sometimes|string|min:6|confirmed',
             'jabatan' => 'required|in:guru,admin,kepala_sekolah',
+            'pendidikan' => 'nullable|string|max:100',
+            'status' => 'required|in:aktif,nonaktif',
         ]);
 
-        // Update username ke NIP (jika NIP berubah)
-        $data['username'] = $data['nip'];
+
+
+        $data['username'] = explode('@', $data['email'])[0];
 
         if (empty($data['password'])) {
             unset($data['password']);
@@ -86,7 +122,7 @@ class GuruController extends Controller
         }
 
         $guru->update([
-            'password' => Hash::make($guru->nip),
+            'password' => Hash::make(Carbon::parse($guru->tanggal_lahir)->format('dmY')),
         ]);
 
         return back()->with('success', 'Password guru berhasil direset menjadi NIP.');
@@ -97,5 +133,40 @@ class GuruController extends Controller
         $guru->delete();
 
         return redirect()->route('admin.guru.index')->with('success', 'Data guru berhasil dihapus.');
+    }
+
+    public function updateStatus(Request $request, Guru $guru)
+    {
+        $request->validate([
+            'status' => 'required|in:aktif,nonaktif',
+        ]);
+
+        $guru->update([
+            'status' => $request->status,
+        ]);
+
+        return redirect()
+            ->route('admin.guru.index')
+            ->with('success', 'Status guru berhasil diperbarui.');
+    }
+
+    public function bulkStatus(Request $request)
+    {
+        $request->validate([
+            'guru' => 'required|array',
+            'status' => 'required|in:aktif,nonaktif',
+        ]);
+
+        Guru::whereIn('id_guru', $request->guru)
+            ->update([
+                'status' => $request->status,
+            ]);
+
+        return redirect()
+            ->route('admin.guru.index')
+            ->with(
+                'success',
+                count($request->guru) . ' guru berhasil diperbarui.'
+            );
     }
 }

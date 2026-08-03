@@ -17,10 +17,10 @@ class MapelSayaController extends Controller
         }
 
         $kelas = Kelas::with(['mapels' => function ($q) use ($guru) {
-            $q->where('id_guru', $guru->id_guru);
+            $q->where('kelas_mapel.id_guru', $guru->id_guru);
         }])
             ->whereHas('mapels', function ($q) use ($guru) {
-                $q->where('id_guru', $guru->id_guru);
+                $q->where('kelas_mapel.id_guru', $guru->id_guru);
             })
             ->orderBy('nama_kelas')
             ->get();
@@ -37,9 +37,9 @@ class MapelSayaController extends Controller
         }
 
         $kelas = Kelas::with([
-            'waliKelas',
+
             'mapels' => function ($q) use ($guru) {
-                $q->where('id_guru', $guru->id_guru);
+                $q->where('kelas_mapel.id_guru', $guru->id_guru);
             },
             'siswas'
         ])

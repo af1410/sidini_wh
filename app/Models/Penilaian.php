@@ -29,7 +29,13 @@ class Penilaian extends Model
         'approved_oleh',
         'approved_at',
         'catatan',
+        'id_tahun_ajar',
     ];
+
+    public function tahunAjar()
+    {
+        return $this->belongsTo(TahunAjar::class, 'id_tahun_ajar', 'id_tahun_ajar');
+    }
 
     public function mapel()
     {

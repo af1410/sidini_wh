@@ -3,7 +3,6 @@
 
 @section('content')
     <div class="container">
-        <h4>Detail Kelas</h4>
 
         @if ($kelas)
             <div class="mb-4 d-flex justify-content-between align-items-center">
@@ -18,11 +17,8 @@
             </div>
             <div class="card mb-4">
                 <div class="card-body">
-                    <p><strong>ID Kelas:</strong> {{ $kelas->id_kelas }}</p>
                     <p><strong>Nama Kelas:</strong> {{ $kelas->nama_kelas }}</p>
                     <p><strong>Tahun Ajar:</strong> {{ $kelas->tahun_ajar }}</p>
-                    <p><strong>Kelas:</strong> {{ $kelas->kelas }}</p>
-                    <p><strong>Rombel:</strong> {{ $kelas->rombel }}</p>
                     <p><strong>Wali Kelas:</strong> {{ optional($kelas->waliKelas)->nama_guru ?? 'Belum ada wali kelas' }}
                     </p>
                 </div>
@@ -48,6 +44,8 @@
                                                 {{ $mapel->nama_mapel }}
                                             </th>
                                         @endforeach
+
+                                        <th rowspan="2">Aksi</th>
                                     </tr>
 
                                     <tr>
@@ -57,7 +55,9 @@
                                             <th>PSAS</th>
                                             <th>Nilai Akhir</th>
                                         @endforeach
+
                                     </tr>
+
 
                                 </thead>
 
@@ -91,7 +91,13 @@
                                                     {{ $nilai->nilai_akhir ?? '-' }}
                                                 </td>
                                             @endforeach
-
+                                            <td>
+                                                <a href="{{ route('guru.kelas_saya.lengkapi_rapor', $siswa->id_siswa) }}"
+                                                    class="btn btn-primary btn-sm">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                    Lengkapi Rapor
+                                                </a>
+                                            </td>
                                         </tr>
                                     @endforeach
 

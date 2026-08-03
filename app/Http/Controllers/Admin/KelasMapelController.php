@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Kelas;
 use App\Models\Mapel;
 use App\Models\Penilaian;
+use App\Models\GuruMapel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -18,16 +19,25 @@ class KelasMapelController extends Controller
 
         $mapelsSelected = $kelas->mapels->pluck('id_mapel')->toArray();
 
-        $mapelsAvailable = Mapel::where(
-            'tahun_ajaran',
-            $kelas->tahun_ajar
-        )
+        $mapelsAvailable = Mapel::with('guruMapels.guru')
+            ->where('tahun_ajaran', $kelas->tahun_ajar)
+            ->orderBy('jenis_mapel')
             ->orderBy('nama_mapel')
             ->get();
 
+
+        $guruSelected = DB::table('kelas_mapel')
+            ->join('guru', 'guru.id_guru', '=', 'kelas_mapel.id_guru')
+            ->where('kelas_mapel.id_kelas', $id_kelas)
+            ->pluck('guru.nama_guru', 'kelas_mapel.id_mapel');
+
+        $guruSelectedId = DB::table('kelas_mapel')
+            ->where('id_kelas', $id_kelas)
+            ->pluck('id_guru', 'id_mapel');
+
         return view(
             'admin.kelas_mapel.index',
-            compact('kelas', 'mapelsSelected', 'mapelsAvailable')
+            compact('kelas', 'mapelsSelected', 'mapelsAvailable', 'guruSelected', 'guruSelectedId')
         );
     }
     public function update(Request $request, $id_kelas)
@@ -35,6 +45,7 @@ class KelasMapelController extends Controller
         $request->validate([
             'mapels' => ['nullable', 'array'],
             'mapels.*' => ['exists:mapel,id_mapel'],
+            'guru_mapel' => ['nullable', 'array'],
         ]);
 
         DB::transaction(function () use ($request, $id_kelas) {
@@ -43,116 +54,109 @@ class KelasMapelController extends Controller
 
             $selectedMapels = $request->input('mapels', []);
 
-            $kelas->mapels()->sync($selectedMapels);
+            /*
+        |--------------------------------------------------------------------------
+        | Sync Mata Pelajaran
+        |--------------------------------------------------------------------------
+        */
+            $syncData = [];
 
-            $semester = now()->month >= 7 ? 'ganjil' : 'genap';
+            foreach ($selectedMapels as $id_mapel) {
+                $syncData[$id_mapel] = [
+                    'id_guru' => $request->guru_mapel[$id_mapel] ?? null,
+                ];
+            }
 
-            $tanggalSelesai = $semester === 'ganjil'
-                ? now()->year . '-12-31 23:59:59'
-                : now()->year . '-06-30 23:59:59';
+            $kelas->mapels()->sync($syncData);
+
+            /*
+        |--------------------------------------------------------------------------
+        | Buat Penilaian Ganjil & Genap
+        |--------------------------------------------------------------------------
+        */
+
+            $semesters = ['ganjil', 'genap'];
 
             foreach ($selectedMapels as $id_mapel) {
 
-                $id_guru = DB::table('mapel')
-                    ->where('id_mapel', $id_mapel)
-                    ->value('id_guru');
+                $id_guru = $request->guru_mapel[$id_mapel] ?? null;
 
-                /*
-            |--------------------------------------------------------------------------
-            | FORMATIF BAB 1
-            |--------------------------------------------------------------------------
-            */
-                Penilaian::firstOrCreate(
-                    [
-                        'id_kelas' => $kelas->id_kelas,
-                        'id_mapel' => $id_mapel,
-                        'semester' => $semester,
-                        'jenis_penilaian' => 'formatif',
-                        'bab_ke' => 1,
-                    ],
-                    [
-                        'id_guru' => $id_guru,
-                        'judul_bab' => null,
+                foreach ($semesters as $semester) {
 
-                        'tanggal_mulai' => now(),
-                        'tanggal_selesai' => $tanggalSelesai,
+                    Penilaian::updateOrCreate(
+                        [
+                            'id_kelas'          => $kelas->id_kelas,
+                            'id_mapel'          => $id_mapel,
+                            'id_guru'           => $id_guru,
+                            'semester'          => $semester,
+                            'jenis_penilaian'   => 'formatif',
+                            'bab_ke'            => 1,
+                        ],
+                        [
+                            'judul_bab'         => null,
 
-                        'status_buka' => 'ditutup',
-                        'status_approval' => 'normal',
+                            // Belum dibuka oleh admin
+                            'tanggal_mulai'     => null,
+                            'tanggal_selesai'   => null,
 
-                        'dibuka_oleh' => auth('guru')->id()
-                            ?? auth('admin')->id()
-                            ?? 1,
+                            'status_buka'       => 'ditutup',
+                            'status_approval'   => 'normal',
 
-                        'approved_oleh' => null,
-                        'approved_at' => null,
-                        'catatan' => null,
-                    ]
-                );
+                            'dibuka_oleh'       => auth('guru')->id()
+                                ?? auth('guru')->id()
+                                ?? 1,
 
-                /*
-            |--------------------------------------------------------------------------
-            | SUMATIF BAB 1
-            |--------------------------------------------------------------------------
-            */
-                Penilaian::firstOrCreate(
-                    [
-                        'id_kelas' => $kelas->id_kelas,
-                        'id_mapel' => $id_mapel,
-                        'semester' => $semester,
-                        'jenis_penilaian' => 'sumatif',
-                        'bab_ke' => 1,
-                    ],
-                    [
-                        'id_guru' => $id_guru,
-                        'judul_bab' => 'Bab 1',
+                            'approved_oleh'     => null,
+                            'approved_at'       => null,
+                            'catatan'           => null,
+                        ]
+                    );
 
-                        'tanggal_mulai' => now(),
-                        'tanggal_selesai' => $tanggalSelesai,
+                    Penilaian::updateOrCreate(
+                        [
+                            'id_kelas'          => $kelas->id_kelas,
+                            'id_mapel'          => $id_mapel,
+                            'id_guru'           => $id_guru,
+                            'semester'          => $semester,
+                            'jenis_penilaian'   => 'sumatif',
+                            'bab_ke'            => 1,
+                        ],
+                        [
+                            'judul_bab'         => 'Bab 1',
 
-                        'status_buka' => 'ditutup',
-                        'status_approval' => 'normal',
+                            // Belum dibuka oleh admin
+                            'tanggal_mulai'     => null,
+                            'tanggal_selesai'   => null,
 
-                        'dibuka_oleh' => auth('guru')->id()
-                            ?? auth('admin')->id()
-                            ?? 1,
+                            'status_buka'       => 'ditutup',
+                            'status_approval'   => 'normal',
 
-                        'approved_oleh' => null,
-                        'approved_at' => null,
-                        'catatan' => null,
-                    ]
-                );
+                            'dibuka_oleh'       => auth('guru')->id()
+                                ?? auth('guru')->id()
+                                ?? 1,
+
+                            'approved_oleh'     => null,
+                            'approved_at'       => null,
+                            'catatan'           => null,
+                        ]
+                    );
+                }
             }
 
             /*
         |--------------------------------------------------------------------------
-        | Hapus penilaian mapel yang tidak lagi dipilih
+        | Hapus Penilaian yang Mapelnya Tidak Dipilih Lagi
         |--------------------------------------------------------------------------
         */
+
             Penilaian::where('id_kelas', $kelas->id_kelas)
-                ->where('semester', $semester)
                 ->whereNotIn('id_mapel', $selectedMapels)
                 ->delete();
         });
 
-        return back()->with(
+        return redirect()->route('admin.kelas.index')->with(
             'success',
-            'Mata pelajaran berhasil disimpan. Penilaian formatif dan sumatif otomatis dibuat.'
+            'Mata pelajaran berhasil disimpan. Penilaian semester ganjil dan genap berhasil dibuat.'
         );
-    }
-
-    public function update1(Request $request, $id_kelas)
-    {
-        $request->validate([
-            'mapels' => 'required|array',
-            'mapels.*' => 'required|string|exists:mapel,id_mapel',
-        ]);
-
-        $kelas = Kelas::findOrFail($id_kelas);
-
-        // Sync the mapels
-        $kelas->mapels()->sync($request->mapels);
-
-        return redirect()->route('admin.kelas.index')->with('success', 'Mata pelajaran berhasil diperbarui untuk kelas ' . $kelas->nama_kelas);
     }
 }

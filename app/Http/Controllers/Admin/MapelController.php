@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Guru;
 use App\Models\Mapel;
 use App\Models\GuruMapel;
+use App\Models\TahunAjar;
 use Illuminate\Http\Request;
 
 class MapelController extends Controller
@@ -14,7 +15,7 @@ class MapelController extends Controller
     {
         $keyword = $request->keyword;
 
-        $data = Mapel::with('guruMapels.guru')
+        $data = Mapel::with('guruMapels.guru', 'tahunAjar')
             ->when($keyword, function ($query) use ($keyword) {
 
                 $query->where(function ($q) use ($keyword) {
@@ -42,7 +43,8 @@ class MapelController extends Controller
     public function create()
     {
         $gurus = Guru::orderBy('nama_guru')->get();
-        return view('admin.mapel.create', compact('gurus'));
+        $tahunAjars = TahunAjar::orderBy('tahun_mulai', 'desc')->get();
+        return view('admin.mapel.create', compact('gurus', 'tahunAjars'));
     }
 
     public function store(Request $request)
@@ -50,10 +52,13 @@ class MapelController extends Controller
         $request->validate([
             'nama_mapel' => 'required|string|max:100',
             'jenis_mapel' => 'required|string|max:50',
-            'tahun_ajaran' => 'required',
+            'id_tahun_ajar' => 'required|exists:tahun_ajar,id_tahun_ajar',
             'id_guru' => 'required|array',
             'id_guru.*' => 'exists:guru,id_guru',
         ]);
+
+        // Get tahun ajar
+        $tahunAjar = TahunAjar::find($request->id_tahun_ajar);
 
         // M
         $prefixMapel = 'M';
@@ -63,7 +68,7 @@ class MapelController extends Controller
         $prefixJenis = strtoupper(substr($request->jenis_mapel, 0, 1));
 
         // 2025-2026 -> 2526
-        $tahun = str_replace('-', '', substr($request->tahun_ajaran, 2, 2) . substr($request->tahun_ajaran, 7, 2));
+        $tahun = str_replace('-', '', substr($tahunAjar->tahun_ajar, 2, 2) . substr($tahunAjar->tahun_ajar, 7, 2));
 
         // Prefix akhir
         $prefix = $prefixMapel . $prefixJenis . $tahun;
@@ -91,7 +96,8 @@ class MapelController extends Controller
             'id_mapel' => $idMapel,
             'nama_mapel' => $request->nama_mapel,
             'jenis_mapel' => $request->jenis_mapel,
-            'tahun_ajaran' => $request->tahun_ajaran,
+            'tahun_ajaran' => $tahunAjar->tahun_ajar,
+            'id_tahun_ajar' => $request->id_tahun_ajar,
         ]);
 
         foreach ($request->id_guru as $idGuru) {
@@ -112,6 +118,7 @@ class MapelController extends Controller
         $mapel = Mapel::with('guruMapels')->findOrFail($id);
 
         $gurus = Guru::orderBy('nama_guru')->get();
+        $tahunAjars = TahunAjar::orderBy('tahun_mulai', 'desc')->get();
 
         $selectedGuru = $mapel->guruMapels
             ->pluck('id_guru')
@@ -122,6 +129,7 @@ class MapelController extends Controller
             compact(
                 'mapel',
                 'gurus',
+                'tahunAjars',
                 'selectedGuru'
             )
         );
@@ -132,17 +140,19 @@ class MapelController extends Controller
         $request->validate([
             'nama_mapel' => 'required|string|max:100',
             'jenis_mapel' => 'required|string|max:50',
-            'tahun_ajaran' => 'required',
+            'id_tahun_ajar' => 'required|exists:tahun_ajar,id_tahun_ajar',
 
             'id_guru' => 'required|array',
             'id_guru.*' => 'exists:guru,id_guru',
         ]);
 
+        $tahunAjar = TahunAjar::find($request->id_tahun_ajar);
         $mapel = Mapel::findOrFail($id);
         $mapel->update([
             'nama_mapel' => $request->nama_mapel,
             'jenis_mapel' => $request->jenis_mapel,
-            'tahun_ajaran' => $request->tahun_ajaran,
+            'tahun_ajaran' => $tahunAjar->tahun_ajar,
+            'id_tahun_ajar' => $request->id_tahun_ajar,
         ]);
 
         GuruMapel::where(
@@ -169,6 +179,6 @@ class MapelController extends Controller
 
         return redirect()
             ->route('admin.mapel.index')
-            ->with('success', 'Mapel berhasil dihapus.');
+            ->with('error', 'Mapel berhasil dihapus.');
     }
 }

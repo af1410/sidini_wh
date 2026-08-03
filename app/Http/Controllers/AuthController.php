@@ -28,37 +28,71 @@ class AuthController extends Controller
             'password' => $validated['password'],
         ];
 
-        // Try to authenticate as siswa first
+        // Login sebagai siswa
         if (Auth::guard('siswa')->attempt($credentials)) {
+
             $name = Auth::guard('siswa')->user()->nama_siswa ?? 'Siswa';
-            return redirect()->route('siswa.dashboard')->with('success', 'Selamat datang, ' . $name);
+
+            return redirect()
+                ->route('siswa.dashboard')
+                ->with('success', 'Selamat datang, ' . $name . '!');
         }
 
-        // Try to authenticate as ortu
+        // Login sebagai orang tua
         if (Auth::guard('ortu')->attempt($credentials)) {
+
             $name = Auth::guard('ortu')->user()->nama_ortu ?? 'Orang Tua';
-            return redirect()->route('ortu.dashboard')->with('success', 'Selamat datang, ' . $name);
+
+            return redirect()
+                ->route('ortu.dashboard')
+                ->with('success', 'Selamat datang, ' . $name . '!');
         }
 
-        // Try to authenticate as guru (check jabatan for admin/kepsek)
-        $guru = Guru::query()->where('username', '=', $validated['username'])->first();
+        // Login sebagai guru
+        $guru = Guru::where('username', $validated['username'])->first();
+
         if ($guru && Hash::check($validated['password'], $guru->password)) {
-            Auth::guard('guru')->login($guru);
-            $name = $guru->nama_guru ?? 'Guru';
-            if ($guru->jabatan === 'admin') {
-                return redirect()->route('admin.dashboard')->with('success', 'Selamat datang, ' . $name);
-            } elseif ($guru->jabatan === 'kepala_sekolah') {
-                return redirect()->route('kepsek.dashboard')->with('success', 'Selamat datang, ' . $name);
-            } elseif ($guru->jabatan === 'kurikulum') {
-                return redirect()->route('kurikulum.dashboard')->with('success', 'Selamat datang, ' . $name);
-            } else {
-                return redirect()->route('guru.dashboard')->with('success', 'Selamat datang, ' . $name);
+
+            if ($guru->status !== 'aktif') {
+
+                return back()
+                    ->withInput($request->only('username'))
+                    ->with('error', 'Akun Anda sedang dinonaktifkan. Silakan hubungi administrator.');
             }
+
+            Auth::guard('guru')->login($guru);
+
+            $name = $guru->nama_guru ?? 'Guru';
+
+            if ($guru->jabatan === 'admin') {
+
+                return redirect()
+                    ->route('admin.dashboard')
+                    ->with('success', 'Selamat datang, ' . $name . '!');
+            }
+
+            if ($guru->jabatan === 'kepala_sekolah') {
+
+                return redirect()
+                    ->route('kepsek.dashboard')
+                    ->with('success', 'Selamat datang, ' . $name . '!');
+            }
+
+            if ($guru->jabatan === 'kurikulum') {
+
+                return redirect()
+                    ->route('kurikulum.dashboard')
+                    ->with('success', 'Selamat datang, ' . $name . '!');
+            }
+
+            return redirect()
+                ->route('guru.dashboard')
+                ->with('success', 'Selamat datang, ' . $name . '!');
         }
 
         return back()
             ->withInput($request->only('username'))
-            ->with('error', 'Username atau password salah');
+            ->with('error', 'Username atau password salah.');
     }
 
     public function logout(Request $request)

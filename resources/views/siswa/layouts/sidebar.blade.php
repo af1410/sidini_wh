@@ -15,47 +15,27 @@
         <li class="nav-item">
             <a class="nav-link {{ request()->is('siswa/nilai*') ? 'active' : '' }}"
                 href="{{ route('siswa.nilai.index') }}">
-                <i class="bi bi-file-earmark"></i> <span>Nilai Saya</span>
+                <i class="bi bi-file-earmark"></i> <span>Detail Nilai</span>
             </a>
         </li>
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link {{ request()->is('siswa/presensi*') ? 'active' : '' }}"
                 href="{{ route('siswa.presensi.index') }}">
-                <i class="bi bi-check-circle"></i> <span>Presensi Saya</span>
+                <i class="bi bi-check-circle"></i> <span>Presensi</span>
             </a>
-        </li>
+        </li> --}}
         <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="bi bi-calendar2-week"></i> <span>Jadwal Pelajaran</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="bi bi-book"></i> <span>Tugas</span>
+            <a class="nav-link {{ request()->is('siswa/raporsaya*') ? 'active' : '' }}"
+                href="{{ route('siswa.raporsaya.index') }}">
+                <i class="bi bi-journal-check"></i> <span>Rapor</span>
             </a>
         </li>
 
-        <li class="nav-section-title mt-3">KOMUNIKASI</li>
+        <li class="nav-section-title mt-3">DATA PRIBADI</li>
         <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="bi bi-chat-dots"></i> <span>Pesan dari Guru</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="bi bi-megaphone"></i> <span>Pengumuman</span>
-            </a>
-        </li>
-
-        <li class="nav-section-title mt-3">TAMBAHAN</li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="bi bi-file-pdf"></i> <span>Download Rapor</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="bi bi-award"></i> <span>Prestasi</span>
+            <a class="nav-link {{ request()->is('siswa/profile*') ? ' active' : '' }}"
+                href="{{ route('siswa.profile.index') }}">
+                <i class="bi bi-person"></i> <span>Profile</span>
             </a>
         </li>
     </ul>

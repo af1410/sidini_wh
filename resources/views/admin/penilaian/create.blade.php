@@ -1,5 +1,7 @@
 @extends('admin.layouts.app')
 
+@section('title', 'Buka Penilaian')
+
 @section('content')
     <div class="container">
         <div class="card">
@@ -64,10 +66,6 @@
                         @enderror
                     </div>
 
-
-
-
-
                     <div class="mb-3">
                         <label>Semester</label>
                         <select name="semester" class="form-select @error('semester') is-invalid @enderror" id="semester">
@@ -100,7 +98,7 @@
                             <option value="PSAS">PSAS</option>
                         </select>
                     </div>
-
+                    <input type="hidden" name="id_tahun_ajar" value="{{ $tahunAjarAktif->id_tahun_ajar }}">
 
 
                     <div class="mb-3">

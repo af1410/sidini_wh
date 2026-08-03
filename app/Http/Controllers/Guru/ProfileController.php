@@ -34,7 +34,18 @@ class ProfileController extends Controller
             'email' => 'required|email|unique:guru,email,' . $guru->id_guru . ',id_guru',
             'alamat' => 'required|string|max:255',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'ttd' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
         ]);
+
+        // Hapus TTD lama jika upload baru
+        if ($request->hasFile('ttd')) {
+
+            if ($guru->ttd && Storage::exists('public/' . $guru->ttd)) {
+                Storage::delete('public/' . $guru->ttd);
+            }
+
+            $validated['ttd'] = $request->file('ttd')->store('ttd', 'public');
+        }
 
         // Hapus foto lama jika ada file baru
         if ($request->hasFile('gambar')) {

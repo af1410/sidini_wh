@@ -43,35 +43,74 @@
                     @csrf
                     @method('PUT')
 
-                    <div class="row">
-                        @forelse ($mapelsAvailable as $mapel)
-                            <div class="col-md-6 col-lg-4 mb-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="mapels[]"
-                                        value="{{ $mapel->id_mapel }}" id="mapel_{{ $mapel->id_mapel }}"
-                                        {{ in_array($mapel->id_mapel, $mapelsSelected) ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="mapel_{{ $mapel->id_mapel }}">
-                                        <strong>{{ $mapel->nama_mapel }}</strong>
-                                        <br>
-                                        <small class="text-muted">{{ $mapel->jenis_mapel }} -
-                                            {{ $mapel->tahun_ajaran }}</small>
-                                    </label>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="col-12">
-                                <div class="alert alert-info">
-                                    Tidak ada mata pelajaran tersedia. Silakan tambahkan mata pelajaran terlebih dahulu.
-                                </div>
-                            </div>
-                        @endforelse
-                    </div>
+                    @php
+                        $groupedMapels = $mapelsAvailable->groupBy('jenis_mapel');
+                    @endphp
 
+                    <div class="row">
+                        @foreach ($groupedMapels as $jenis => $mapels)
+                            <div class="col-lg-6 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-header">
+                                        <h5 class="mb-0 ">
+                                            Mata Pelajaran {{ ucfirst($jenis) }}
+                                        </h5>
+                                    </div>
+
+                                    <div class="card-body p-0">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-hover mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="60">Pilih</th>
+                                                        <th>Nama Mata Pelajaran</th>
+                                                        <th width="250">Guru Pengampu</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($mapels as $mapel)
+                                                        <tr>
+                                                            <td class="text-center">
+                                                                <input type="checkbox" class="form-check-input"
+                                                                    name="mapels[]" value="{{ $mapel->id_mapel }}"
+                                                                    {{ in_array($mapel->id_mapel, $mapelsSelected) ? 'checked' : '' }}>
+                                                            </td>
+
+                                                            <td>
+                                                                {{ $mapel->nama_mapel }}
+                                                            </td>
+
+                                                            <td>
+                                                                <select class="form-select form-select-sm"
+                                                                    name="guru_mapel[{{ $mapel->id_mapel }}]">
+
+                                                                    <option value="">
+                                                                        -- Pilih Guru --
+                                                                    </option>
+
+                                                                    @foreach ($mapel->guruMapels as $guruMapel)
+                                                                        <option value="{{ $guruMapel->id_guru }}"
+                                                                            {{ ($guruSelectedId[$mapel->id_mapel] ?? null) == $guruMapel->id_guru ? 'selected' : '' }}>
+                                                                            {{ $guruMapel->guru->nama_guru }}
+                                                                        </option>
+                                                                    @endforeach
+
+                                                                </select>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
                     <hr>
 
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-success"><i class="bi bi-floppy-fill me-1"></i> Simpan
-                            Perubahan</button>
+                    <div class="d-flex gap-2 justify-content-end">
+                        <button type="submit" class="btn btn-success"><i class="bi bi-floppy-fill me-1"></i> Simpan</button>
                         <a href="{{ route('admin.kelas.index') }}" class="btn btn-secondary"><i
                                 class="bi bi-x-lg me-1"></i>
                             Batal</a>
@@ -84,39 +123,65 @@
             <div class="card-header bg-light">
                 <h5 class="mb-0">Mata Pelajaran yang Dipilih</h5>
             </div>
+
             <div class="card-body">
-                @if (count($mapelsSelected) > 0)
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>#</th>
-                                    <th>Nama Mata Pelajaran</th>
-                                    <th>Jenis</th>
-                                    <th>Tahun Ajaran</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($mapelsAvailable as $mapel)
-                                    @if (in_array($mapel->id_mapel, $mapelsSelected))
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $mapel->nama_mapel }}</td>
-                                            <td><span class="badge bg-info text-dark">{{ $mapel->jenis_mapel }}</span></td>
-                                            <td>{{ $mapel->tahun_ajaran }}</td>
-                                        </tr>
-                                    @endif
-                                @endforeach
-                            </tbody>
-                        </table>
+
+                @php
+                    $mapelTerpilih = $mapelsAvailable->whereIn('id_mapel', $mapelsSelected)->groupBy('jenis_mapel');
+                @endphp
+
+                @if ($mapelTerpilih->count())
+                    <div class="row">
+                        @foreach ($mapelTerpilih as $jenis => $mapels)
+                            <div class="col-lg-6 mb-4">
+                                <div class="card border">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0 text-primary fw-bold">
+                                            Mata Pelajaran {{ ucfirst($jenis) }}
+                                        </h6>
+                                    </div>
+
+                                    <div class="card-body p-0">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-hover mb-0">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th width="60">No</th>
+                                                        <th>Nama Mata Pelajaran</th>
+                                                        <th>Guru Pengampu</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($mapels as $mapel)
+                                                        <tr>
+                                                            <td>{{ $loop->iteration }}</td>
+
+                                                            <td>
+                                                                {{ $mapel->nama_mapel }}
+                                                            </td>
+
+                                                            <td>
+                                                                <span class="badge bg-success">
+                                                                    {{ $guruSelected[$mapel->id_mapel] ?? 'Belum ada guru' }}
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 @else
                     <div class="alert alert-warning mb-0">
-                        <strong>Belum ada mata pelajaran dipilih untuk kelas ini.</strong> Pilih setidaknya satu mata
-                        pelajaran dan simpan.
+                        <strong>Belum ada mata pelajaran dipilih untuk kelas ini.</strong>
                     </div>
                 @endif
+
             </div>
         </div>
-    </div>
-@endsection
+    @endsection

@@ -20,8 +20,14 @@ class Mapel extends Model
         'nama_mapel',
         'jenis_mapel',
         'tahun_ajaran',
-        'id_guru',
+
+        'id_tahun_ajar',
     ];
+
+    public function tahunAjar()
+    {
+        return $this->belongsTo(TahunAjar::class, 'id_tahun_ajar', 'id_tahun_ajar');
+    }
 
     public function guru()
     {
@@ -46,7 +52,12 @@ class Mapel extends Model
 
     public function kelas()
     {
-        return $this->belongsToMany(Kelas::class, 'kelas_mapel', 'id_mapel', 'id_kelas');
+        return $this->belongsToMany(
+            Kelas::class,
+            'kelas_mapel',
+            'id_mapel',
+            'id_kelas'
+        )->withPivot('id_guru');
     }
 
     public function kelasMapel()

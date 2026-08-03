@@ -6,7 +6,7 @@
 
     <div class="container-fluid">
 
-        ```
+
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h3 class="fw-bold mb-1">Edit Profile Guru</h3>
@@ -217,7 +217,16 @@
                                         </div>
                                     @enderror
                                 </div>
-
+                                <div class="form-group">
+                                    <label>Tanda Tangan</label>
+                                    <input type="file"
+                                        name="ttd"
+                                        class="form-control"
+                                        accept="image/png,image/jpeg,image/jpg">
+                                    <small class="text-muted">
+                                        Disarankan menggunakan PNG dengan background transparan.
+                                    </small>
+                                </div>
                             </div>
 
                             <hr class="my-4">

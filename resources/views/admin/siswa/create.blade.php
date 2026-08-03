@@ -111,17 +111,26 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+
                         <div class="col-md-6">
-                            <label class="form-label">Kelas</label>
-                            <select name="id_kelas" class="form-control @error('id_kelas') is-invalid @enderror">
-                                <option value="">Pilih Kelas</option>
-                                @foreach ($kelasOptions as $option)
-                                    <option value="{{ $option->id_kelas }}"
-                                        {{ old('id_kelas') === $option->id_kelas ? 'selected' : '' }}>
-                                        {{ $option->nama_kelas }}</option>
-                                @endforeach
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-control @error('status') is-invalid @enderror">
+                                <option value="">Pilih Status</option>
+                                <option value="aktif" {{ old('status', 'aktif') == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                                <option value="nonaktif" {{ old('status') == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
                             </select>
-                            @error('id_kelas')
+                            @error('status')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Asal Sekolah</label>
+                            <input type="text"
+                                name="asal_sekolah"
+                                value="{{ old('asal_sekolah', $siswa->asal_sekolah ?? '') }}"
+                                class="form-control @error('asal_sekolah') is-invalid @enderror"
+                                placeholder="Contoh: MTs Wasilatul Huda">
+                            @error('asal_sekolah')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>

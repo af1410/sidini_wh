@@ -7,12 +7,23 @@
         <div class="row mb-4">
             <div class="col-12 d-flex align-items-center justify-content-between">
                 <div>
-                    <h4 class="mb-1">Kelola Kelas</h4>
+                    <h4 class="mb-1"><i class="bi bi-house me-2"></i>Kelola Kelas</h4>
                 </div>
                 <a href="{{ route('admin.kelas.create') }}" class="btn btn-success"><i class="bi bi-plus me-1"></i> Tambah
                     Kelas</a>
             </div>
         </div>
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if (session('danger'))
+            <div class="alert alert-danger">
+                {{ session('danger') }}
+            </div>
+        @endif
+
 
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
@@ -25,9 +36,8 @@
                         <thead class="table-light">
                             <tr>
                                 <th>No</th>
-                                <th>ID Kelas</th>
-                                <th>Tahun Ajar</th>
                                 <th>Nama Kelas</th>
+                                <th>Tahun Ajar</th>
                                 <th>Wali Kelas</th>
                                 <th>Aksi</th>
                             </tr>
@@ -36,15 +46,18 @@
                             @forelse($kelas as $item)
                                 <tr>
                                     <td>{{ $loop->iteration + $kelas->firstItem() - 1 }}</td>
-                                    <td>{{ $item->id_kelas }}</td>
-                                    <td>{{ $item->tahun_ajar }}</td>
                                     <td>{{ $item->nama_kelas }}</td>
+                                    <td>{{ $item->tahun_ajar }}</td>
                                     <td>{{ $item->waliKelas->nama_guru ?? '-' }}</td>
                                     <td>
                                         <div class="d-flex gap-2 flex-wrap">
                                             <a href="{{ route('admin.kelas.mapel.index', $item->id_kelas) }}"
                                                 class="btn btn-sm btn-info" title="Kelola Mapel">
                                                 <i class="bi bi-book me-1"></i> Mapel
+                                            </a>
+                                            <a href="{{ route('admin.kelas.siswa', $item) }}"
+                                                class="btn btn-info btn-sm">
+                                                <i class="bi bi-people-fill">Siswa</i>
                                             </a>
                                             <a href="{{ route('admin.kelas.edit', $item->id_kelas) }}"
                                                 class="btn btn-sm btn-primary"><i class="bi bi-pencil me-1"></i> Edit</a>

@@ -5,7 +5,16 @@
 @section('content')
     <div class="container-fluid">
 
-
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if (session('danger'))
+            <div class="alert alert-danger">
+                {{ session('danger') }}
+            </div>
+        @endif
         <div class="card">
             <div class="card-header">
                 <div class="col-12 d-flex align-items-center justify-content-between">
@@ -108,6 +117,26 @@
                                     Kepala Sekolah</option>
                             </select>
                             @error('jabatan')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Pendidikan</label>
+                            <input type="text" name="pendidikan" value="{{ old('pendidikan') }}"
+                                class="form-control @error('pendidikan') is-invalid @enderror"
+                                placeholder="Contoh: S1, S2, S3">
+                            @error('pendidikan')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-control @error('status') is-invalid @enderror">
+                                <option value="">Pilih Status</option>
+                                <option value="aktif" {{ old('status', 'aktif') == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                                <option value="nonaktif" {{ old('status') == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                            </select>
+                            @error('status')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>

@@ -11,24 +11,12 @@
                 <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link {{ request()->is('admin/profile*') ? 'active' : '' }}"
-                href="{{ route('admin.profile.index') }}">
-                <i class="bi bi-person"></i> <span>Profile</span>
-            </a>
-        </li>
 
         <li class="nav-section-title mt-3">MANAJEMEN DATA</li>
         <li class="nav-item">
             <a class="nav-link {{ request()->is('admin/siswa*') ? 'active' : '' }}"
                 href="{{ route('admin.siswa.index') }}">
                 <i class="bi bi-people"></i> <span>Kelola Siswa</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {{ request()->is('admin/ortu*') ? 'active' : '' }}"
-                href="{{ route('admin.ortu.index') }}">
-                <i class="bi bi-people-fill"></i> <span>Kelola Orang Tua</span>
             </a>
         </li>
         <li class="nav-item">
@@ -51,33 +39,47 @@
         </li>
 
         <li class="nav-section-title mt-3">AKADEMIK</li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="bi bi-calendar2-week"></i> <span>Jadwal Pelajaran</span>
-            </a>
-        </li>
-        <li class="nav-item">
+
+        {{-- <li class="nav-item">
             <a class="nav-link {{ request()->is('admin/presensi*') ? 'active' : '' }}"
                 href="{{ route('admin.presensi.index') }}">
                 <i class="bi bi-check-circle"></i> <span>Presensi</span>
             </a>
-        </li>
+        </li> --}}
         <li class="nav-item">
             <a class="nav-link {{ request()->is('admin/penilaian*') ? 'active' : '' }}"
                 href="{{ route('admin.penilaian.index') }}">
                 <i class="bi bi-file-earmark-text"></i> <span>Penilaian</span>
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->is('admin/tahun-ajar*') ? 'active' : '' }}"
+                href="{{ route('admin.tahun_ajar.index') }}">
+                <i class="bi bi-calendar3"></i> <span>Kelola Tahun Ajar</span>
+            </a>
+        </li>
 
         <li class="nav-section-title mt-3">LAPORAN</li>
         <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="bi bi-bar-chart"></i> <span>Laporan Akademik</span>
+            <a class="nav-link {{ request()->is('admin/rapor_siswa*') ? 'active' : '' }}"
+                href="{{ route('admin.rapor_siswa.index') }}">
+                <i class="bi bi-file-earmark-text-fill"></i> <span>Rapor Siswa</span>
             </a>
         </li>
+
+        {{-- <li class="nav-section-title mt-3">LAPORAN</li>
+
         <li class="nav-item">
             <a class="nav-link" href="#">
                 <i class="bi bi-file-pdf"></i> <span>Export Data</span>
+            </a>
+        </li> --}}
+
+        <li class="nav-section-title mt-3">DATA PRIBADI</li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->is('guru/profile*') ? ' active' : '' }}"
+                href="{{ route('guru.profile.index') }}">
+                <i class="bi bi-person"></i> <span>Profile</span>
             </a>
         </li>
     </ul>

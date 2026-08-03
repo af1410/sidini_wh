@@ -18,29 +18,25 @@
                 <form action="{{ route('admin.kelas.update', $kelas->id_kelas) }}" method="POST">
                     @csrf
                     @method('PUT')
-                    @php
-                        $bulan = date('n');
-                        $tahun = date('Y');
-
-                        if ($bulan >= 7) {
-                            $tahunAjar = $tahun . '/' . ($tahun + 1);
-                        } else {
-                            $tahunAjar = $tahun - 1 . '/' . $tahun;
-                        }
-                    @endphp
                     <div class="row gy-3">
                         <div class="col-md-6">
                             <label class="form-label">Tahun Ajar</label>
-                            <input type="text" name="tahun_ajar" value="{{ old('tahun_ajar', $tahunAjar) }}"
-                                class="form-control @error('tahun_ajar') is-invalid @enderror" readonly>
-                            @error('tahun_ajar')
+                            <select name="id_tahun_ajar" class="form-control @error('id_tahun_ajar') is-invalid @enderror">
+
+                                @foreach ($tahunAjars as $ta)
+                                    <option value="{{ $ta->id_tahun_ajar }}" {{ old('id_tahun_ajar', $kelas->id_tahun_ajar) == $ta->id_tahun_ajar ? 'selected' : '' }}>
+                                        {{ $ta->tahun_ajar }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('id_tahun_ajar')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Kelas</label>
                             <select name="kelas" class="form-control @error('kelas') is-invalid @enderror">
-                                <option value="{{ old('kelas', $kelas->kelas) }}" disabled selected hidden>
+                                <option value="{{ old('kelas', $kelas->kelas) }}" selected hidden>
                                     {{ $kelas->kelas }}</option>
                                 <option value="X">X</option>
                                 <option value="XI">XI</option>
@@ -54,7 +50,7 @@
                         <div class="col-md-6">
                             <label class="form-label">Rombel</label>
                             <select name="rombel" class="form-control @error('rombel') is-invalid @enderror">
-                                <option value="{{ old('rombel', $kelas->rombel) }}" disabled selected hidden>
+                                <option value="{{ old('rombel', $kelas->rombel) }}" selected hidden>
                                     {{ $kelas->rombel }}</option>
                                 <option value="A">A</option>
                                 <option value="B">B</option>
@@ -68,7 +64,7 @@
                         <div class="col-md-6">
                             <label class="form-label">Wali Kelas</label>
                             <select name="id_guru" class="form-control @error('id_guru') is-invalid @enderror">
-                                <option value="{{ old('id_guru', $kelas->id_guru) }}" disabled selected hidden>
+                                <option value="{{ old('id_guru', $kelas->id_guru) }}" selected hidden>
                                     {{ $kelas->waliKelas->nama_guru ?? 'Pilih Wali Kelas' }}</option>
                                 @foreach ($guru as $guru)
                                     <option value="{{ $guru->id_guru }}"

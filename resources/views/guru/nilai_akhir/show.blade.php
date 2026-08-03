@@ -10,7 +10,7 @@
             <h4 class="mb-0">Nilai Akhir</h4>
 
             <div class="d-flex gap-2">
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalBobot">
+                <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalBobot">
                     <i class="bi bi-gear me-1"></i>
                     Pengaturan Bobot
                 </button>
@@ -49,7 +49,7 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>NIS</th>
+                                    <th>NIM</th>
                                     <th>Nama</th>
                                     @foreach ($daftarBab as $bab)
                                         <th>Bab {{ $bab }}</th>
@@ -101,10 +101,11 @@
 
                         </table>
                     </div>
-
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-floppy-fill me-1"></i> Simpan Nilai Akhir
-                    </button>
+                    <div class=" text-end">
+                        <button type="submit" class="btn btn-primary text-end">
+                            <i class="bi bi-floppy-fill me-1"></i> Simpan
+                        </button>
+                    </div>
                 </form>
             </div>
 

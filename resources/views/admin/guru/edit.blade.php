@@ -4,7 +4,16 @@
 
 @section('content')
     <div class="container-fluid">
-
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if (session('danger'))
+            <div class="alert alert-danger">
+                {{ session('danger') }}
+            </div>
+        @endif
         <div class="card">
             <div class="card-header">
                 <div class="col-12 d-flex align-items-center justify-content-between">
@@ -23,7 +32,7 @@
                     <div class="row gy-3">
                         <div class="col-md-6">
                             <label class="form-label">NIP</label>
-                            <input type="text" value="{{ $guru->nip }}" class="form-control" disabled>
+                            <input type="text" name="nip" value="{{ $guru->nip }}" class="form-control">
                         </div>
 
                         <div class="col-md-6">
@@ -31,6 +40,27 @@
                             <input type="text" name="nik" value="{{ old('nik', $guru->nik) }}"
                                 class="form-control @error('nik') is-invalid @enderror">
                             @error('nik')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Nama Guru</label>
+                            <input type="text" name="nama_guru" value="{{ old('nama_guru', $guru->nama_guru) }}"
+                                class="form-control @error('nama_guru') is-invalid @enderror">
+                            @error('nama_guru')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Jenis Kelamin</label>
+                            <select name="jenis_kelamin" class="form-control @error('jenis_kelamin') is-invalid @enderror">
+                                <option value="">Pilih Jenis Kelamin</option>
+                                <option value="Laki-laki" {{ old('jenis_kelamin', $guru->jenis_kelamin) === 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                                <option value="Perempuan" {{ old('jenis_kelamin', $guru->jenis_kelamin) === 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                            </select>
+                            @error('jenis_kelamin')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -93,6 +123,26 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Pendidikan</label>
+                            <input type="text" name="pendidikan" value="{{ old('pendidikan', $guru->pendidikan) }}"
+                                class="form-control @error('pendidikan') is-invalid @enderror"
+                                placeholder="Contoh: S1, S2, S3">
+                            @error('pendidikan')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-control @error('status') is-invalid @enderror">
+                                <option value="">Pilih Status</option>
+                                <option value="aktif" {{ old('status', $guru->status) == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                                <option value="nonaktif" {{ old('status', $guru->status) == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                            </select>
+                            @error('status')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
 
                     <div class="alert alert-info mt-3">
@@ -104,16 +154,22 @@
                     <div class="mt-4 d-flex gap-2 flex-wrap">
                         <button class="btn btn-primary" type="submit"><i class="bi bi-floppy-fill me-1"></i>
                             Simpan</button>
-                        <form action="{{ route('admin.guru.reset-password', $guru->id_guru) }}" method="POST"
-                            class="mt-2" onsubmit="return confirm('Reset password guru menjadi NIP?');">
-                            @csrf
-                            <button type="submit" class="btn btn-warning">
-                                <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Password ke NIP
-                            </button>
-                        </form>
+                        <button type="submit"
+                            form="reset-password-form"
+                            class="btn btn-warning"
+                            onclick="return confirm('Reset password guru ini?')">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i>
+                            Reset Password
+                        </button>
+
                     </div>
                 </form>
-
+                <form id="reset-password-form"
+                    action="{{ route('admin.guru.reset-password', $guru->id_guru) }}"
+                    method="POST"
+                    class="d-none">
+                    @csrf
+                </form>
 
             </div>
         </div>

@@ -1,8 +1,12 @@
 @extends('guru.layouts.app')
 
+@section('title', 'Nilai')
+
 @section('content')
     <div class="container">
-        <h4 class="mb-3">Penilaian Dibuka</h4>
+        <h2 class="mb-3">
+            <i class="bi bi-file-earmark-text me-2" style="color: var(--primary-color)"></i>Penilaian Ujian
+        </h2>
 
         @if (session('success'))
             <div class="alert alert-success">
@@ -31,24 +35,16 @@
                                 <th>No</th>
                                 <th>Mapel</th>
                                 <th>Kelas</th>
-                                <th>Jenis</th>
                                 <th>Semester</th>
-                                <th>Bab</th>
+                                <th>Ujian</th>
                                 <th>Periode</th>
+                                <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
-
                         <tbody>
                             @forelse($data as $item)
                                 <tr>
-                                    @php
-                                        $hasNilai =
-                                            $item->nilai_formatif_count > 0 ||
-                                            $item->nilai_sumatif_count > 0 ||
-                                            $item->nilai_ujian_count > 0;
-                                        $isPastDeadline = now()->gt($item->tanggal_selesai);
-                                    @endphp
                                     <td>{{ $loop->iteration }}</td>
                                     <td>
                                         {{ $item->mapel->nama_mapel }}
@@ -56,21 +52,8 @@
                                         <small>{{ $item->mapel->jenis_mapel }}</small>
                                     </td>
                                     <td>{{ $item->kelas->nama_kelas ?? '-' }}</td>
-                                    <td>{{ ucfirst($item->jenis_penilaian) }}</td>
                                     <td>{{ ucfirst($item->semester) }}</td>
-                                    <td>
-                                        @if ($item->jenis_penilaian == 'sumatif')
-                                            @if ($item->bab_ke)
-                                                Bab {{ $item->bab_ke }}
-                                                <br>
-                                                <small>{{ $item->judul_bab }}</small>
-                                            @else
-                                                {{ strtoupper($item->tipe_sumatif) }}
-                                            @endif
-                                        @else
-                                            Formatif
-                                        @endif
-                                    </td>
+                                    <td>{{ strtoupper($item->tipe_sumatif) }}</td>
                                     <td>
                                         {{ date('d M Y H:i', strtotime($item->tanggal_mulai)) }}
                                         <br>
@@ -79,44 +62,42 @@
                                         {{ date('d M Y H:i', strtotime($item->tanggal_selesai)) }}
                                     </td>
                                     <td>
-                                        @if ($hasNilai)
-                                            <a href="{{ route('guru.nilai.sumatif_ujian.show', $item->id) }}"
-                                                class="btn btn-info btn-sm">
-                                                <i class="bi bi-eye me-1"></i> Lihat Nilai
-                                                {{ strtoupper($item->tipe_sumatif) }}
-                                            </a>
-                                        @elseif ($isPastDeadline)
-                                            @if ($item->status_approval == 'menunggu_approval')
-                                                <button class="btn btn-warning btn-sm" disabled>
-                                                    <i class="bi bi-clock me-1"></i> Menunggu Persetujuan
-                                                </button>
-                                            @elseif ($item->status_approval == 'disetujui')
-                                                <a href="{{ route('guru.nilai.sumatif_ujian.create', $item->id) }}"
-                                                    class="btn btn-success btn-sm">
-                                                    <i class="bi bi-journal-check me-1"></i> Input Nilai
-                                                    {{ strtoupper($item->tipe_sumatif) }}
-                                                </a>
-                                            @else
-                                                <form action="{{ route('guru.nilai.requestApproval', $item->id) }}"
-                                                    method="POST">
-                                                    @csrf
-                                                    <button class="btn btn-warning btn-sm" type="submit">
-                                                        <i class="bi bi-send me-1"></i> Minta Persetujuan Input
-                                                    </button>
-                                                </form>
-                                            @endif
+                                        @if ($item->status_approval == 'draft')
+                                            <span class="badge bg-secondary">Draft</span>
+                                        @elseif($item->status_approval == 'menunggu_approval')
+                                            <span class="badge bg-warning text-dark">
+                                                Menunggu Approval
+                                            </span>
+                                        @elseif($item->status_approval == 'disetujui')
+                                            <span class="badge bg-success">
+                                                Disetujui
+                                            </span>
+                                        @elseif($item->status_approval == 'published')
+                                            <span class="badge bg-primary">
+                                                Published
+                                            </span>
                                         @else
-                                            <a href="{{ route('guru.nilai.sumatif_ujian.create', $item->id) }}"
-                                                class="btn btn-success btn-sm">
+                                            <span class="badge bg-danger">
+                                                Ditolak
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if ($item->status_approval == 'published' || $item->status_approval == 'disetujui' || $item->status_approval == 'menunggu_approval')
+                                            <a href="{{ route('guru.nilai.sumatif_ujian.show', $item->id) }}" class="btn btn-info btn-sm">
+                                                <i class="bi bi-eye me-1"></i>Detail Nilai
+                                            </a>
+                                        @else
+                                            <a href="{{ route('guru.nilai.sumatif_ujian.create', $item->id) }}" class="btn btn-success btn-sm">
                                                 <i class="bi bi-journal-check me-1"></i>Input Nilai
-                                                {{ strtoupper($item->tipe_sumatif) }}
                                             </a>
                                         @endif
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
                                     <td colspan="8" class="text-center">
-                                        Belum ada penilaian dibuka.
+                                        Belum ada penilaian ujian.
                                     </td>
                                 </tr>
                             @endforelse

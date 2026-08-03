@@ -5,14 +5,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'SIDINI - Admin Dashboard')</title>
+    <title>SIDINI | @yield('title', '')</title>
     <link rel="icon" type="image/png" href="{{ asset('img/logo.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         :root {
             --primary-color: #29ab87;
@@ -313,6 +313,37 @@
                 margin-right: 0.35rem;
             }
         }
+
+        /* Pagination */
+        .page-link {
+            color: var(--primary-color);
+            border-color: #dee2e6;
+        }
+
+        .page-link:hover {
+            color: #fff;
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .page-item.active .page-link {
+            color: #fff;
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .page-item.disabled .page-link {
+            color: #6c757d;
+            background-color: #fff;
+            border-color: #dee2e6;
+        }
+
+        .page-link:focus {
+            color: #fff;
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 .2rem rgba(41, 171, 135, .25);
+        }
     </style>
 
     @stack('styles')
@@ -451,6 +482,7 @@
 
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 
 </html>

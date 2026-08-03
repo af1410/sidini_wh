@@ -18,13 +18,13 @@ class NilaiFormatifController extends Controller
             abort(403, 'Guru belum login.');
         }
 
-        $semester = now()->month >= 7 ? 'ganjil' : 'genap';
+        // $semester = now()->month >= 7 ? 'ganjil' : 'genap';
 
         $penilaian = Penilaian::where('id_kelas', $id_kelas)
             ->where('id_mapel', $id_mapel)
             ->where('id_guru', $guru->id_guru)
             ->where('jenis_penilaian', 'formatif')
-            ->where('semester', $semester)
+            ->where('semester')
             ->first();
 
         if (!$penilaian) {

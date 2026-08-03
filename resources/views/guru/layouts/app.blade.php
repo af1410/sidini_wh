@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'SIDINI - Guru Dashboard')</title>
+    <title>SIDINI | @yield('title', '')</title>
     <link rel="icon" type="image/png" href="{{ asset('img/logo.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -337,6 +337,42 @@
         }
     </style>
 
+
+    @if (session('success'))
+        <div class="modal fade" id="successModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title">
+                            <i class="bi bi-check-circle-fill me-2"></i>Berhasil
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white"
+                            data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body text-center">
+                        <i class="bi bi-check-circle-fill text-success"
+                            style="font-size:70px"></i>
+
+                        <h5 class="mt-3">
+                            {{ session('success') }}
+                        </h5>
+                    </div>
+
+                    <div class="modal-footer justify-content-center">
+                        <button class="btn btn-success"
+                            data-bs-dismiss="modal">
+                            OK
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    @endif
+
+
     @stack('styles')
 </head>
 
@@ -358,6 +394,19 @@
             const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
             const mainContent = document.getElementById('mainContent');
             const footer = document.querySelector('.app-footer');
+
+            const modalEl = document.getElementById('successModal');
+
+            if (modalEl) {
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            }
+            setTimeout(function() {
+                let alert = document.querySelector('.alert-success');
+                if (alert) {
+                    bootstrap.Alert.getOrCreateInstance(alert).close();
+                }
+            }, 2500);
 
             function isMobile() {
                 return window.innerWidth <= 992;
@@ -469,6 +518,7 @@
 
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 
 </html>

@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title', 'Tambah Mata Pelajaran')
+
+
 @section('content')
     @push('styles')
         <style>
@@ -62,25 +65,24 @@
                         <label class="form-label">Jenis Mapel</label>
                         <select name="jenis_mapel" class="form-select">
                             <option value="">-- Pilih Jenis --</option>
-                            <option value="wajib" {{ old('jenis_mapel') == 'wajib' ? 'selected' : '' }}>Wajib</option>
+                            <option value="umum" {{ old('jenis_mapel') == 'umum' ? 'selected' : '' }}>Umum</option>
                             <option value="minat" {{ old('jenis_mapel') == 'minat' ? 'selected' : '' }}>Minat</option>
                         </select>
                     </div>
-                    @php
-                        $bulan = date('n');
-                        $tahun = date('Y');
-
-                        if ($bulan >= 7) {
-                            $tahunAjar = $tahun . '/' . ($tahun + 1);
-                        } else {
-                            $tahunAjar = $tahun - 1 . '/' . $tahun;
-                        }
-                    @endphp
 
                     <div class="mb-3">
                         <label class="form-label">Tahun Ajaran</label>
-                        <input type="text" name="tahun_ajaran" class="form-control"
-                            value="{{ old('tahun_ajaran', $tahunAjar) }}" readonly>
+                        <select name="id_tahun_ajar" class="form-select @error('id_tahun_ajar') is-invalid @enderror">
+                            <option value="">-- Pilih Tahun Ajaran --</option>
+                            @foreach ($tahunAjars as $ta)
+                                <option value="{{ $ta->id_tahun_ajar }}" {{ old('id_tahun_ajar') == $ta->id_tahun_ajar ? 'selected' : '' }}>
+                                    {{ $ta->tahun_ajar }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('id_tahun_ajar')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <button type="submit" class="btn btn-primary">Simpan</button>

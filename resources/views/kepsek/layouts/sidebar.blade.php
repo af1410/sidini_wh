@@ -6,59 +6,27 @@
     <ul class="nav flex-column">
         <li class="nav-section-title">MENU UTAMA</li>
         <li class="nav-item">
-            <a class="nav-link active" href="{{ route('kepsek.dashboard') }}">
+            <a class="nav-link {{ request()->is('kepsek/dashboard') ? 'active' : '' }}" href="{{ route('kepsek.dashboard') }}">
                 <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
             </a>
         </li>
 
         <li class="nav-section-title mt-3">MONITORING AKADEMIK</li>
         <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="bi bi-bar-chart"></i> <span>Statistik Akademik</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="bi bi-trophy"></i> <span>Prestasi Siswa</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="bi bi-check-circle"></i> <span>Laporan Presensi</span>
-            </a>
-        </li>
-
-        <li class="nav-section-title mt-3">MANAJEMEN GURU</li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link {{ request()->is('kepsek/guru*') ? 'active' : '' }}" href="{{ route('kepsek.guru.index') }}">
                 <i class="bi bi-person-badge"></i> <span>Data Guru</span>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="bi bi-calendar2-week"></i> <span>Jadwal Mengajar</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="bi bi-award"></i> <span>Penilaian Guru</span>
+            <a class="nav-link {{ request()->is('kepsek/kelas*') ? 'active' : '' }}" href="{{ route('kepsek.kelas.index') }}">
+                <i class="bi bi-house"></i> <span>Data Kelas</span>
             </a>
         </li>
 
-        <li class="nav-section-title mt-3">LAPORAN KEPEMIMPINAN</li>
+        <li class="nav-section-title mt-3">Data Pribadi</li>
         <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="bi bi-file-earmark-text"></i> <span>Laporan Tahunan</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="bi bi-file-pdf"></i> <span>Rapor Akhir</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="bi bi-graph-up"></i> <span>Analisis Data</span>
+            <a class="nav-link {{ request()->is('kepsek/profile*') ? 'active' : '' }}" href="{{ route('kepsek.profile.index') }}">
+                <i class="bi bi-person"></i> <span>Profil</span>
             </a>
         </li>
     </ul>

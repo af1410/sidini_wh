@@ -16,6 +16,7 @@ class Presensi extends Model
 
     protected $fillable = [
         'id_siswa',
+        'perlengkapan_rapor_id',
         'tanggal',
         'waktu_masuk',
         'status',
@@ -28,5 +29,13 @@ class Presensi extends Model
     public function siswa()
     {
         return $this->belongsTo(Siswa::class, 'id_siswa', 'id_siswa');
+    }
+
+    public function rapor()
+    {
+        return $this->belongsTo(
+            PerlengkapanRapor::class,
+            'perlengkapan_rapor_id'
+        );
     }
 }

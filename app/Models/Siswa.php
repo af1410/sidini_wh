@@ -24,6 +24,7 @@ class Siswa extends Authenticatable
         'jenis_kelamin',
         'tempat_lahir',
         'tanggal_lahir',
+        'agama',
         'alamat',
         'no_hp',
         'email',
@@ -32,6 +33,9 @@ class Siswa extends Authenticatable
         'password',
         'gambar',
         'id_kelas',
+        'status',
+        'angkatan',
+        'asal_sekolah'
     ];
 
     protected $hidden = [
@@ -79,5 +83,10 @@ class Siswa extends Authenticatable
     public function kelas()
     {
         return $this->belongsTo(Kelas::class, 'id_kelas', 'id_kelas');
+    }
+
+    public function riwayatKelas()
+    {
+        return $this->hasMany(SiswaKelas::class, 'id_siswa', 'id_siswa');
     }
 }

@@ -1,144 +1,264 @@
 @extends('kepsek.layouts.app')
-
-@section('title', 'Kepala Sekolah - Dashboard')
-
-@section('sidebar')
-    <div class="sidebar" id="sidebar">
-        <button class="sidebar-toggle" id="sidebarToggleBtn" title="Toggle Sidebar">
-            <i class="bi bi-chevron-left me-1"></i>
-        </button>
-        <ul class="nav flex-column">
-            <li class="nav-section-title">MENU UTAMA</li>
-            <li class="nav-item">
-                <a class="nav-link active" href="{{ route('kepsek.dashboard') }}">
-                    <i class="bi bi-speedometer2 me-1"></i> <span>Dashboard</span>
-                </a>
-            </li>
-
-            <li class="nav-section-title mt-3">MONITORING AKADEMIK</li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="bi bi-bar-chart me-1"></i> <span>Statistik Akademik</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="bi bi-trophy me-1"></i> <span>Prestasi Siswa</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="bi bi-check-circle me-1"></i> <span>Laporan Presensi</span>
-                </a>
-            </li>
-
-            <li class="nav-section-title mt-3">MANAJEMEN GURU</li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="bi bi-person-badge me-1"></i> <span>Data Guru</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="bi bi-calendar2-week me-1"></i> <span>Jadwal Mengajar</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="bi bi-award me-1"></i> <span>Penilaian Guru</span>
-                </a>
-            </li>
-
-            <li class="nav-section-title mt-3">LAPORAN KEPEMIMPINAN</li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="bi bi-file-earmark-text me-1"></i> <span>Laporan Tahunan</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="bi bi-file-pdf me-1"></i> <span>Rapor Akhir</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="bi bi-graph-up me-1"></i> <span>Analisis Data</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-@endsection
-
+@section('title', 'Dashboard Kepala Sekolah')
 @section('content')
-    <div class="container mt-5">
-        <div class="row mb-4">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header bg-danger text-white">
-                        <h4 class="mb-0">Dashboard Kepala Sekolah</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="row align-items-center mb-3">
-                            <div class="col-md-8">
-                                <h5>Selamat Datang di Dashboard Kepala Sekolah</h5>
-                                <p class="text-muted mb-0">Pantau kinerja akademik dan agenda sekolah di sini.</p>
-                            </div>
-                            <div class="col-md-4 text-end">
-                                <form method="POST" action="{{ route('logout') }}" style="display: inline;">
-                                    @csrf
-                                    <button type="submit" class="btn btn-danger">Logout</button>
-                                </form>
-                            </div>
-                        </div>
+    <style>
+        .hero-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 18px;
+            color: #fff;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(41, 171, 135, .20);
+        }
 
-                        <div class="alert alert-info">
-                            <i class="bi bi-info-circle me-2"></i>
-                            Anda login sebagai <strong>Kepala Sekolah</strong>. Pantau kinerja akademik dan agenda sekolah
-                            di sini.
+        .hero-icon {
+            font-size: 90px;
+            opacity: .15;
+        }
+
+        .stat-card {
+            border: none;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 15px;
+            transition: .3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 24px rgba(220, 53, 69, .18);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--light-primary);
+            color: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+        }
+
+        .menu-card {
+            border: none;
+            border-radius: 15px;
+            transition: .3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+        }
+
+        .menu-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 24px rgba(220, 53, 69, .18);
+        }
+
+        .menu-icon {
+            width: 70px;
+            height: 70px;
+            margin: auto;
+            border-radius: 50%;
+            background: var(--light-primary);
+            color: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 32px;
+        }
+
+        .section-title {
+            font-weight: 600;
+            color: #444;
+        }
+
+        .info-card {
+            border: none;
+            border-left: 5px solid var(--primary-color);
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+        }
+    </style>
+    <div class="container-fluid">
+        <div class="card hero-card mb-4">
+            <div class="card-body p-4">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h3 class="fw-bold">
+                            Selamat Datang,
+                            {{ $kepsek->nama_guru }}
+                        </h3>
+                        <p class="mb-0">
+                            Pantau proses persetujuan rapor siswa, data guru, data kelas, dan perkembangan akademik sekolah melalui Sistem Informasi Akademik.
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-end d-none d-md-block">
+                        <i class="bi bi-person-workspace hero-icon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted">
+                                Total Guru
+                            </small>
+                            <h2 class="fw-bold mb-0">
+                                {{ $totalGuru }}
+                            </h2>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="bi bi-person-badge"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted">
+                                Total Siswa
+                            </small>
+                            <h2 class="fw-bold mb-0">
+                                {{ $totalSiswa }}
+                            </h2>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted">
+                                Total Kelas
+                            </small>
+                            <h2 class="fw-bold mb-0">
+                                {{ $totalKelas }}
+                            </h2>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="bi bi-building"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="row g-3 mb-4">
-            <div class="col-md-3">
-                <div class="card h-100 border-primary">
-                    <div class="card-body text-center">
-                        <i class="bi bi-bar-chart fs-1 text-primary me-1"></i>
-                        <h6 class="mt-3">Statistik Akademik</h6>
-                        <p class="text-muted">Lihat ringkasan performa sekolah.</p>
-                    </div>
-                </div>
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="section-title mb-0">
+                    Menu Cepat
+                </h5>
             </div>
-            <div class="col-md-3">
-                <div class="card h-100 border-success">
-                    <div class="card-body text-center">
-                        <i class="bi bi-people fs-1 text-success me-1"></i>
-                        <h6 class="mt-3">Data Guru</h6>
-                        <p class="text-muted">Kelola informasi guru dan jadwal mengajar.</p>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <a href="{{ route('kepsek.kelas.index') }}" class="text-decoration-none">
+                            <div class="card menu-card h-100">
+                                <div class="card-body text-center">
+                                    <div class="menu-icon">
+                                        <i class="bi bi-building"></i>
+                                    </div>
+                                    <h6 class="mt-3 fw-semibold">
+                                        Data Kelas
+                                    </h6>
+                                    <small class="text-muted">
+                                        Lihat seluruh data kelas.
+                                    </small>
+                                </div>
+                            </div>
+                        </a>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card h-100 border-warning">
-                    <div class="card-body text-center">
-                        <i class="bi bi-file-earmark-text fs-1 text-warning me-1"></i>
-                        <h6 class="mt-3">Laporan Tahunan</h6>
-                        <p class="text-muted">Buka laporan evaluasi tahunan.</p>
+                    <div class="col-md-4">
+                        <a href="{{ route('kepsek.guru.index') }}" class="text-decoration-none">
+                            <div class="card menu-card h-100">
+                                <div class="card-body text-center">
+                                    <div class="menu-icon">
+                                        <i class="bi bi-person-video3"></i>
+                                    </div>
+                                    <h6 class="mt-3 fw-semibold">
+                                        Data Guru
+                                    </h6>
+                                    <small class="text-muted">
+                                        Lihat data seluruh guru.
+                                    </small>
+                                </div>
+                            </div>
+                        </a>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card h-100 border-danger">
-                    <div class="card-body text-center">
-                        <i class="bi bi-graph-up fs-1 text-danger me-1"></i>
-                        <h6 class="mt-3">Analisis Data</h6>
-                        <p class="text-muted">Analisis hasil dan perkembangan sekolah.</p>
+                    <div class="col-md-4">
+                        <a href="{{ route('kepsek.kelas.index') }}" class="text-decoration-none">
+                            <div class="card menu-card h-100">
+                                <div class="card-body text-center">
+                                    <div class="menu-icon">
+                                        <i class="bi bi-patch-check"></i>
+                                    </div>
+                                    <h6 class="mt-3 fw-semibold">
+                                        Persetujuan Rapor
+                                    </h6>
+                                    <small class="text-muted">
+                                        Melakukan persetujuan rapor siswa.
+                                    </small>
+                                </div>
+                            </div>
+                        </a>
                     </div>
+                    {{-- <div class="col-md-3">
+                        <a href="#" class="text-decoration-none">
+                            <div class="card menu-card h-100">
+                                <div class="card-body text-center">
+                                    <div class="menu-icon">
+                                        <i class="bi bi-bar-chart-line"></i>
+                                    </div>
+                                    <h6 class="mt-3 fw-semibold">
+                                        Laporan Akademik
+                                    </h6>
+                                    <small class="text-muted">
+                                        Melihat laporan perkembangan akademik.
+                                    </small>
+                                </div>
+                            </div>
+                        </a>
+                    </div> --}}
                 </div>
             </div>
         </div>
-
+        <div class="card info-card mt-4">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">
+                    <i class="bi bi-info-circle me-2 text-danger"></i>
+                    Informasi Sistem
+                </h5>
+                <p class="mb-2">
+                    <strong>Sistem Informasi Akademik</strong>
+                </p>
+                <p class="mb-2 text-muted">
+                    Dashboard Kepala Sekolah
+                </p>
+                <small class="text-muted">
+                    Dashboard Kepala Sekolah digunakan untuk memantau data guru, data kelas, proses persetujuan rapor, serta perkembangan akademik siswa secara terintegrasi melalui Sistem Informasi Akademik.
+                </small>
+            </div>
+        </div>
     </div>
+    @if (session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Login Berhasil',
+                    text: '{{ session('success') }}',
+                    timer: 5000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+            });
+        </script>
+    @endif
 @endsection

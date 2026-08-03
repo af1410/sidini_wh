@@ -4,7 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'SIDINI - Kepala Sekolah Dashboard')</title>
+    <title>SIDINI | @yield('title', '')</title>
+    <link rel="icon" type="image/png" href="{{ asset('img/logo.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
@@ -75,7 +76,11 @@
         }
 
         .user-dropdown .dropdown-menu {
-            min-width: 240px;
+            min-width: 230px;
+        }
+
+        .user-dropdown img {
+            border: 2px solid white;
         }
 
         .user-profile-link {
@@ -84,15 +89,11 @@
             gap: 0.5rem;
             text-decoration: none;
             color: rgba(255, 255, 255, 0.95) !important;
-            max-width: 250px;
+            max-width: 240px;
         }
 
         .user-profile-link:hover {
             color: #fff !important;
-        }
-
-        .user-profile-link img {
-            border: 2px solid white;
         }
 
         .user-profile-name {
@@ -307,7 +308,7 @@
             }
 
             .user-profile-name {
-                max-width: 120px;
+                max-width: 130px;
             }
         }
 
@@ -346,6 +347,67 @@
         @yield('content')
     </div>
 
+    @if (session('success'))
+        <div class="modal fade" id="successModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title">
+                            <i class="bi bi-check-circle-fill me-2"></i>Berhasil
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white"
+                            data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body text-center">
+                        <i class="bi bi-check-circle-fill text-success"
+                            style="font-size:70px"></i>
+
+                        <h5 class="mt-3">
+                            {{ session('success') }}
+                        </h5>
+                    </div>
+
+                    <div class="modal-footer justify-content-center">
+                        <button class="btn btn-success"
+                            data-bs-dismiss="modal">
+                            OK
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="modal fade" id="errorModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title">
+                            <i class="bi bi-exclamation-circle-fill me-2"></i>
+                            Gagal
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <i class="bi bi-x-circle-fill text-danger" style="font-size:70px"></i>
+                        <h5 class="mt-3">
+                            {{ session('error') }}
+                        </h5>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button class="btn btn-danger" data-bs-dismiss="modal">
+                            OK
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     @include('kepsek.layouts.footer')
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -360,6 +422,18 @@
             function isMobile() {
                 return window.innerWidth <= 992;
             }
+
+            const modalEl = document.getElementById('successModal');
+            if (modalEl) {
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            }
+            setTimeout(function() {
+                let alert = document.querySelector('.alert-success');
+                if (alert) {
+                    bootstrap.Alert.getOrCreateInstance(alert).close();
+                }
+            }, 2500);
 
             function updateToggleIcon() {
                 if (!sidebarToggleBtn) return;

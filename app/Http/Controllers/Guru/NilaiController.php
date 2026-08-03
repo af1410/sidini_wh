@@ -16,9 +16,14 @@ class NilaiController extends Controller
 {
     public function index()
     {
+        $guru = auth()->guard('guru')->user();
+
         $data = Penilaian::with(['mapel', 'kelas', 'guru'])
             ->withCount(['nilaiFormatif', 'nilaiSumatif', 'nilaiUjian'])
-            ->where('status_buka', '=', 'dibuka')
+            ->where('id_guru', $guru->id_guru) // jika guru hanya melihat mapelnya sendiri
+            ->where('status_buka', 'dibuka')
+            ->where('jenis_penilaian', 'sumatif')
+            ->whereIn('tipe_sumatif', ['psts', 'psas'])
             ->latest()
             ->get();
 

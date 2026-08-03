@@ -4,11 +4,9 @@
 
 @section('content')
     <div class="container-fluid">
-
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h4 class="fw-bold mb-1">Nilai Sumatif</h4>
-
                 <p class="text-muted mb-0">
                     {{ $penilaians->first()->mapel->nama_mapel }}
                     -
@@ -17,259 +15,228 @@
             </div>
 
             <div class="d-flex gap-2">
-
-                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalBobot">
-
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalBobot">
                     <i class="bi bi-gear me-1"></i>
                     Pengaturan Bobot
-
                 </button>
                 <a href="{{ route('guru.nilai_sumatif.export', [
                     'id_kelas' => $penilaians->first()->id_kelas,
                     'id_mapel' => $penilaians->first()->id_mapel,
                 ]) }}"
                     class="btn btn-success">
-
                     <i class="bi bi-file-earmark-excel me-1"></i>
                     Export Excel
-
                 </a>
-
-                <a href="{{ route('guru.mapel.show', $penilaians->first()->id_mapel) }}" class="btn btn-secondary">
-
+                <a href="{{ route('guru.mapel.show', $penilaians->first()->id_kelas) }}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left me-1"></i> Kembali
-
                 </a>
-
             </div>
         </div>
 
+        @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if (session('info'))
+            <div class="alert alert-info">
+                {{ session('info') }}
+            </div>
+        @endif
+
         <form action="{{ route('guru.nilai_sumatif.store') }}" method="POST">
-
             @csrf
-
             <input type="hidden" name="bobot_tugas" id="bobot_tugas" value="{{ $bobotTugas ?? 40 }}">
-
             <input type="hidden" name="bobot_tes_tulis" id="bobot_tes_tulis" value="{{ $bobotTesTulis ?? 50 }}">
-
             <input type="hidden" name="bobot_kehadiran" id="bobot_kehadiran" value="{{ $bobotKehadiran ?? 10 }}">
-
             <div class="card">
-
                 <div class="card-header d-flex justify-content-between align-items-center">
-
                     <h5 class="mb-0">
                         Penilaian Sumatif
                     </h5>
-
                     <button type="button" id="btnTambahTugas" class="btn btn-success btn-sm">
-
                         + Tugas
-
                     </button>
-
                     <button type="button" id="btnTambahBab" class="btn btn-primary btn-sm">
-
                         + Bab Baru
-
                     </button>
-
                 </div>
-
                 <div class="card-body p-0 table-responsive">
-
                     <table class="table table-bordered align-middle mb-0" id="tabelSumatif">
-
                         <thead>
-
                             <tr>
-
                                 <th rowspan="2">No</th>
                                 <th rowspan="2">Nama</th>
-
                                 @foreach ($babList as $bab)
                                     <th colspan="{{ count($tugasPerBab[$bab]) + 3 }}" data-header-bab="{{ $bab }}"
                                         data-jumlah-tugas="{{ count($tugasPerBab[$bab]) }}">
                                         Bab {{ $bab }}
                                     </th>
                                 @endforeach
-
                             </tr>
-
                             <tr>
-
                                 @foreach ($babList as $bab)
                                     @foreach ($tugasPerBab[$bab] as $tugas)
                                         <th data-bab="{{ $bab }}" class="kolom-tugas">
-
                                             T{{ $tugas }}
-
                                         </th>
                                     @endforeach
-
                                     <th data-bab="{{ $bab }}" data-type="tes">
                                         Tes Tulis
                                     </th>
-
                                     <th data-bab="{{ $bab }}" data-type="hadir">
                                         Kehadiran
                                     </th>
-
                                     <th data-bab="{{ $bab }}" data-type="nilai">
                                         Nilai Bab
                                     </th>
                                 @endforeach
-
                             </tr>
-
                         </thead>
-
                         <tbody>
-
                             @foreach ($siswa as $index => $item)
                                 <tr data-siswa="{{ $item->id_siswa }}">
-
                                     <td>{{ $index + 1 }}</td>
-
                                     <td>{{ $item->nama_siswa }}</td>
-
                                     @foreach ($penilaians as $penilaian)
                                         @php
                                             $bab = $penilaian->bab_ke;
                                             $isBabAktif = $bab == $babAktif;
                                             $lastTugas = max($tugasPerBab[$bab]);
                                         @endphp
-
                                         @foreach ($tugasPerBab[$bab] as $tugas)
                                             @php
-                                                $nilaiTugas =
-                                                    $nilaiPivot[$bab][$item->id_siswa]['tugas'][$tugas] ?? null;
+                                                $nilaiTugas = $nilaiPivot[$bab][$item->id_siswa]['tugas'][$tugas] ?? null;
                                             @endphp
                                             <td>
-
                                                 <input type="number" min="0" max="100"
                                                     class="form-control form-control-sm"
                                                     name="tugas[{{ $penilaian->id }}][{{ $item->id_siswa }}][{{ $tugas }}]"
                                                     value="{{ $nilaiTugas }}"
                                                     {{ $nilaiTugas !== null ? 'readonly' : '' }}>
-
                                             </td>
                                         @endforeach
-
                                         <td>
-
                                             <input type="number" min="0" max="100"
                                                 class="form-control form-control-sm"
                                                 name="tes_tulis[{{ $penilaian->id }}][{{ $item->id_siswa }}]"
                                                 value="{{ $nilaiPivot[$bab][$item->id_siswa]['tes_tulis'] ?? '' }}"
                                                 {{ !$isBabAktif ? 'readonly' : '' }}>
-
                                         </td>
-
                                         <td>
-
                                             <input type="number" min="0" max="100"
                                                 class="form-control form-control-sm"
                                                 name="kehadiran[{{ $penilaian->id }}][{{ $item->id_siswa }}]"
                                                 value="{{ $nilaiPivot[$bab][$item->id_siswa]['kehadiran'] ?? '' }}"
                                                 {{ !$isBabAktif ? 'readonly' : '' }}>
-
                                         </td>
-
                                         <td>
-
                                             <input type="text" readonly class="form-control form-control-sm bg-light"
                                                 value="{{ $nilaiPivot[$bab][$item->id_siswa]['nilai_bab'] ?? 0 }}">
-
                                         </td>
                                     @endforeach
-
                                 </tr>
                             @endforeach
-
                         </tbody>
-
                     </table>
-
                 </div>
-
                 <div class="card-footer text-end">
-
                     <button class="btn btn-primary">
-
                         <i class="bi bi-floppy-fill me-1"></i> Simpan
-
                     </button>
-
                 </div>
-
             </div>
-
         </form>
-
     </div>
 
     {{-- Modal Bobot --}}
     <div class="modal fade" id="modalBobot" tabindex="-1">
-
         <div class="modal-dialog">
-
             <div class="modal-content">
-
                 <div class="modal-header">
-
                     <h5 class="modal-title">
                         Pengaturan Bobot
                     </h5>
-
                     <button type="button" class="btn-close" data-bs-dismiss="modal">
                     </button>
-
                 </div>
-
                 <div class="modal-body">
-
                     <div class="mb-3">
                         <label>Bobot Tugas (%)</label>
-
                         <input type="number" class="form-control" id="modal_bobot_tugas" value="{{ $bobotTugas ?? 40 }}">
                     </div>
-
                     <div class="mb-3">
                         <label>Bobot Tes Tulis (%)</label>
-
-                        <input type="number" class="form-control" id="modal_bobot_tes"
-                            value="{{ $bobotTesTulis ?? 50 }}">
+                        <input type="number" class="form-control" id="modal_bobot_tes" value="{{ $bobotTesTulis ?? 50 }}">
                     </div>
-
                     <div class="mb-3">
                         <label>Bobot Kehadiran (%)</label>
+                        <input type="number" class="form-control" id="modal_bobot_hadir" value="{{ $bobotKehadiran ?? 10 }}">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="simpanBobot">
+                        Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                        <input type="number" class="form-control" id="modal_bobot_hadir"
-                            value="{{ $bobotKehadiran ?? 10 }}">
+    @if (session('success'))
+        <div class="modal fade" id="successModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title">
+                            <i class="bi bi-check-circle-fill me-2"></i>Berhasil
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white"
+                            data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body text-center">
+                        <i class="bi bi-check-circle-fill text-success"
+                            style="font-size:70px"></i>
+
+                        <h5 class="mt-3">
+                            {{ session('success') }}
+                        </h5>
+                    </div>
+
+                    <div class="modal-footer justify-content-center">
+                        <button class="btn btn-success"
+                            data-bs-dismiss="modal">
+                            OK
+                        </button>
                     </div>
 
                 </div>
-
-                <div class="modal-footer">
-
-                    <button type="button" class="btn btn-primary" id="simpanBobot">
-
-                        Simpan
-
-                    </button>
-
-                </div>
-
             </div>
-
         </div>
+    @endif
 
-    </div>
 
     @push('scripts')
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+
+                const modalEl = document.getElementById('successModal');
+
+                if (modalEl) {
+                    const modal = new bootstrap.Modal(modalEl);
+                    modal.show();
+                }
+                setTimeout(function() {
+                    let alert = document.querySelector('.alert-success');
+                    if (alert) {
+                        bootstrap.Alert.getOrCreateInstance(alert).close();
+                    }
+                }, 2500);
+
+
                 document.getElementById('simpanBobot')
                     .addEventListener('click', function() {
 

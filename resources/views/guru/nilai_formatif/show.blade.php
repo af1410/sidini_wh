@@ -3,6 +3,7 @@
 
 @section('content')
     <div class="container-fluid">
+
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h4 class="fw-bold mb-1">Nilai Formatif</h4>
@@ -11,18 +12,30 @@
                     {{ $penilaian->kelas->nama_kelas ?? '-' }}
                 </p>
             </div>
-            <a href="{{ route('guru.mapel.show', $penilaian->id_mapel) }}" class="btn btn-secondary">Kembali</a>
+            <a href="{{ route('guru.mapel.show', $penilaian->id_kelas) }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-1"></i> Kembali
+            </a>
         </div>
 
+
+        @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if (session('info'))
+            <div class="alert alert-info">
+                {{ session('info') }}
+            </div>
+        @endif
         <form action="{{ route('guru.nilai_formatif.store') }}" method="POST">
             @csrf
             <input type="hidden" name="id_penilaian" value="{{ $penilaian->id }}">
 
             @foreach ($babList ?: [1] as $bab)
                 @php
-                    $pertemuanList = isset($nilaiFormatif[$bab])
-                        ? $nilaiFormatif[$bab]->keys()->sort()->values()
-                        : collect([]);
+                    $pertemuanList = isset($nilaiFormatif[$bab]) ? $nilaiFormatif[$bab]->keys()->sort()->values() : collect([]);
                     $isBabAktif = $bab == $babAktif;
                 @endphp
 
@@ -118,9 +131,57 @@
             </div>
         </form>
     </div>
+
+    @if (session('success'))
+        <div class="modal fade" id="successModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title">
+                            <i class="bi bi-check-circle-fill me-2"></i>Berhasil
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white"
+                            data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body text-center">
+                        <i class="bi bi-check-circle-fill text-success"
+                            style="font-size:70px"></i>
+
+                        <h5 class="mt-3">
+                            {{ session('success') }}
+                        </h5>
+                    </div>
+
+                    <div class="modal-footer justify-content-center">
+                        <button class="btn btn-success"
+                            data-bs-dismiss="modal">
+                            OK
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    @endif
+
     @push('scripts')
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+
+                const modalEl = document.getElementById('successModal');
+
+                if (modalEl) {
+                    const modal = new bootstrap.Modal(modalEl);
+                    modal.show();
+                }
+                setTimeout(function() {
+                    let alert = document.querySelector('.alert-success');
+                    if (alert) {
+                        bootstrap.Alert.getOrCreateInstance(alert).close();
+                    }
+                }, 2500);
 
                 let babTerakhir = {{ max($babList) }};
 

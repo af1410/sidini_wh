@@ -5,6 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login | SIDINI</title>
+    <link rel="icon" type="image/png" href="{{ asset('img/logo.png') }}">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root {
@@ -255,6 +257,42 @@
                 </form>
             </div>
         </div>
+
+        @if (session('error'))
+            <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow-lg rounded-4">
+                        <div class="modal-header border-0 pb-0">
+                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body text-center px-4">
+                            <div class="mx-auto d-flex align-items-center justify-content-center rounded-circle mb-4" style="width:90px;height:90px;background:linear-gradient(140deg,#29ab87,#1e7f5f);">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="46" height="46" fill="white" class="bi bi-exclamation-lg" viewBox="0 0 16 16">
+                                    <path d="M7.005 2.1a1 1 0 1 1 1.99 0l-.35 7a.645.645 0 0 1-1.29 0l-.35-7ZM8 12a1.25 1.25 0 1 0 0 2.5A1.25 1.25 0 0 0 8 12Z" />
+                                </svg>
+                            </div>
+                            <h4 class="fw-bold mb-3">Login Gagal</h4>
+                            <p class="text-muted mb-0">{{ session('error') }}</p>
+                        </div>
+                        <div class="modal-footer border-0 justify-content-center pt-0 pb-4">
+                            <button type="button" class="btn btn-login px-5" data-bs-dismiss="modal">
+                                Tutup
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+        @if (session('error'))
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const modal = new bootstrap.Modal(document.getElementById('errorModal'));
+                    modal.show();
+                });
+            </script>
+        @endif
 </body>
 
 </html>
