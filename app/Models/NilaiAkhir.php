@@ -19,6 +19,7 @@ class NilaiAkhir extends Model
         'bobot_psas',
 
         'rata_bab',
+        'rata_bab_formatif',
         'nilai_psts',
         'nilai_psas',
 

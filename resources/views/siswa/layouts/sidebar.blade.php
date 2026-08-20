@@ -18,12 +18,12 @@
                 <i class="bi bi-file-earmark"></i> <span>Detail Nilai</span>
             </a>
         </li>
-        {{-- <li class="nav-item">
+        <li class="nav-item">
             <a class="nav-link {{ request()->is('siswa/presensi*') ? 'active' : '' }}"
                 href="{{ route('siswa.presensi.index') }}">
                 <i class="bi bi-check-circle"></i> <span>Presensi</span>
             </a>
-        </li> --}}
+        </li>
         <li class="nav-item">
             <a class="nav-link {{ request()->is('siswa/raporsaya*') ? 'active' : '' }}"
                 href="{{ route('siswa.raporsaya.index') }}">

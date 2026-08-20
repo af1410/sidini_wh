@@ -237,7 +237,7 @@
                 <tr>
                     <td class="center">{{ $no++ }}</td>
                     <td>{{ $mapel->nama_mapel }}</td>
-                    <td class="center">{{ $mapel->nilai_akhir }}</td>
+                    <td class="center">{{ round($mapel->nilai_akhir) }}</td>
                     <td>{{ $mapel->deskripsi ?? '-' }}</td>
                 </tr>
             @endforeach
@@ -257,7 +257,7 @@
                 <tr>
                     <td class="center">{{ $no++ }}</td>
                     <td>{{ $mapel->nama_mapel }}</td>
-                    <td class="center">{{ $mapel->nilai_akhir }}</td>
+                    <td class="center">{{ round($mapel->nilai_akhir) }}</td>
                     <td>{{ $mapel->deskripsi ?? '-' }}</td>
                 </tr>
             @endforeach
@@ -268,7 +268,7 @@
                     <b>Jumlah</b>
                 </td>
                 <td class="center">
-                    <b>{{ $totalNilai ?? 0 }}</b>
+                    <b>{{ round($totalNilai) ?? 0 }}</b>
                 </td>
                 <td></td>
             </tr>

@@ -17,9 +17,7 @@ class NilaiController extends Controller
     public function index(Request $request)
     {
         $semester = $request->semester ?? (now()->month < 7 ? 'genap' : 'ganjil');
-
         $siswa = Auth::guard('siswa')->user();
-
         $riwayatKelas = SiswaKelas::with([
             'kelas',
             'tahunAjar'
@@ -27,47 +25,50 @@ class NilaiController extends Controller
             ->where('id_siswa', $siswa->id_siswa)
             ->orderByDesc('created_at')
             ->get();
-
         $nilaiPerKelas = [];
-
         foreach ($riwayatKelas as $riwayat) {
-
             $kelas = $riwayat->kelas;
-
             if (!$kelas) {
                 continue;
             }
-
             $mapels = KelasMapel::with('mapel')
                 ->where('id_kelas', $kelas->id_kelas)
                 ->get();
-
             $dataMapel = [];
-
             foreach ($mapels as $km) {
-
                 $mapel = $km->mapel;
-
+                if (!$mapel) {
+                    continue;
+                }
                 $nilaiAkhir = NilaiAkhir::where([
                     'id_siswa' => $siswa->id_siswa,
                     'id_kelas' => $kelas->id_kelas,
                     'id_mapel' => $mapel->id_mapel,
                     'semester' => $semester,
                 ])->first();
-
                 $babPenilaian = Penilaian::where([
-                    'id_kelas'        => $kelas->id_kelas,
-                    'id_mapel'        => $mapel->id_mapel,
-                    'id_tahun_ajar'   => $riwayat->id_tahun_ajar,
-                    'semester'        => $semester,
+                    'id_kelas' => $kelas->id_kelas,
+                    'id_mapel' => $mapel->id_mapel,
+                    'id_tahun_ajar' => $riwayat->id_tahun_ajar,
+                    'semester' => $semester,
                     'jenis_penilaian' => 'sumatif',
                 ])
                     ->whereNull('tipe_sumatif')
                     ->orderBy('bab_ke')
                     ->get();
-
-
-
+                $detailBab = [];
+                foreach ($babPenilaian as $bab) {
+                    $detailBab[$bab->bab_ke] = NilaiSumatif::where([
+                        'id_penilaian' => $bab->id,
+                        'id_siswa' => $siswa->id_siswa,
+                    ])->value('nilai_bab');
+                }
+                $nilaiBab = array_filter($detailBab, function ($nilai) {
+                    return $nilai !== null;
+                });
+                $rataBab = count($nilaiBab)
+                    ? round(array_sum($nilaiBab) / count($nilaiBab), 2)
+                    : null;
                 $psts = SumatifUjian::where('id_penilaian', function ($q) use ($kelas, $mapel, $riwayat, $semester) {
                     $q->select('id')
                         ->from('penilaian')
@@ -81,7 +82,6 @@ class NilaiController extends Controller
                 })
                     ->where('id_siswa', $siswa->id_siswa)
                     ->value('nilai_ujian');
-
                 $psas = SumatifUjian::where('id_penilaian', function ($q) use ($kelas, $mapel, $riwayat, $semester) {
                     $q->select('id')
                         ->from('penilaian')
@@ -95,46 +95,25 @@ class NilaiController extends Controller
                 })
                     ->where('id_siswa', $siswa->id_siswa)
                     ->value('nilai_ujian');
-
-
-                $detailBab = [];
-
-                foreach ($babPenilaian as $bab) {
-
-                    $detailBab[$bab->bab_ke] = NilaiSumatif::where([
-                        'id_penilaian' => $bab->id,
-                        'id_siswa'     => $siswa->id_siswa,
-                    ])->value('nilai_bab');
-                }
-
-                $nilaiBab = array_filter($detailBab, function ($nilai) {
-                    return $nilai !== null;
-                });
-
-                $rataBab = count($nilaiBab)
-                    ? round(array_sum($nilaiBab) / count($nilaiBab), 2)
-                    : 0;
-
                 $dataMapel[] = [
-                    'mapel'       => $mapel,
-                    'detail_bab'  => $detailBab,
-                    'rata_bab'    =>  $nilaiAkhir?->rata_bab ?: $rataBab,
-                    'psts'        => $psts,
-                    'psas'        => $psas,
+                    'mapel' => $mapel,
+                    'semester' => $semester,
+                    'detail_bab' => $detailBab,
+                    'rata_bab' => $nilaiAkhir?->rata_bab ?? $rataBab,
+                    'rata_bab_formatif' => $nilaiAkhir?->rata_bab_formatif,
+                    'nilai_psts' => $nilaiAkhir?->nilai_psts ?? $psts,
+                    'nilai_psas' => $nilaiAkhir?->nilai_psas ?? $psas,
                     'nilai_akhir' => $nilaiAkhir?->nilai_akhir,
                 ];
             }
-
             $namaTab = $kelas->nama_kelas .
                 ' (' .
                 optional($riwayat->tahunAjar)->tahun_mulai .
                 '/' .
                 optional($riwayat->tahunAjar)->tahun_selesai .
                 ')';
-
             $nilaiPerKelas[$namaTab] = $dataMapel;
         }
-
         $semuaBab = Penilaian::where([
             'jenis_penilaian' => 'sumatif',
             'semester' => $semester,
@@ -144,15 +123,11 @@ class NilaiController extends Controller
             ->unique()
             ->sort()
             ->values();
-
-        return view(
-            'siswa.nilai.index',
-            compact(
-                'siswa',
-                'nilaiPerKelas',
-                'semuaBab',
-                'semester'
-            )
-        );
+        return view('siswa.nilai.index', compact(
+            'siswa',
+            'nilaiPerKelas',
+            'semuaBab',
+            'semester'
+        ));
     }
 }

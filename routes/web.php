@@ -70,8 +70,8 @@ Route::middleware('is_guru')->group(function () {
     // Route::post('guru/nilai/formatif', [NilaiController::class, 'storeFormatif'])->name('guru.nilai.formatif.store');
     // Route::get('guru/nilai/sumatif/{idPembukaan}', [NilaiController::class, 'createSumatif'])->name('guru.nilai.sumatif.create');
     // Route::post('guru/nilai/sumatif', [NilaiController::class, 'storeSumatif'])->name('guru.nilai.sumatif.store');
-    // Route::get('/guru/presensi', [GuruPresensiController::class, 'index'])->name('guru.presensi.index');
-    // Route::post('/guru/presensi/status/{id_siswa}', [GuruPresensiController::class, 'markStatus'])->name('guru.presensi.status');
+    Route::get('/guru/presensi', [GuruPresensiController::class, 'index'])->name('guru.presensi.index');
+    Route::post('/guru/presensi/status/{id_siswa}', [GuruPresensiController::class, 'markStatus'])->name('guru.presensi.status');
 
     //kelas_saya
     Route::get('guru/kelas_saya', [KelasSayaController::class, 'index'])

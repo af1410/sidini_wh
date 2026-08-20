@@ -21,10 +21,8 @@
             <tr>
                 <th>No</th>
                 <th>Mata Pelajaran</th>
-                @foreach ($semuaBab as $bab)
-                    <th>Bab {{ $bab }}</th>
-                @endforeach
-                <th>Rata-rata Bab</th>
+                <th>Sumatif</th>
+                <th>Formatif</th>
                 <th>PSTS</th>
                 <th>PSAS</th>
                 <th>Nilai Akhir</th>
@@ -35,11 +33,7 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $item['mapel']->nama_mapel }}</td>
-                    @foreach ($semuaBab as $bab)
-                        <td class="text-center">
-                            {{ number_format($item['detail_bab'][$bab] ?? 0, 2) }}
-                        </td>
-                    @endforeach
+                    <td>{{ number_format($item['rata_bab_formatif'], 2) }}</td>
                     <td>{{ number_format($item['rata_bab'], 2) }}</td>
                     <td>{{ number_format($item['psts'], 2) }}</td>
                     <td>{{ number_format($item['psas'], 2) }}</td>

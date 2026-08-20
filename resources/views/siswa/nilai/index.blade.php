@@ -71,12 +71,8 @@
                                             <tr>
                                                 <th>No</th>
                                                 <th>Mata Pelajaran</th>
-
-                                                @foreach ($semuaBab as $bab)
-                                                    <th>Bab {{ $bab }}</th>
-                                                @endforeach
-
-                                                <th>Rata-rata Bab</th>
+                                                <th>Sumatif</th>
+                                                <th>Formatif</th>
                                                 <th>PSTS</th>
                                                 <th>PSAS</th>
                                                 <th>Nilai Akhir</th>
@@ -85,53 +81,58 @@
                                         </thead>
 
                                         <tbody>
-
                                             @forelse($items as $item)
                                                 <tr>
-
                                                     <td>
                                                         {{ $loop->iteration }}
                                                     </td>
-
                                                     <td>
                                                         {{ $item['mapel']->nama_mapel }}
                                                     </td>
-
-                                                    @foreach ($semuaBab as $bab)
-                                                        <td class="text-center">
-                                                            {{ number_format($item['detail_bab'][$bab] ?? 0, 2) }}
-                                                        </td>
-                                                    @endforeach
-
                                                     <td>
-                                                        {{ number_format($item['rata_bab'], 2) }}
+                                                        @if ($item['rata_bab'] !== null && $item['rata_bab'] != 0)
+                                                            {{ number_format($item['rata_bab'], 2) }}
+                                                        @else
+                                                            -
+                                                        @endif
                                                     </td>
-
                                                     <td>
-                                                        {{ number_format($item['psts'], 2) }}
+                                                        @if ($item['rata_bab_formatif'] !== null && $item['rata_bab_formatif'] != 0)
+                                                            {{ number_format($item['rata_bab_formatif'], 2) }}
+                                                        @else
+                                                            -
+                                                        @endif
                                                     </td>
-
                                                     <td>
-                                                        {{ number_format($item['psas'], 2) }}
+                                                        @if ($item['nilai_psts'] !== null && $item['nilai_psts'] != 0)
+                                                            {{ number_format($item['nilai_psts'], 2) }}
+                                                        @else
+                                                            -
+                                                        @endif
                                                     </td>
-
+                                                    <td>
+                                                        @if ($item['nilai_psas'] !== null && $item['nilai_psas'] != 0)
+                                                            {{ number_format($item['nilai_psas'], 2) }}
+                                                        @else
+                                                            -
+                                                        @endif
+                                                    </td>
                                                     <td class="fw-bold">
-                                                        {{ number_format($item['nilai_akhir'], 2) }}
+                                                        @if ($item['nilai_akhir'] !== null && $item['nilai_akhir'] != 0)
+                                                            {{ round($item['nilai_akhir']) }}
+                                                        @else
+                                                            -
+                                                        @endif
                                                     </td>
-
                                                 </tr>
-
                                             @empty
-
                                                 <tr>
-                                                    <td colspan="{{ count($semuaBab) + 6 }}" class="text-center">
+                                                    <td colspan="7" class="text-center">
                                                         Tidak ada data nilai.
                                                     </td>
                                                 </tr>
                                             @endforelse
-
                                         </tbody>
-
                                     </table>
 
                                 </div>

@@ -14,6 +14,7 @@ class NilaiFormatif extends Model
         'bab_ke',
         'pertemuan_ke',
         'tanggal_input',
+        'nilai_bab',
         'nilai_formatif',
         'status_data',
     ];

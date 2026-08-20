@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Rapor {{ $siswa->nama_siswa }}</title>
-    <link rel="icon" type="image/png" href="{{ asset('img/logo.png') }}">
 
 
     <style>
@@ -153,7 +152,7 @@
     <table class="header-table">
         <tr>
             <td width="15%">
-                <img src="{{ asset('img/kemenag.png') }}" class="logo">
+                <img src="{{ public_path('img/kemenag.png') }}" class="logo">
             </td>
 
             <td width="70%" class="school">
@@ -183,28 +182,25 @@
             <td>NIS/NISN</td>
             <td>: {{ $siswa->nim ?? '-' }}/{{ $siswa->nisn ?? '-' }}</td>
 
-            <td>Semester</td>
-            <td>: {{ $semester ?? 'Ganjil' }}</td>
-            {{-- <td>Fase</td>
-            <td>: {{ $kelas->fase ?? '-' }}</td> --}}
+
+            <td>Fase</td>
+            <td>: F</td>
         </tr>
 
         <tr>
             <td>Madrasah</td>
             <td>: MAS WASILATUL HUDA</td>
 
-            <td>Tahun Ajaran</td>
-            <td>: {{ $kelas->tahun_ajar }}</td>
-            {{-- <td>Semester</td>
-            <td>: {{ $semester ?? 'Ganjil' }}</td> --}}
+            <td>Semester</td>
+            <td>: {{ $semester ?? 'Ganjil' }}</td>
         </tr>
 
         <tr>
             <td>Alamat</td>
             <td>: {{ $siswa->alamat }}</td>
 
-            {{-- <td>Tahun Ajaran</td>
-            <td>: {{ $kelas->tahun_ajar }}</td> --}}
+            <td>Tahun Ajaran</td>
+            <td>: {{ $kelas->tahunAjar->tahun_ajar }}</td>
         </tr>
     </table>
 
@@ -241,7 +237,7 @@
                 <tr>
                     <td class="center">{{ $no++ }}</td>
                     <td>{{ $mapel->nama_mapel }}</td>
-                    <td class="center">{{ $mapel->nilai_akhir }}</td>
+                    <td class="center">{{ round($mapel->nilai_akhir) }}</td>
                     <td>{{ $mapel->deskripsi ?? '-' }}</td>
                 </tr>
             @endforeach
@@ -261,37 +257,18 @@
                 <tr>
                     <td class="center">{{ $no++ }}</td>
                     <td>{{ $mapel->nama_mapel }}</td>
-                    <td class="center">{{ $mapel->nilai_akhir }}</td>
+                    <td class="center">{{ round($mapel->nilai_akhir) }}</td>
                     <td>{{ $mapel->deskripsi ?? '-' }}</td>
                 </tr>
             @endforeach
 
-            {{-- VOKASI --}}
-            <tr class="group-row">
-                <td colspan="4">
-                    Kelompok Mata Pelajaran Vokasi/Keterampilan
-                </td>
-            </tr>
-
-            @php
-                $no = 1;
-            @endphp
-
-            @foreach ($mapelVokasi as $mapel)
-                <tr>
-                    <td class="center">{{ $no++ }}</td>
-                    <td>{{ $mapel->nama_mapel }}</td>
-                    <td class="center">{{ $mapel->nilai_akhir }}</td>
-                    <td>{{ $mapel->deskripsi ?? '-' }}</td>
-                </tr>
-            @endforeach
 
             <tr>
                 <td colspan="2" class="right">
                     <b>Jumlah</b>
                 </td>
                 <td class="center">
-                    <b>{{ $totalNilai ?? 0 }}</b>
+                    <b>{{ round($totalNilai) ?? 0 }}</b>
                 </td>
                 <td></td>
             </tr>
@@ -307,8 +284,12 @@
         Kokurikuler
     </div>
 
-    <div class="box">
-        {{ $kokurikuler ?? '-' }}
+    <div class="box" style="text-align: justify; line-height: 1.5;">
+        Siswa sangat baik dalam menunjukkan kecintaan kepada Allah SWT dan Rasulullah SAW melalui akhlak terpuji,
+        keteladanan sikap, dan pengamalan ajaran Islam dalam kehidupan sehari-hari. Sangat baik dalam menunjukkan sikap
+        iman dan takwa yang baik melalui kedisiplinan pribadi, adab keseharian, serta pengamalan nilai-nilai keislaman
+        dalam setiap kegiatan. Dan sangat baik dalam mampu memahami permasalahan kegiatan dengan baik serta menyampaikan
+        pendapat dan solusi secara logis, santun, dan bertanggung jawab.
     </div>
 
     {{-- EKSTRAKURIKULER --}}
@@ -327,10 +308,10 @@
         </thead>
 
         <tbody>
-            @forelse($ekstrakurikuler as $i => $item)
+            @forelse(optional($perlengkapanRapor)->ekskul ?? [] as $i => $item)
                 <tr>
                     <td class="center">{{ $i + 1 }}</td>
-                    <td>{{ $item->nama }}</td>
+                    <td>{{ $item->nama_ekskul }}</td>
                     <td class="center">{{ $item->nilai }}</td>
                     <td>{{ $item->keterangan }}</td>
                 </tr>
@@ -359,10 +340,10 @@
         </thead>
 
         <tbody>
-            @forelse($prestasi as $i => $item)
+            @forelse(optional($perlengkapanRapor)->prestasi ?? [] as $i => $item)
                 <tr>
                     <td class="center">{{ $i + 1 }}</td>
-                    <td>{{ $item->nama_prestasi }}</td>
+                    <td>{{ $item->prestasi }}</td>
                     <td>{{ $item->keterangan }}</td>
                 </tr>
             @empty
@@ -393,15 +374,15 @@
     <table class="nilai-table">
         <tr>
             <td width="50%">Sakit</td>
-            <td>{{ $sakit ?? 0 }} Hari</td>
+            <td>{{ $perlengkapanRapor->sakit ?? 0 }} Hari</td>
         </tr>
         <tr>
             <td>Izin</td>
-            <td>{{ $izin ?? 0 }} Hari</td>
+            <td>{{ $perlengkapanRapor->izin ?? 0 }} Hari</td>
         </tr>
         <tr>
             <td>Alpa</td>
-            <td>{{ $alpa ?? 0 }} Hari</td>
+            <td>{{ $perlengkapanRapor->alpa ?? 0 }} Hari</td>
         </tr>
     </table>
 
@@ -411,7 +392,7 @@
     </div>
 
     <div class="box" style="height:80px;">
-        {{ $catatan_wali ?? '-' }}
+        {{ $perlengkapanRapor->catatan_wali_kelas ?? '-' }}
     </div>
 
     {{-- TANGGAPAN ORTU --}}
@@ -424,6 +405,7 @@
     {{-- TTD --}}
     <div class="signature-wrapper clearfix">
 
+        {{-- Orang Tua --}}
         <div class="signature-left">
             Orang Tua/Wali
 
@@ -432,17 +414,28 @@
             ______________________
         </div>
 
+        {{-- Wali Kelas --}}
         <div class="signature-right">
             Kabupaten Bandung,
             {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}
             <br>
             Wali Kelas
 
-            <div class="sign-space"></div>
+            <div class="sign-space" style="position:relative;">
 
-            <b>
-                {{ optional($kelas->waliKelas)->nama_guru }}
-            </b>
+                @if (!empty($waliKelas?->ttd))
+                    <img src="{{ public_path('storage/' . $waliKelas->ttd) }}"
+                        style="position:absolute;
+                       width:80px;
+                       left:48%;
+                       transform:translateX(-50%);
+                       top:5px;">
+                @else
+                    <div style="height:70px"></div>
+                @endif
+            </div>
+            <b>{{ $waliKelas?->nama_guru }}</b><br>
+            NIP. {{ $waliKelas?->nip ?? '-' }}
         </div>
 
     </div>
@@ -450,17 +443,44 @@
     <div class="clearfix"></div>
 
     <br><br>
-
     <div style="text-align:center">
         Mengetahui,
         <br>
         Kepala Madrasah
 
-        <div class="sign-space"></div>
+        <div class="sign-space" style="position:relative;">
 
-        <b>{{ $kepalaMadrasah ?? 'KEPALA MADRASAH' }}</b>
+            @if (optional($perlengkapanRapor)->status_acc == 'disetujui')
+                <img src="{{ public_path('img/cap_sekolah.png') }}"
+                    style="position:absolute;
+                       opacity: 75%;
+                       width:250px;
+                       left:42%;
+                       transform:translateX(-50%);
+                       top:-25px;">
+
+                <img src="{{ public_path('img/ttd_kepsek.png') }}"
+                    style="position:absolute;
+                       width:120px;
+                       left:48%;
+                       transform:translateX(-50%);
+                       top:5px;">
+            @endif
+
+        </div>
+
+        @if (optional($perlengkapanRapor)->status_acc == 'disetujui')
+
+            <b>{{ optional($perlengkapanRapor->approver)->nama_guru }}</b>
+
+            @if (optional($perlengkapanRapor->approver)->nip)
+                <br>
+                NIP. {{ $perlengkapanRapor->approver->nip }}
+            @endif
+
+        @endif
+
     </div>
-
 </body>
 
 </html>

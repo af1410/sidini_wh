@@ -95,11 +95,11 @@
                                     <td class="text-center">
                                         @if (optional($rapor)->status_acc == 'disetujui')
                                             <span class="badge bg-success">
-                                                Disetujui
+                                                Sudah di Tanda Tangan
                                             </span>
                                         @elseif (optional($rapor)->status_acc == 'menunggu')
                                             <span class="badge bg-warning">
-                                                Menunggu Disetujui
+                                                Menunggu di Tanda Tangan
                                             </span>
                                         @elseif (optional($rapor)->status_acc == 'ditolak')
                                             <span class="badge bg-danger">

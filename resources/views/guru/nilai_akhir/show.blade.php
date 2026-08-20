@@ -10,11 +10,6 @@
             <h4 class="mb-0">Nilai Akhir</h4>
 
             <div class="d-flex gap-2">
-                <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalBobot">
-                    <i class="bi bi-gear me-1"></i>
-                    Pengaturan Bobot
-                </button>
-
                 <a id="btnExport"
                     href="{{ route('guru.nilai_akhir.export', [
                         'id_kelas' => $kelas->id_kelas,
@@ -51,10 +46,8 @@
                                     <th>No</th>
                                     <th>NIM</th>
                                     <th>Nama</th>
-                                    @foreach ($daftarBab as $bab)
-                                        <th>Bab {{ $bab }}</th>
-                                    @endforeach
-                                    <th>Rata-rata BAB</th>
+                                    <th>Nilai Sumatif</th>
+                                    <th>Nilai Formatif</th>
                                     <th>PSTS</th>
                                     <th>PSAS</th>
                                     <th>Nilai Akhir</th>
@@ -63,42 +56,32 @@
                             </thead>
 
                             <tbody>
-
                                 @foreach ($nilaiSiswa as $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $item['siswa']->nim }}</td>
                                         <td>{{ $item['siswa']->nama_siswa }}</td>
-                                        @foreach ($daftarBab as $bab)
-                                            <td>
-                                                {{ $item['detail_bab'][$bab] ?? '-' }}
-                                            </td>
-                                        @endforeach
-                                        <td class="rata-bab">
-                                            {{ $item['rata_bab'] ? rtrim(rtrim((string) $item['rata_bab'], '0'), '.') : '0' }}
+                                        <td class="nilai-sumatif">
+                                            {{ $item['rata_bab'] !== null ? rtrim(rtrim(number_format((float) $item['rata_bab'], 2, '.', ''), '0'), '.') : '0' }}
                                         </td>
-
+                                        <td class="nilai-formatif">
+                                            {{ $item['rata_bab_formatif'] !== null ? rtrim(rtrim(number_format((float) $item['rata_bab_formatif'], 2, '.', ''), '0'), '.') : '0' }}
+                                        </td>
                                         <td class="psts">
-                                            {{ $item['psts'] ? rtrim(rtrim((string) $item['psts'], '0'), '.') : '0' }}
+                                            {{ $item['psts'] !== null ? rtrim(rtrim(number_format((float) $item['psts'], 2, '.', ''), '0'), '.') : '0' }}
                                         </td>
-
                                         <td class="psas">
-                                            {{ $item['psas'] ? rtrim(rtrim((string) $item['psas'], '0'), '.') : '0' }}
+                                            {{ $item['psas'] !== null ? rtrim(rtrim(number_format((float) $item['psas'], 2, '.', ''), '0'), '.') : '0' }}
                                         </td>
-
                                         <td class="nilai-akhir fw-bold">
-                                            {{ $item['nilai_akhir'] ? rtrim(rtrim((string) $item['nilai_akhir'], '0'), '.') : '0' }}
+                                            {{ $item['nilai_akhir'] !== null ? round($item['nilai_akhir']) : '0' }}
                                         </td>
-
                                         <td style="height: 70px">
-                                            <textarea class="form-control" name="keterangan[{{ $item['siswa']->id_siswa }}]" rows="1"
-                                                placeholder="{{ $item['default_keterangan'] }}" style="height: 90px">{{ $item['keterangan'] ?? '' }}</textarea>
+                                            <textarea class="form-control" name="keterangan[{{ $item['siswa']->id_siswa }}]" rows="1" placeholder="{{ $item['default_keterangan'] }}" style="height: 90px">{{ $item['keterangan'] ?? '' }}</textarea>
                                         </td>
                                     </tr>
                                 @endforeach
-
                             </tbody>
-
                         </table>
                     </div>
                     <div class=" text-end">
@@ -114,58 +97,7 @@
 
     </div>
 
-    <div class="modal fade" id="modalBobot" tabindex="-1">
 
-        <div class="modal-dialog">
-
-            <div class="modal-content">
-
-                <div class="modal-header">
-
-                    <h5 class="modal-title">
-                        Pengaturan Bobot
-                    </h5>
-
-                    <button type="button" class="btn-close" data-bs-dismiss="modal">
-                    </button>
-
-                </div>
-
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label>Bobot Rata-rata BAB (%)</label>
-                        <input type="number" class="form-control" id="bobotBab"
-                            value="{{ number_format($bobotBab, 0, ',', '.') }}">
-                    </div>
-
-                    <div class="mb-3">
-                        <label>Bobot PSTS (%)</label>
-                        <input type="number" class="form-control" id="bobotPsts"
-                            value="{{ number_format($bobotPsts, 0, ',', '.') }}">
-                    </div>
-
-                    <div class="mb-3">
-                        <label>Bobot PSAS (%)</label>
-                        <input type="number" class="form-control" id="bobotPsas"
-                            value="{{ number_format($bobotPsas, 0, ',', '.') }}">
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-
-                    <button type="button" class="btn btn-primary" id="simpanBobot">
-
-                        <i class="bi bi-floppy-fill me-1"></i> Simpan
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
 
     <script>
         function generateKeterangan(nilai) {
@@ -183,52 +115,26 @@
         }
 
         function hitungNilaiAkhir() {
-
-            const bobotBab =
-                parseFloat(document.getElementById('bobotBab').value) || 0;
-
-            const bobotPsts =
-                parseFloat(document.getElementById('bobotPsts').value) || 0;
-
-            const bobotPsas =
-                parseFloat(document.getElementById('bobotPsas').value) || 0;
-
-            const total =
-                bobotBab +
-                bobotPsts +
-                bobotPsas;
-
+            const bobotBab = parseFloat(document.getElementById('bobotBab').value) || 0;
+            const bobotPsts = parseFloat(document.getElementById('bobotPsts').value) || 0;
+            const bobotPsas = parseFloat(document.getElementById('bobotPsas').value) || 0;
+            const total = bobotBab + bobotPsts + bobotPsas;
             if (total !== 100) {
                 alert('Total bobot harus 100%');
                 return false;
             }
-
             document.querySelectorAll('tbody tr').forEach(row => {
-
-                const bab =
-                    parseFloat(row.querySelector('.rata-bab').textContent) || 0;
-
-                const psts =
-                    parseFloat(row.querySelector('.psts').textContent) || 0;
-
-                const psas =
-                    parseFloat(row.querySelector('.psas').textContent) || 0;
-
-                const akhir =
-                    (bab * bobotBab / 100) +
-                    (psts * bobotPsts / 100) +
-                    (psas * bobotPsas / 100);
-
+                const sumatif = parseFloat(row.querySelector('.nilai-sumatif').textContent) || 0;
+                const psts = parseFloat(row.querySelector('.psts').textContent) || 0;
+                const psas = parseFloat(row.querySelector('.psas').textContent) || 0;
+                const akhir = (sumatif * bobotBab / 100) + (psts * bobotPsts / 100) + (psas * bobotPsas / 100);
                 const nilaiCell = row.querySelector('.nilai-akhir');
                 nilaiCell.textContent = akhir.toFixed(2);
-
-                // Update placeholder keterangan berdasarkan nilai baru
                 const textarea = row.querySelector('textarea[name^="keterangan"]');
                 if (textarea) {
                     textarea.placeholder = generateKeterangan(akhir);
                 }
             });
-
             return true;
         }
 

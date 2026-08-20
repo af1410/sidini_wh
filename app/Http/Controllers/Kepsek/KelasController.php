@@ -107,8 +107,6 @@ class KelasController extends Controller
                 ->orderBy('bab_ke')
                 ->get();
 
-            $detailBab = [];
-
             foreach ($babPenilaian as $bab) {
 
                 $detailBab[$bab->bab_ke] = NilaiSumatif::where([
@@ -155,7 +153,7 @@ class KelasController extends Controller
 
             $dataMapel[] = [
                 'mapel'       => $mapel,
-                'detail_bab'  => $detailBab,
+                'rata_bab_formatif'  => $nilaiAkhir?->rata_bab_formatif,
                 'rata_bab'    => $nilaiAkhir?->rata_bab,
                 'psts'        => $psts,
                 'psas'        => $psas,

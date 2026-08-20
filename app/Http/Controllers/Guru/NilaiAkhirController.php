@@ -10,6 +10,7 @@ use App\Models\SumatifUjian;
 use App\Models\Mapel;
 use App\Models\Kelas;
 use App\Models\NilaiAkhir;
+use App\Models\NilaiFormatif;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
@@ -73,6 +74,18 @@ class NilaiAkhirController extends Controller
             ->toArray()
             : [];
 
+        $formatifPenilaian = Penilaian::where([
+            'id_kelas' => $id_kelas,
+            'id_mapel' => $id_mapel,
+            'id_guru' => $guru->id_guru,
+            'jenis_penilaian' => 'formatif',
+            'semester' => $semester,
+        ])->first();
+
+        $nilaiFormatif = $formatifPenilaian
+            ? NilaiFormatif::where('id_penilaian', $formatifPenilaian->id)->get()
+            : collect();
+
         $existingNilaiAkhir = NilaiAkhir::where([
             'id_kelas' => $id_kelas,
             'id_mapel' => $id_mapel,
@@ -81,76 +94,50 @@ class NilaiAkhirController extends Controller
             ->get()
             ->keyBy('id_siswa');
 
-        // Default bobot
-        $savedBobot = $existingNilaiAkhir->first();
-        $bobotBab = $savedBobot?->bobot_bab ?? 40;
-        $bobotPsts = $savedBobot?->bobot_psts ?? 30;
-        $bobotPsas = $savedBobot?->bobot_psas ?? 30;
 
         $nilaiSiswa = [];
 
         foreach ($siswas as $siswa) {
-
             $nilaiBab = [];
-            $detailBab = [];
-
             foreach ($babPenilaian as $penilaian) {
-
-                $nilai = $penilaian->nilaiSumatif
-                    ->where('id_siswa', $siswa->id_siswa)
-                    ->first();
-
+                $nilai = $penilaian->nilaiSumatif->where('id_siswa', $siswa->id_siswa)->first();
                 $nilaiBabValue = $nilai?->nilai_bab ?? null;
-
-                $detailBab[$penilaian->bab_ke] = $nilaiBabValue;
-
                 if (!is_null($nilaiBabValue)) {
                     $nilaiBab[] = $nilaiBabValue;
                 }
             }
-
-            $rataBab = count($nilaiBab)
-                ? round(array_sum($nilaiBab) / count($nilaiBab), 2)
-                : 0;
-
+            $rataBab = count($nilaiBab) ? round(array_sum($nilaiBab) / count($nilaiBab), 2) : 0;
+            $nilaiFormatifSiswa = $nilaiFormatif->where('id_siswa', $siswa->id_siswa);
+            $nilaiBabFormatif = $nilaiFormatifSiswa->groupBy('bab_ke')->map(function ($nilaiBab) {
+                return $nilaiBab->avg('nilai_bab');
+            })->filter(fn($nilai) => $nilai !== null);
+            $rataBabFormatif = $nilaiBabFormatif->count() ? round($nilaiBabFormatif->avg(), 2) : 0;
             $psts = $nilaiPsts[$siswa->id_siswa] ?? 0;
             $psas = $nilaiPsas[$siswa->id_siswa] ?? 0;
-
-            // Hitung nilai akhir
-            $nilaiAkhir = ($rataBab * $bobotBab / 100) + ($psts * $bobotPsts / 100) + ($psas * $bobotPsas / 100);
+            $rerataFSPsts = ($rataBabFormatif + $rataBab + $psts) / 3;
+            $nilaiAkhir = ($rerataFSPsts * 75 / 100) + ($psas * 25 / 100);
             $nilaiAkhir = round($nilaiAkhir, 2);
-
-            // Generate default keterangan berdasarkan nilai
             $defaultKeterangan = $this->generateKeterangan($nilaiAkhir);
-
             $nilaiSiswa[] = [
                 'siswa' => $siswa,
-                'detail_bab' => $detailBab,
                 'rata_bab' => $rataBab,
+                'rata_bab_formatif' => $rataBabFormatif,
                 'psts' => $psts,
                 'psas' => $psas,
+                'rerata_fspsts' => round($rerataFSPsts, 2),
                 'nilai_akhir' => $nilaiAkhir,
                 'keterangan' => $existingNilaiAkhir[$siswa->id_siswa]?->keterangan ?? null,
                 'default_keterangan' => $defaultKeterangan,
             ];
         }
 
-        $daftarBab = $babPenilaian
-            ->pluck('bab_ke')
-            ->unique()
-            ->sort()
-            ->values();
 
         return view(
             'guru.nilai_akhir.show',
             compact(
                 'nilaiSiswa',
-                'daftarBab',
                 'kelas',
-                'mapel',
-                'bobotBab',
-                'bobotPsts',
-                'bobotPsas'
+                'mapel'
             )
         );
     }
@@ -181,9 +168,7 @@ class NilaiAkhirController extends Controller
             ? 'ganjil'
             : 'genap';
 
-        $bobotBab = $request->bobot_bab;
-        $bobotPsts = $request->bobot_psts;
-        $bobotPsas = $request->bobot_psas;
+
 
         $siswas = Siswa::where(
             'id_kelas',
@@ -243,9 +228,6 @@ class NilaiAkhirController extends Controller
             : [];
 
         $validated = $request->validate([
-            'bobot_bab' => 'nullable|numeric|min:0|max:100',
-            'bobot_psts' => 'nullable|numeric|min:0|max:100',
-            'bobot_psas' => 'nullable|numeric|min:0|max:100',
             'keterangan' => 'nullable|array',
             'keterangan.*' => 'nullable|string|max:600',
         ]);
@@ -280,21 +262,27 @@ class NilaiAkhirController extends Controller
                 )
                 : 0;
 
-            $psts =
-                $nilaiPsts[$siswa->id_siswa]
-                ?? 0;
+            $formatifPenilaian = Penilaian::where([
+                'id_kelas' => $id_kelas,
+                'id_mapel' => $id_mapel,
+                'id_guru' => $guru->id_guru,
+                'jenis_penilaian' => 'formatif',
+                'semester' => $semester,
+            ])->first();
+            $nilaiFormatif = $formatifPenilaian ? NilaiFormatif::where('id_penilaian', $formatifPenilaian->id)->get() : collect();
 
-            $psas =
-                $nilaiPsas[$siswa->id_siswa]
-                ?? 0;
-
-            $nilaiAkhir =
-                ($rataBab * $bobotBab / 100) +
-                ($psts * $bobotPsts / 100) +
-                ($psas * $bobotPsas / 100);
+            $nilaiFormatifSiswa = $nilaiFormatif->where('id_siswa', $siswa->id_siswa);
+            $nilaiBabFormatif = $nilaiFormatifSiswa->groupBy('bab_ke')->map(function ($nilaiBab) {
+                return $nilaiBab->avg('nilai_bab');
+            })->filter(fn($nilai) => $nilai !== null);
+            $rataBabFormatif = $nilaiBabFormatif->count() ? round($nilaiBabFormatif->avg(), 2) : 0;
+            $psts = $nilaiPsts[$siswa->id_siswa] ?? 0;
+            $psas = $nilaiPsas[$siswa->id_siswa] ?? 0;
+            $rerataFSPsts = ($rataBabFormatif + $rataBab + $psts) / 3;
+            $nilaiAkhir = round(($rerataFSPsts * 75 / 100) + ($psas * 25 / 100));
 
             $keterangan = $request->input('keterangan.' . $siswa->id_siswa);
-
+            $keterangan = filled($keterangan) ? $keterangan : $this->generateKeterangan($nilaiAkhir);
             NilaiAkhir::updateOrCreate(
                 [
                     'id_siswa' => $siswa->id_siswa,
@@ -303,18 +291,11 @@ class NilaiAkhirController extends Controller
                     'semester' => $semester,
                 ],
                 [
-                    'bobot_bab' => $bobotBab,
-                    'bobot_psts' => $bobotPsts,
-                    'bobot_psas' => $bobotPsas,
-
                     'rata_bab' => $rataBab,
+                    'rata_bab_formatif' => $rataBabFormatif,
                     'nilai_psts' => $psts,
                     'nilai_psas' => $psas,
-
-                    'nilai_akhir' => round(
-                        $nilaiAkhir,
-                        2
-                    ),
+                    'nilai_akhir' => round($nilaiAkhir, 2),
                     'keterangan' => $keterangan,
                 ]
             );

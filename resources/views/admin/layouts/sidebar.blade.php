@@ -40,12 +40,12 @@
 
         <li class="nav-section-title mt-3">AKADEMIK</li>
 
-        {{-- <li class="nav-item">
+        <li class="nav-item">
             <a class="nav-link {{ request()->is('admin/presensi*') ? 'active' : '' }}"
                 href="{{ route('admin.presensi.index') }}">
                 <i class="bi bi-check-circle"></i> <span>Presensi</span>
             </a>
-        </li> --}}
+        </li>
         <li class="nav-item">
             <a class="nav-link {{ request()->is('admin/penilaian*') ? 'active' : '' }}"
                 href="{{ route('admin.penilaian.index') }}">

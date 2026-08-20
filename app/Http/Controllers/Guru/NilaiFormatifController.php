@@ -156,6 +156,12 @@ class NilaiFormatifController extends Controller
         $nilaiBab = $request->nilai_bab ?? [];
         $tanggalBab = $request->tanggal_bab ?? [];
 
+        /*
+    |--------------------------------------------------------------------------
+    | 1. Simpan nilai formatif per pertemuan
+    |--------------------------------------------------------------------------
+    */
+
         foreach ($nilaiBab as $babKe => $pertemuanList) {
 
             foreach ($pertemuanList as $pertemuanKe => $siswaList) {
@@ -174,8 +180,12 @@ class NilaiFormatifController extends Controller
                             'pertemuan_ke' => $pertemuanKe,
                         ],
                         [
-                            'tanggal_input' => $tanggalBab[$babKe][$pertemuanKe] ?? now()->toDateString(),
+                            'tanggal_input' => $tanggalBab[$babKe][$pertemuanKe]
+                                ?? now()->toDateString(),
+
                             'nilai_formatif' => $nilai,
+                            'nilai_bab' => null,
+
                             'status_data' => 'aktif',
                         ]
                     );
@@ -183,7 +193,50 @@ class NilaiFormatifController extends Controller
             }
         }
 
-        return back()->with('success', 'Nilai formatif berhasil disimpan.');
+
+        /*
+    |--------------------------------------------------------------------------
+    | 2. Hitung nilai_bab berdasarkan seluruh pertemuan dalam setiap bab
+    |--------------------------------------------------------------------------
+    */
+
+        $dataFormatif = NilaiFormatif::where('id_penilaian', $idPenilaian)
+            ->where('status_data', 'aktif')
+            ->get()
+            ->groupBy([
+                'id_siswa',
+                'bab_ke'
+            ]);
+
+
+        foreach ($dataFormatif as $idSiswa => $babList) {
+
+            foreach ($babList as $babKe => $nilaiPertemuan) {
+
+                // Hitung rata-rata nilai seluruh pertemuan pada bab tersebut
+                $rataBab = $nilaiPertemuan->avg('nilai_formatif');
+
+                // Simpan hasil rata-rata ke setiap record pertemuan
+                NilaiFormatif::where('id_penilaian', $idPenilaian)
+                    ->where('id_siswa', $idSiswa)
+                    ->where('bab_ke', $babKe)
+                    ->update([
+                        'nilai_bab' => round($rataBab, 2)
+                    ]);
+            }
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | 3. Selesai
+    |--------------------------------------------------------------------------
+    */
+
+        return back()->with(
+            'success',
+            'Nilai formatif berhasil disimpan dan nilai per bab berhasil dihitung.'
+        );
     }
 
     public function tambahBab($id)

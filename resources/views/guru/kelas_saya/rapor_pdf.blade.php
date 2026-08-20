@@ -237,7 +237,7 @@
                 <tr>
                     <td class="center">{{ $no++ }}</td>
                     <td>{{ $mapel->nama_mapel }}</td>
-                    <td class="center">{{ $mapel->nilai_akhir }}</td>
+                    <td class="center">{{ round($mapel->nilai_akhir) }}</td>
                     <td>{{ $mapel->deskripsi ?? '-' }}</td>
                 </tr>
             @endforeach
@@ -257,7 +257,7 @@
                 <tr>
                     <td class="center">{{ $no++ }}</td>
                     <td>{{ $mapel->nama_mapel }}</td>
-                    <td class="center">{{ $mapel->nilai_akhir }}</td>
+                    <td class="center">{{ round($mapel->nilai_akhir) }}</td>
                     <td>{{ $mapel->deskripsi ?? '-' }}</td>
                 </tr>
             @endforeach
@@ -268,7 +268,7 @@
                     <b>Jumlah</b>
                 </td>
                 <td class="center">
-                    <b>{{ $totalNilai ?? 0 }}</b>
+                    <b>{{ round($totalNilai) ?? 0 }}</b>
                 </td>
                 <td></td>
             </tr>
@@ -481,39 +481,6 @@
         @endif
 
     </div>
-    {{-- <div style="text-align:center">
-
-        Mengetahui,
-        <br>
-        Kepala Madrasah
-
-        <div style="height:10px"></div>
-
-        @if (optional($perlengkapanRapor)->status_acc == 'disetujui' && !empty($approver?->ttd))
-            
-            <img src="{{ public_path('img/cap.png') }}"
-                style="
-                position:absolute;
-                width:95px;
-                margin-top:15px;
-                margin-left:-40px;
-                opacity:0.9;
-            ">
-
-            <img src="{{ public_path('storage/' . $approver->ttd) }}"
-                style="height:70px; position:relative; z-index:2;">
-        @else
-            <div style="height:70px"></div>
-        @endif
-
-        <br>
-
-        <b>{{ $approver?->nama_guru ?? '....................................' }}</b>
-        <br>
-
-        NIP. {{ $approver?->nip ?? '-' }}
-
-    </div> --}}
 </body>
 
 </html>

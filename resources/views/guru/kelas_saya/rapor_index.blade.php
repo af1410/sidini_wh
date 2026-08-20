@@ -27,9 +27,10 @@
                         <table class="table table-striped mb-0">
                             <thead>
                                 <tr>
-                                    <th>No</th>
-                                    <th>Nama Siswa</th>
-                                    <th>NIM</th>
+                                    <th width="5%">No</th>
+                                    <th width="12%">NISN</th>
+                                    <th width="12%">NIM</th>
+                                    <th width="40%">Nama Siswa</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -37,9 +38,16 @@
                                 @foreach ($siswas as $index => $siswa)
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
-                                        <td>{{ $siswa->nama_siswa }}</td>
+                                        <td>{{ $siswa->nisn }}</td>
                                         <td>{{ $siswa->nim }}</td>
+                                        <td>{{ $siswa->nama_siswa }}</td>
                                         <td>
+                                            <a href="{{ route('guru.kelas_saya.lengkapi_rapor', $siswa->id_siswa) }}"
+                                                class="btn btn-outline-success btn-sm">
+                                                <i class="bi bi-pencil-square"></i>
+                                                Lengkapi Rapor
+                                            </a>
+
                                             <a href="{{ route('guru.kelas.rapor.pdf', $siswa->id_siswa) }}" target="_blank"
                                                 class="btn btn-sm btn-outline-primary me-2">
                                                 <i class="bi bi-eye"></i> Preview

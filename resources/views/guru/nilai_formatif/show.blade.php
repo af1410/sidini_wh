@@ -66,11 +66,12 @@
                                     <th rowspan="2">Nama Siswa</th>
 
                                     @foreach ($babList as $bab)
-                                        <th colspan="{{ count($pertemuanPerBab[$bab]) }}"
+                                        <th colspan="{{ count($pertemuanPerBab[$bab]) + 1 }}"
                                             data-header-bab="{{ $bab }}">
                                             Bab {{ $bab }}
 
-                                            <button type="button" class="btn btn-sm btn-outline-primary tambah-pertemuan"
+                                            <button type="button"
+                                                class="btn btn-sm btn-outline-primary tambah-pertemuan"
                                                 data-bab="{{ $bab }}">
                                                 +
                                             </button>
@@ -85,12 +86,19 @@
                                                 P{{ $pertemuan }}
                                             </th>
                                         @endforeach
+
+                                        {{-- NILAI BAB --}}
+                                        <th data-bab="{{ $bab }}"
+                                            data-nilai-bab="{{ $bab }}">
+                                            Nilai Bab
+                                        </th>
                                     @endforeach
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($siswa as $index => $item)
                                     <tr data-siswa="{{ $item->id_siswa }}">
+
                                         <td>{{ $index + 1 }}</td>
 
                                         <td>
@@ -98,22 +106,61 @@
                                         </td>
 
                                         @foreach ($babList as $bab)
+                                            @php
+                                                $nilaiBabData = collect();
+
+                                                foreach ($pertemuanPerBab[$bab] as $pertemuan) {
+                                                    $data = $nilaiPivot[$bab][$pertemuan][$item->id_siswa] ?? null;
+
+                                                    if ($data) {
+                                                        $nilaiBabData->push($data);
+                                                    }
+                                                }
+
+                                                // Ambil nilai_bab yang sudah dihitung dari database
+                                                $nilaiBab = $nilaiBabData->pluck('nilai_bab')->filter(fn($nilai) => $nilai !== null)->first();
+
+                                                // Jika nilai_bab belum tersimpan, hitung sementara
+                                                // dari nilai seluruh pertemuan
+                                                if ($nilaiBab === null) {
+                                                    $nilaiBab = $nilaiBabData->pluck('nilai_formatif')->filter(fn($nilai) => $nilai !== null)->avg();
+                                                }
+
+                                                $nilaiBab = $nilaiBab !== null ? number_format($nilaiBab, 2, ',', '') : '0,00';
+                                            @endphp
+
+                                            {{-- NILAI SETIAP PERTEMUAN --}}
                                             @foreach ($pertemuanPerBab[$bab] as $pertemuan)
                                                 @php
                                                     $nilai = $nilaiPivot[$bab][$pertemuan][$item->id_siswa] ?? null;
                                                 @endphp
 
                                                 <td>
-                                                    <input type="number" class="form-control form-control-sm"
+                                                    <input type="number"
+                                                        class="form-control form-control-sm"
                                                         name="nilai_bab[{{ $bab }}][{{ $pertemuan }}][{{ $item->id_siswa }}]"
-                                                        value="{{ $nilai->nilai_formatif ?? '' }}" min="0"
-                                                        max="100">
+                                                        value="{{ $nilai->nilai_formatif ?? '' }}"
+                                                        min="0"
+                                                        max="100"
+                                                        step="0.01">
 
                                                     <small class="text-muted d-block">
                                                         {{ $nilai->tanggal_input ?? '-' }}
                                                     </small>
                                                 </td>
                                             @endforeach
+
+                                            {{-- NILAI BAB --}}
+                                            <td data-nilai-bab="{{ $bab }}">
+                                                <input type="text"
+                                                    class="form-control form-control-sm bg-light"
+                                                    value="{{ $nilaiBab }}"
+                                                    readonly>
+
+                                                <small class="text-muted">
+                                                    Rata-rata
+                                                </small>
+                                            </td>
                                         @endforeach
 
                                     </tr>
@@ -169,9 +216,7 @@
     @push('scripts')
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-
                 const modalEl = document.getElementById('successModal');
-
                 if (modalEl) {
                     const modal = new bootstrap.Modal(modalEl);
                     modal.show();
@@ -182,135 +227,91 @@
                         bootstrap.Alert.getOrCreateInstance(alert).close();
                     }
                 }, 2500);
-
                 let babTerakhir = {{ max($babList) }};
-
-                // BAB BARU
-                document.getElementById('btnTambahBab').addEventListener('click', function() {
-
-                    // hapus placeholder kosong dari bab terakhir
-                    const placeholder = document.querySelector(
-                        `th[data-placeholder="1"][data-bab="${babTerakhir}"]`
-                    );
-
-                    if (placeholder) {
-
-                        const colIndex = placeholder.cellIndex;
-
-                        placeholder.remove();
-
-                        document.querySelectorAll('#tabelNilai tbody tr')
-                            .forEach(row => row.deleteCell(colIndex));
-
-                        const headerBab = document.querySelector(
-                            `th[data-header-bab="${babTerakhir}"]`
-                        );
-
-                        headerBab.colSpan =
-                            parseInt(headerBab.colSpan) - 1;
+                const btnTambahBab = document.getElementById('btnTambahBab');
+                if (btnTambahBab) {
+                    btnTambahBab.addEventListener('click', function() {
+                        const placeholder = document.querySelector(`th[data-placeholder="1"][data-bab="${babTerakhir}"]`);
+                        if (placeholder) {
+                            const colIndex = placeholder.cellIndex;
+                            placeholder.remove();
+                            document.querySelectorAll('#tabelNilai tbody tr').forEach(function(row) {
+                                row.deleteCell(colIndex);
+                            });
+                            const headerBabLama = document.querySelector(`th[data-header-bab="${babTerakhir}"]`);
+                            if (headerBabLama) {
+                                headerBabLama.colSpan = parseInt(headerBabLama.colSpan) - 1;
+                            }
+                        }
+                        babTerakhir++;
+                        const rowBab = document.querySelectorAll('#tabelNilai thead tr')[0];
+                        const rowPertemuan = document.querySelectorAll('#tabelNilai thead tr')[1];
+                        const thBab = document.createElement('th');
+                        thBab.setAttribute('colspan', '2');
+                        thBab.setAttribute('data-header-bab', babTerakhir);
+                        thBab.innerHTML = `Bab ${babTerakhir} <button type="button" class="btn btn-sm btn-outline-primary tambah-pertemuan" data-bab="${babTerakhir}">+</button>`;
+                        rowBab.appendChild(thBab);
+                        const thPertemuan = document.createElement('th');
+                        thPertemuan.setAttribute('data-bab', babTerakhir);
+                        thPertemuan.setAttribute('data-placeholder', '1');
+                        thPertemuan.innerHTML = 'P1';
+                        rowPertemuan.appendChild(thPertemuan);
+                        const thNilaiBab = document.createElement('th');
+                        thNilaiBab.setAttribute('data-bab', babTerakhir);
+                        thNilaiBab.setAttribute('data-nilai-bab', babTerakhir);
+                        thNilaiBab.innerHTML = 'Nilai Bab';
+                        rowPertemuan.appendChild(thNilaiBab);
+                        document.querySelectorAll('#tabelNilai tbody tr').forEach(function(row) {
+                            const idSiswa = row.dataset.siswa;
+                            const tdPertemuan = document.createElement('td');
+                            tdPertemuan.setAttribute('data-bab', babTerakhir);
+                            tdPertemuan.innerHTML = `<input type="number" class="form-control form-control-sm" name="nilai_bab[${babTerakhir}][1][${idSiswa}]" min="0" max="100" step="0.01"><small class="text-muted d-block">-</small>`;
+                            row.appendChild(tdPertemuan);
+                            const tdNilaiBab = document.createElement('td');
+                            tdNilaiBab.setAttribute('data-bab', babTerakhir);
+                            tdNilaiBab.setAttribute('data-nilai-bab', babTerakhir);
+                            tdNilaiBab.innerHTML = `<input type="text" class="form-control form-control-sm bg-light" value="0,00" readonly><small class="text-muted">Rata-rata</small>`;
+                            row.appendChild(tdNilaiBab);
+                        });
+                    });
+                }
+                document.addEventListener('click', function(e) {
+                    const button = e.target.closest('.tambah-pertemuan');
+                    if (!button) {
+                        return;
                     }
-
-                    babTerakhir++;
-
-                    const rowBab = document.querySelectorAll('#tabelNilai thead tr')[0];
+                    const bab = parseInt(button.dataset.bab);
+                    const headerBab = document.querySelector(`th[data-header-bab="${bab}"]`);
+                    if (!headerBab) {
+                        return;
+                    }
+                    let jumlahKolom = parseInt(headerBab.colSpan);
+                    let jumlahPertemuan = jumlahKolom - 1;
+                    jumlahPertemuan++;
+                    headerBab.colSpan = jumlahPertemuan + 1;
+                    const th = document.createElement('th');
+                    th.setAttribute('data-bab', bab);
+                    th.innerHTML = `P${jumlahPertemuan}`;
                     const rowPertemuan = document.querySelectorAll('#tabelNilai thead tr')[1];
-
-                    const thBab = document.createElement('th');
-
-                    thBab.setAttribute('colspan', '1');
-                    thBab.setAttribute('data-header-bab', babTerakhir);
-
-                    thBab.innerHTML = `
-            Bab ${babTerakhir}
-            <button type="button"
-                class="btn btn-sm btn-outline-primary tambah-pertemuan"
-                data-bab="${babTerakhir}">
-                +
-            </button>
-        `;
-
-                    rowBab.appendChild(thBab);
-
-                    const thPertemuan = document.createElement('th');
-
-                    thPertemuan.setAttribute('data-bab', babTerakhir);
-                    thPertemuan.setAttribute('data-placeholder', '1');
-
-                    thPertemuan.innerHTML = 'P1';
-
-                    rowPertemuan.appendChild(thPertemuan);
-
+                    const nilaiBabHeader = rowPertemuan.querySelector(`th[data-nilai-bab="${bab}"]`);
+                    if (nilaiBabHeader) {
+                        rowPertemuan.insertBefore(th, nilaiBabHeader);
+                    } else {
+                        rowPertemuan.appendChild(th);
+                    }
                     document.querySelectorAll('#tabelNilai tbody tr').forEach(function(row) {
-
                         const idSiswa = row.dataset.siswa;
-
                         const td = document.createElement('td');
-
-                        td.innerHTML = `
-                <input type="number"
-                    class="form-control form-control-sm"
-                    name="nilai_bab[${babTerakhir}][1][${idSiswa}]">
-
-                <small class="text-muted">
-                    -
-                </small>
-            `;
-
-                        row.appendChild(td);
+                        td.setAttribute('data-bab', bab);
+                        td.innerHTML = `<input type="number" class="form-control form-control-sm" name="nilai_bab[${bab}][${jumlahPertemuan}][${idSiswa}]" min="0" max="100" step="0.01"><small class="text-muted d-block">-</small>`;
+                        const nilaiBabCell = row.querySelector(`td[data-nilai-bab="${bab}"]`);
+                        if (nilaiBabCell) {
+                            row.insertBefore(td, nilaiBabCell);
+                        } else {
+                            row.appendChild(td);
+                        }
                     });
                 });
-
-                // TAMBAH PERTEMUAN
-                document.addEventListener('click', function(e) {
-
-                    if (!e.target.classList.contains('tambah-pertemuan'))
-                        return;
-
-                    const bab = parseInt(
-                        e.target.dataset.bab
-                    );
-
-                    const headerBab = document.querySelector(
-                        `th[data-header-bab="${bab}"]`
-                    );
-
-                    let jumlahPertemuan =
-                        parseInt(headerBab.colSpan);
-
-                    jumlahPertemuan++;
-
-                    headerBab.colSpan = jumlahPertemuan;
-
-                    const th = document.createElement('th');
-
-                    th.setAttribute('data-bab', bab);
-
-                    th.innerHTML = `P${jumlahPertemuan}`;
-
-                    document.querySelectorAll('#tabelNilai thead tr')[1]
-                        .appendChild(th);
-
-                    document.querySelectorAll('#tabelNilai tbody tr')
-                        .forEach(function(row) {
-
-                            const idSiswa = row.dataset.siswa;
-
-                            const td = document.createElement('td');
-
-                            td.innerHTML = `
-                    <input type="number"
-                        class="form-control form-control-sm"
-                        name="nilai_bab[${bab}][${jumlahPertemuan}][${idSiswa}]">
-
-                    <small class="text-muted">
-                        -
-                    </small>
-                `;
-
-                            row.appendChild(td);
-                        });
-                });
-
             });
         </script>
     @endpush

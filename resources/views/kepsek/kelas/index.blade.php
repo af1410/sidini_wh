@@ -104,7 +104,7 @@
                 Data Kelas
             </h3>
             <p class="text-muted mb-0">
-                Daftar kelas yang siap dilakukan Approve rapor siswa.
+                Daftar kelas yang siap dilakukan Tanda Tangan rapor siswa.
             </p>
         </div>
     </div>
@@ -140,7 +140,7 @@
                             </strong>
                         </div>
                         <div class="info-item">
-                            <small>Menunggu di Approve</small>
+                            <small>Menunggu di Tanda Tangan</small>
                             <strong>
                                 <span class="badge bg-warning">
                                     {{ $item->jumlah_menunggu ?? 0 }}

@@ -34,13 +34,12 @@
                             <table class="table table-bordered table-striped">
 
                                 <thead>
-
                                     <tr>
                                         <th rowspan="2">No</th>
-                                        <th rowspan="2">Nama Siswa</th>
+                                        <th rowspan="2" style="min-width: 150px;">Nama Siswa</th>
 
                                         @foreach ($mapels as $mapel)
-                                            <th colspan="4" class="text-center">
+                                            <th colspan="5" class="text-center">
                                                 {{ $mapel->nama_mapel }}
                                             </th>
                                         @endforeach
@@ -50,7 +49,8 @@
 
                                     <tr>
                                         @foreach ($mapels as $mapel)
-                                            <th>Rata BAB</th>
+                                            <th>Sumatif</th>
+                                            <th>Formatif</th>
                                             <th>PSTS</th>
                                             <th>PSAS</th>
                                             <th>Nilai Akhir</th>
@@ -76,19 +76,39 @@
                                                 @endphp
 
                                                 <td>
-                                                    {{ $nilai->rata_bab ?? '-' }}
+                                                    @if ($nilai && $nilai->rata_bab !== null && $nilai->rata_bab != 0)
+                                                        {{ number_format($nilai->rata_bab, 2) }}
+                                                    @else
+                                                        -
+                                                    @endif
                                                 </td>
-
                                                 <td>
-                                                    {{ $nilai->nilai_psts ?? '-' }}
+                                                    @if ($nilai && $nilai->rata_bab_formatif !== null && $nilai->rata_bab_formatif != 0)
+                                                        {{ number_format($nilai->rata_bab_formatif, 2) }}
+                                                    @else
+                                                        -
+                                                    @endif
                                                 </td>
-
                                                 <td>
-                                                    {{ $nilai->nilai_psas ?? '-' }}
+                                                    @if ($nilai && $nilai->nilai_psts !== null && $nilai->nilai_psts != 0)
+                                                        {{ number_format($nilai->nilai_psts, 2) }}
+                                                    @else
+                                                        -
+                                                    @endif
                                                 </td>
-
+                                                <td>
+                                                    @if ($nilai && $nilai->nilai_psas !== null && $nilai->nilai_psas != 0)
+                                                        {{ number_format($nilai->nilai_psas, 2) }}
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
                                                 <td class="fw-bold">
-                                                    {{ $nilai->nilai_akhir ?? '-' }}
+                                                    @if ($nilai && $nilai->nilai_akhir !== null && $nilai->nilai_akhir != 0)
+                                                        {{ number_format($nilai->nilai_akhir, 2) }}
+                                                    @else
+                                                        -
+                                                    @endif
                                                 </td>
                                             @endforeach
                                             <td>

@@ -92,9 +92,9 @@
                                     <th>NISN</th>
                                     <th>Nama</th>
                                     <th>Kelas</th>
-                                    {{-- <th>Status</th> --}}
-                                    {{-- <th>Waktu Masuk</th>
-                                    <th>Aksi</th> --}}
+                                    <th>Status</th>
+                                    <th>Waktu Masuk</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -108,7 +108,7 @@
                                         <td>{{ $item->nisn ?? '-' }}</td>
                                         <td>{{ $item->nama_siswa }}</td>
                                         <td>{{ $item->dataKelas->nama_kelas ?? '-' }}</td>
-                                        {{-- <td>
+                                        <td>
                                             @if ($presensi)
                                                 <span
                                                     class="badge bg-{{ $presensi->status === 'Hadir' ? 'success' : ($presensi->status === 'Terlambat' ? 'warning' : ($presensi->status === 'Izin' ? 'info' : ($presensi->status === 'Sakit' ? 'primary' : 'secondary'))) }}">
@@ -117,13 +117,20 @@
                                             @else
                                                 <span class="badge bg-secondary">Belum</span>
                                             @endif
-                                        </td> --}}
-                                        {{-- <td>{{ $presensi->waktu_masuk ?? '-' }}</td>
+                                        </td>
+                                        <td>{{ $presensi->waktu_masuk ?? '-' }}</td>
                                         <td>
                                             @if ($presensi && in_array($presensi->status, ['Hadir', 'Terlambat']))
                                                 <span class="text-muted">Tidak dapat diubah</span>
                                             @else
                                                 <div class="d-flex gap-2 flex-wrap">
+                                                    <form action="{{ route('guru.presensi.status', $item->id_siswa) }}"
+                                                        method="POST" class="m-0">
+                                                        @csrf
+                                                        <input type="hidden" name="status" value="Masuk">
+                                                        <button type="submit"
+                                                            class="btn btn-sm btn-outline-success">Masuk</button>
+                                                    </form>
                                                     <form action="{{ route('guru.presensi.status', $item->id_siswa) }}"
                                                         method="POST" class="m-0">
                                                         @csrf
